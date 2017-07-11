@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>br.com.sgpf</groupId>
+		<artifactId>commons</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>commons-jee6</artifactId>
+	<name>SGPF : Commons : JEE6</name>
+	<description>Biblioteca de componentes e utilitários de apoio para projetos JEE 6</description>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+			    <groupId>org.jboss.bom</groupId>
+			    <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
+			    <version>${org.jboss.bom.version}</version>
+			    <type>pom</type>
+			    <scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>${javaee.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>${project.artifactId}</finalName>
+	</build>
+	
+	<properties>
+		<!-- Dependencies -->
+		<org.jboss.bom.version>1.0.7.Final</org.jboss.bom.version>
+		<javaee.version>6.0</javaee.version>
+	</properties>
+</project>
