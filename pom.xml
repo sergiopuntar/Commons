@@ -10,6 +10,7 @@
 	
 	<modules>
 		<module>commons-jee6</module>
+		<module>commons-jee6-dataimport</module>
 	</modules>
 	
 	<dependencies>

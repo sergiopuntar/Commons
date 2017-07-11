@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>br.com.sgpf</groupId>
+		<artifactId>commons</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>commons-jee6-dataimport</artifactId>
+	<name>SGPF : Commons : JEE6 : Data Import</name>
+	<description>Biblioteca de componentes de importação de dados para projetos JEE 6</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>${parent.groupId}</groupId>
+			<artifactId>commons-jee6</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${org.apache.poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${org.apache.poi.version}</version>
+			<classifier>javadoc</classifier>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>${project.artifactId}</finalName>
+	</build>
+	
+	<properties>
+		<!-- Dependencies -->
+		<org.apache.poi.version>3.16</org.apache.poi.version>
+	</properties>
+</project>
