@@ -83,20 +83,30 @@ public abstract class AbstractEntity<ID extends Serializable> implements Entity<
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(5, 11).append(getId()).toHashCode();
+		if (getId() != null) {
+			return new HashCodeBuilder(5, 11).append(getId()).toHashCode();
+		} else {
+			return unpersistedHashCode();
+		}
 	}
+	
+	/**
+	 * Implementação do método hashcode para objetos ainda não persistidos.
+	 * 
+	 * @return Hashcode do objeto
+	 */
+	public abstract int unpersistedHashCode();
 
 	@Override
 	public boolean equals(Object obj) {
-		boolean result = false;
-
-		if (obj instanceof AbstractEntity) {
+		if (obj instanceof AbstractEntity && getId() != null) {
 			AbstractEntity<?> ae = (AbstractEntity<?>) obj;
-
-			result = ae.canEqual(this) && new EqualsBuilder().append(getId(), ae.getId()).isEquals();
+			return ae.canEqual(this) && new EqualsBuilder().append(getId(), ae.getId()).isEquals();
+		} else if (obj instanceof AbstractEntity) {
+			return unpersistedEquals(obj);
 		}
 
-		return result;
+		return false;
 	}
 	
 	/**
@@ -107,4 +117,12 @@ public abstract class AbstractEntity<ID extends Serializable> implements Entity<
 	 * @return Flag indicando se a entidade pode ser comparada com esta
 	 */
 	protected abstract boolean canEqual(AbstractEntity<?> entity);
+
+	/**
+	 * Implementação do método equals para objetos ainda não persistidos.
+	 * 
+	 * @param obj Objeto a ser comparado
+	 * @return True se os objetos são equivalentes, false caso contrário
+	 */
+	public abstract boolean unpersistedEquals(Object obj);
 }

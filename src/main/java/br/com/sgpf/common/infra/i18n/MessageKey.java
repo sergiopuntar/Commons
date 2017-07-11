@@ -1,7 +1,7 @@
 package br.com.sgpf.common.infra.i18n;
 
 /**
- * Interface ára enumerações de chaves de mensagens.
+ * Interface para enumerações de chaves de mensagens.
  */
 public interface MessageKey {
 	

@@ -6,21 +6,22 @@ import javax.persistence.MappedSuperclass;
 /**
  * Super classe abstrata para todas as entidades do sistema com identificador
  * próprio baseado em UUID.
- * 
- * @param <T> Tipo do identificador da entidade
+ * Essa implementação segue a abordagem de geração de id no construtor, o que
+ * garante que o objeto possui sempre um id único e, dessa forma, os métodos
+ * hashcode e equals serão confiáveis baseados somente no identificador.
+ * <b>Essa abordagem é válida somente em ambientes sem concorrência.</b>
  */
 @MappedSuperclass
 public abstract class AbstractUUIDEntity extends AbstractEntity<String> {
 	private static final long serialVersionUID = 8082865570195906837L;
+	
+	private static final String ERROR_EQUALS_HASHCODE_UNSUPPORTED = "Os métodos unpersistedEquals e unpersistedHashCode não são suportados pela classe AbstractUUIDEntity, pois objetos desse tipo devem sempre possuir um id baseeado em UUID.";
 
 	@Id
 	private String id;
 	
 	/**
 	 * Construtor padrão que gera o identificador da entidade.
-	 * A abordagem de geração de id no construtor garante que o objeto sempre
-	 * possui um id único e, dessa forma, pode-se utilizar os métodos hashcode
-	 * e equals confiáveis baseados somente no identificador.
 	 */
 	public AbstractUUIDEntity() {
 		super();
@@ -35,5 +36,15 @@ public abstract class AbstractUUIDEntity extends AbstractEntity<String> {
 	@Override
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	@Override
+	public int unpersistedHashCode() {
+		throw new UnsupportedOperationException(ERROR_EQUALS_HASHCODE_UNSUPPORTED);
+	}
+
+	@Override
+	public boolean unpersistedEquals(Object obj) {
+		throw new UnsupportedOperationException(ERROR_EQUALS_HASHCODE_UNSUPPORTED);
 	}
 }

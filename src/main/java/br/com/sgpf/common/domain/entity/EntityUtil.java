@@ -1,5 +1,6 @@
 package br.com.sgpf.common.domain.entity;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -24,9 +25,9 @@ public class EntityUtil {
 	 * @param id Identificador da entidade
 	 * @return Entidade recuperada, null se ela não estiver presente na lista
 	 */
-	public static <T extends Entity<?>> T recuperarEntidade(Collection<T> entidades, String id) {
+	public static <T extends Entity<ID>, ID extends Serializable> T recuperarEntidade(Collection<T> entidades, ID id) {
 		for (T entidade : entidades) {
-			if(entidade.getId()!=null && entidade.getId().equals(id)) {
+			if(entidade.getId() != null && entidade.getId().equals(id)) {
 				return entidade;
 			}
 		}
