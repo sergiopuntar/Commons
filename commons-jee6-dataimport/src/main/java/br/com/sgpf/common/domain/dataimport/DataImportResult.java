@@ -6,37 +6,37 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Classe que representa o resultado da importação de uma entidade.
+ * Classe que representa o resultado da importação de dados.
  */
-public class EntityImportResult implements Serializable {
+public class DataImportResult implements Serializable {
 	private static final long serialVersionUID = 6106162065670933764L;
 
 	public static enum Status { 
 		/**
-		 * Os dados da entidade na origem foram importados no destino como um novo registro.
+		 * Os dados da origem foram importados no destino como um novo registro.
 		 */
 		INSERTED,
 		/**
-		 * Os dados da entidade na origem foram importados em um registro pré-existente no destino,
-		 * pois os dados da origem eram mais recentes.
+		 * Os dados da origem foram importados em um registro pré-existente no destino, pois os
+		 * dados da origem eram mais recentes.
 		 */		
 		UPDATED,
 		/**
-		 * Os dados da entidade na origem foram importados em um registro pré-existente no destino,
-		 * mesmo que o detino contendo dados mais recentes.
+		 * Os dados da origem foram importados em um registro pré-existente no destino, mesmo que o
+		 * detino contendo dados mais recentes.
 		 */
 		FORCE_UPDATED, 
 		/**
-		 * Os dados da entidade no destino foram removidos.
+		 * Os dados foram removidos do destino.
 		 */
 		DELETED,
 		/**
-		 * A entidade da origem foi substituída pela do destino, pois os dados do destino eram mais
+		 * Os dados do item de importação foram substituídos pelos dados do destino, pois eram mais
 		 * recentes. 
 		 */
 		OVERRIDDEN,
 		/**
-		 * Ocorreu um erro durante a importação da entidade.
+		 * Ocorreu um erro durante a importação dos dados.
 		 */
 		ERROR,
 		/**
@@ -50,7 +50,7 @@ public class EntityImportResult implements Serializable {
 	private String message;
 	private Exception exception;
 	
-	public EntityImportResult() {
+	public DataImportResult() {
 		super();
 	}
 
@@ -97,8 +97,8 @@ public class EntityImportResult implements Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof EntityImportResult) {
-			EntityImportResult eir = (EntityImportResult) obj;
+		if (obj instanceof DataImportResult) {
+			DataImportResult eir = (DataImportResult) obj;
 			return new EqualsBuilder()
 					.append(getStatus(), eir.getStatus())
 					.append(isSynced(), eir.isSynced())
