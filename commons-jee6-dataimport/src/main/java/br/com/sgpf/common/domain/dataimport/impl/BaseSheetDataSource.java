@@ -7,17 +7,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceDocumentException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceException;
+import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFormatException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceIOException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceInvalidStateException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreItensException;
@@ -28,27 +40,40 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreIten
  * @param <ID> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public abstract class BaseSheetDataSource<ID extends Serializable, T extends Serializable> implements ImportDataSource<ID, T> {
+public abstract class BaseSheetDataSource<T extends Serializable> implements ImportDataSource<Integer, T> {
 	private static final long serialVersionUID = -7387063988593887736L;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BaseSheetDataSource.class);
 	
 	private static final String ERROR_NULL_FILE = "O arquivo não pode ser nulo.";
 	private static final String ERROR_NULL_IS = "O input stream não pode ser nulo.";
-	
+	private static final String ERROR_NULL_COLUMN_NAME = "O nome da coluna não pode ser nulo.";
+	private static final String ERROR_FILE_NOT_FOUND = "Não foi possível encontrar o arquivo [%s].";
 	private static final String ERROR_UNDEFINED_TYPE = "O tipo da fonte de dados não foi definido.";
-	private static final String ERROR_DOCUMENT_CLOSED = "O documento está fechado.";
-	private static final String ERROR_DOCUMENT_OPEN = "O documento está aberto.";
-
 	private static final String ERROR_READING_DOCUMENT = "Ocorreu um erro na leitura do documento.";
 	private static final String ERROR_ENCRYPTED_DOCUMENT = "O documento está criptografado.";
 	private static final String ERROR_INVALID_DOCUMENT_FORMAT = "O documento possui um formato inválido.";
 	private static final String ERROR_NON_READABLE_FILE = "O arquivo [%s] não pode ser lido.";
 	private static final String ERROR_NON_EXISTING_SHEET = "O documento não possui planilha com índice [%d].";
-	private static final String ERROR_FILE_NOT_FOUND = "Não foi possível encontrar o arquivo [%s].";
+	private static final String ERROR_NO_HEADER = "A planilha não possui um cabeçalho.";
+	private static final String ERROR_NO_MORE_ITENS = "A Planilha não possui mais itens.";
+	private static final String ERROR_NON_EXISTING_COLUMN = "A planilha não possui uma coluna com o nome [%s].";
+	private static final String ERROR_CHAR_FORMART = "A coluna [%s] não possui conteúdo no formato Character.";
+	private static final String ERROR_YES_NO_FORMART = "A coluna [%s] não possui conteúdo no formato Y/N.";
+	
 	private static final String ERROR_WRITING_CHANGES = "Não foi possível gravar as alterações no documento.";
 	private static final String ERROR_CLOSING_DOCUMENT = "Ocorreu um erro ao fechar o documento.";
+	
+	private static final String ERROR_DOCUMENT_CLOSED = "O documento está fechado.";
+	private static final String ERROR_DOCUMENT_OPEN = "O documento está aberto.";
+	
+	private static final String VALUE_STRING_Y = "Y";
+	private static final String VALUE_STRING_N = "N";
 
 
 	private static enum Type { FILE, INPUT_STREAM };
+	
+	private static enum ImportActionHeader { INSERT, UPDATE, MERGE, REMOVE, FORCE, SYNC };
 	
 	private File file;
 	private InputStream is;
@@ -59,6 +84,7 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 	private Sheet sheet;
 	private int currRow;
 	private boolean changed;
+	private Map<String, Integer> columnMap = new HashMap<String, Integer>();
 	
 	private BaseSheetDataSource(Type type, int sheetId) {
 		super();
@@ -71,12 +97,15 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 	 * 
 	 * @param file Arquivo da planilha
 	 * @param sheetId Índice da planilha
+	 * @throws ImportDataSourceFileException Se o arquivo não for encontrado
 	 */
-	public BaseSheetDataSource(File file, int sheetId) {
+	public BaseSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		this(Type.FILE, sheetId);
 		
 		if (file == null) {
 			throw new InvalidParameterException(ERROR_NULL_FILE);
+		} else if (!file.exists()) {
+			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
 		}
 		
 		this.file = file;
@@ -119,8 +148,8 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 			throw new ImportDataSourceDocumentException(String.format(ERROR_NON_EXISTING_SHEET, sheetId));
 		}
 		
-		changed = false;
-		currRow = -1;
+		reset();
+		mapColumns();
 	}
 
 	/**
@@ -163,6 +192,28 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 		}
 	}
 
+	/**
+	 * Mapeia as colunas da planilha a partir do seu cabeçalho.
+	 * 
+	 * @throws ImportDataSourceException Se a planilha não possui um cabeçalho 
+	 */
+	private void mapColumns() throws ImportDataSourceException {
+		Row row = sheet.getRow(++currRow);
+		
+		if (row == null) {
+			throw new ImportDataSourceException(ERROR_NO_HEADER);
+		}
+		
+		Iterator<Cell> it = row.iterator();
+		
+		while (it.hasNext()) {
+			Cell cell = it.next();
+			columnMap.put(cell.getStringCellValue().toUpperCase(), cell.getColumnIndex());
+		}
+		
+		LOGGER.debug("Colunas mapeadas: " + columnMap);
+	}
+
 	@Override
 	public boolean isWritable() {
 		if (type == Type.FILE && file != null) {
@@ -179,24 +230,240 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 	}
 
 	@Override
-	public DataImportItem<ID, T> next() throws ImportDataSourceNoMoreItensException, ImportDataSourceException {
+	public DataImportItem<Integer, T> next() throws ImportDataSourceNoMoreItensException, ImportDataSourceException {
 		validadeIsOpen();
 		
 		if (!hasNext()) {
-			throw new ImportDataSourceNoMoreItensException();
+			throw new ImportDataSourceNoMoreItensException(ERROR_NO_MORE_ITENS);
 		}
 		
 		currRow++;
 		
-		//TODO ler dados
-		return null;
+		boolean insert = readYesNoCell(ImportActionHeader.INSERT.name());
+		boolean update = readYesNoCell(ImportActionHeader.UPDATE.name());
+		boolean remove = readYesNoCell(ImportActionHeader.REMOVE.name());
+		boolean force = readYesNoCell(ImportActionHeader.FORCE.name());
+		boolean sync = readYesNoCell(ImportActionHeader.SYNC.name());
+		
+		return new DataImportItem<Integer, T>(currRow, readCurrentItemData(), insert, update, remove, force, sync);
 	}
 
-	@Override
-	public void sync(DataImportItem<ID, T> item) throws ImportDataSourceException {
-		validadeIsOpen();
-		//TODO escrever dados
+	/**
+	 * Lê os dados do item atual.
+	 * 
+	 * @return Dados do item atual
+	 */
+	protected abstract T readCurrentItemData();
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo String.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected String readStringCell(String columnName) {
+		Cell cell = getCurrentRowCell(columnName);
+		
+		if (CellType.BLANK.equals(cell.getCellTypeEnum())){
+			return null;
+		}
+		
+		return cell.getStringCellValue();
 	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Character.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 * @throws ImportDataSourceFormatException Se a célula não possui conteúdo no formado Character
+	 */
+	protected Character readCharCell(String columnName) throws ImportDataSourceFormatException {
+		String stringValue = readStringCell(columnName);
+		
+		if (stringValue == null || stringValue.isEmpty()) {
+			return null;
+		} else if (stringValue.length() > 1) {
+			throw new ImportDataSourceFormatException(String.format(ERROR_CHAR_FORMART, columnName));
+		}
+		
+		return stringValue.charAt(0);
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Double.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Double readDoubleCell(String columnName) {
+		Cell cell = getCurrentRowCell(columnName);
+		
+		if (CellType.BLANK.equals(cell.getCellTypeEnum())){
+			return null;
+		}
+		
+		return cell.getNumericCellValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Float.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Float readFloatCell(String columnName) {
+		Double doubleValue = readDoubleCell(columnName);
+		return doubleValue == null ? null : doubleValue.floatValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Long.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Long readLongCell(String columnName) {
+		Double doubleValue = readDoubleCell(columnName);
+		return doubleValue == null ? null : doubleValue.longValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Integer.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Integer readIntegerCell(String columnName) {
+		Double doubleValue = readDoubleCell(columnName);
+		return doubleValue == null ? null : doubleValue.intValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Short.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Short readShortCell(String columnName) {
+		Double doubleValue = readDoubleCell(columnName);
+		return doubleValue == null ? null : doubleValue.shortValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Byte.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Byte readByteCell(String columnName) {
+		Double doubleValue = readDoubleCell(columnName);
+		return doubleValue == null ? null : doubleValue.byteValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Boolean.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Boolean readBooleanCell(String columnName) {
+		Cell cell = getCurrentRowCell(columnName);
+		
+		if (CellType.BLANK.equals(cell.getCellTypeEnum())){
+			return null;
+		}
+		
+		return cell.getBooleanCellValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Date.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Date readDateCell(String columnName) {
+		Cell cell = getCurrentRowCell(columnName);
+		
+		if (CellType.BLANK.equals(cell.getCellTypeEnum())){
+			return null;
+		}
+		
+		return cell.getDateCellValue();
+	}
+	
+	/**
+	 * Lê o conteúdo de uma celula do tipo Calendar.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return Conteúdo da célula, null se a célula estiver vazia
+	 */
+	protected Calendar readCalendarCell(String columnName) {
+		Date date = readDateCell(columnName);
+		
+		if (date == null) {
+			return null;
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		
+		return calendar;
+	}
+
+	/**
+	 * Lê o conteúdo de uma celula do tipo Flag Y/N.
+	 * 
+	 * @param columnName Nome da coluna
+	 * @return True se o conteúdo for 'Y', False se o conteúdo for 'N' e null se for indefinido
+	 * @throws ImportDataSourceFormatException Se a célula não possui conteúdo no formato Y/N
+	 */
+	protected Boolean readYesNoCell(String columnName) throws ImportDataSourceFormatException {
+		String value = getCurrentRowCell(columnName).getStringCellValue();
+		
+		if (VALUE_STRING_Y.equalsIgnoreCase(value)) {
+			return true;
+		} else if (VALUE_STRING_N.equalsIgnoreCase(value)) {
+			return false;
+		} else if (value != null && !value.isEmpty()) {
+			throw new ImportDataSourceFormatException(String.format(ERROR_YES_NO_FORMART, columnName));
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Recupera uma célula da linha atual a partir do nome da sua coluna.
+	 * 
+	 * @param name Nome da coluna da célula
+	 * @return Célula encontrada
+	 * @throws InvalidParameterException Se o nome da coluna for inválido ou se a coluna for
+	 * inexistente
+	 */
+	private Cell getCurrentRowCell(String name) {
+		if (name == null) {
+			throw new InvalidParameterException(ERROR_NULL_COLUMN_NAME);
+		}else if (!columnMap.containsKey(name)) {
+			throw new InvalidParameterException(String.format(ERROR_NON_EXISTING_COLUMN, name));
+		}
+		
+		return sheet.getRow(currRow).getCell(columnMap.get(name));
+	}
+	
+	@Override
+	public void sync(DataImportItem<Integer, T> item) throws ImportDataSourceException {
+		validadeIsOpen();
+		syncRow(item.getId(), item.getData());
+	}
+
+	/**
+	 * Sincroniza os dados de uma linha da planilha.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param data Dados da linha
+	 */
+	protected abstract void syncRow(Integer rowIndex, T data);
 
 	@Override
 	public void close() throws ImportDataSourceException {
@@ -207,7 +474,7 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 				flush();
 			}
 		} catch (FileNotFoundException e) {
-			throw new ImportDataSourceDocumentException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
+			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
 		} catch (IOException e) {
 			throw new ImportDataSourceIOException(ERROR_WRITING_CHANGES, e);
 		} finally {
@@ -215,8 +482,7 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 				workbook.close();
 				workbook = null;
 				sheet = null;
-				changed = false;
-				currRow = -1;
+				reset();
 			} catch (IOException e) {
 				throw new ImportDataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
 			}
@@ -235,6 +501,15 @@ public abstract class BaseSheetDataSource<ID extends Serializable, T extends Ser
 		}
 		
 		workbook.write(new FileOutputStream(file));
+	}
+
+	/**
+	 * Reseta as variáveis auxiliares.
+	 */
+	private void reset() {
+		changed = false;
+		currRow = -1;
+		columnMap.clear();
 	}
 
 	/**

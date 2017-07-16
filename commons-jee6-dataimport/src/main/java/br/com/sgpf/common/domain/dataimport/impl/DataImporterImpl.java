@@ -15,15 +15,15 @@ import br.com.sgpf.common.domain.dataimport.ImportDataSource;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 
 /**
- * Implementação base para os importadores de dados.
+ * Implementação padrão para os importadores de dados.
  * 
  * @param <ID> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public abstract class BaseDataImporter<ID extends Serializable, T extends Serializable> implements DataImporter<ID, T> {
+public class DataImporterImpl<ID extends Serializable, T extends Serializable> implements DataImporter<ID, T> {
 	private static final long serialVersionUID = 5124248593928945081L;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BaseDataImporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataImporterImpl.class);
 	
 	private static final String ERROR_NULL_DATASOURCE = "A fonte de dados não pode ser nula.";
 	
@@ -45,7 +45,7 @@ public abstract class BaseDataImporter<ID extends Serializable, T extends Serial
 		int synced = 0;
 		
 		while (dataSource.hasNext()) {
-			DataImportItem<ID, T> item = importEntity(dataSource.next());
+			DataImportItem<ID, T> item = dataSource.next();
 			LOGGER.debug("Dados com identificador '{0}' importados.", item.getId());
 			
 			if (sync && item.dataChanged() && item.isSync() && dataSource.isWritable()) {
@@ -71,14 +71,4 @@ public abstract class BaseDataImporter<ID extends Serializable, T extends Serial
 		
 		return itens;
 	}
-	
-	/**
-	 * Importa um único item no destino, retornado o item atualizado e com o resultado da
-	 * importação.
-	 * 
-	 * @param item Item a ser importado
-	 * @return Item com os dados atualizados após importação
-	 * @throws DataImportException Se ocorrer um erro durante a importação dos dados
-	 */
-	protected abstract DataImportItem<ID, T> importEntity(DataImportItem<ID, T> item) throws DataImportException;
 }
