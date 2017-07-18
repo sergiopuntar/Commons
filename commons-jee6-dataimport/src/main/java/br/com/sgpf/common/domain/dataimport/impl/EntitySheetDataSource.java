@@ -64,6 +64,23 @@ public abstract class EntitySheetDataSource<ID extends Serializable, E extends E
 
 	@Override
 	protected void syncRow(Integer rowIndex, E data) {
-		
+		//TODO
 	}
+	
+	/**
+	 * Escreve o identificador da entidade em uma linha da planilha.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna onde está o identificador.
+	 * @param id Identificador da entidade
+	 */
+	protected abstract void writeEntityId(Integer rowIndex, String columnName, ID id);
+	
+	/**
+	 * Escreve os dados de uma entidade em uma linha da planilha.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param data Dados da entidade
+	 */
+	protected abstract void writeItemData(Integer rowIndex, E data);
 }

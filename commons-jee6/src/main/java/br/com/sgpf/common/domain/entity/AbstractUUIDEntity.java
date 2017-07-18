@@ -18,6 +18,7 @@ public abstract class AbstractUUIDEntity extends AbstractEntity<String> {
 	private static final String ERROR_EQUALS_HASHCODE_UNSUPPORTED = "Os métodos unpersistedEquals e unpersistedHashCode não são suportados pela classe AbstractUUIDEntity, pois objetos desse tipo devem sempre possuir um id baseeado em UUID.";
 
 	@Id
+	// TODO Subistituir String por UUID
 	private String id;
 	
 	/**

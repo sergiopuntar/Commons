@@ -272,6 +272,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 	
 	/**
+	 * Escreve o conteúdo de uma celula do tipo String.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeStringCell(Integer rowIndex, String columnName, String value) {
+		getRowCell(rowIndex, columnName).setCellValue(value);
+	}
+	
+	/**
 	 * Lê o conteúdo de uma celula do tipo Character.
 	 * 
 	 * @param columnName Nome da coluna
@@ -291,6 +302,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 	
 	/**
+	 * Escreve o conteúdo de uma celula do tipo Character.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @return value Conteúdo da célula
+	 */
+	protected void writeCharCell(Integer rowIndex, String columnName, Character value) {
+		writeStringCell(rowIndex, columnName, value == null ? null : String.valueOf(value));
+	}
+	
+	/**
 	 * Lê o conteúdo de uma celula do tipo Double.
 	 * 
 	 * @param columnName Nome da coluna
@@ -307,6 +329,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 	
 	/**
+	 * Escreve o conteúdo de uma celula do tipo Double.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeDoubleCell(Integer rowIndex, String columnName, Double value) {
+		getRowCell(rowIndex, columnName).setCellValue(value);
+	}
+	
+	/**
 	 * Lê o conteúdo de uma celula do tipo Float.
 	 * 
 	 * @param columnName Nome da coluna
@@ -315,6 +348,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	protected Float readFloatCell(String columnName) {
 		Double doubleValue = readDoubleCell(columnName);
 		return doubleValue == null ? null : doubleValue.floatValue();
+	}
+	
+	/**
+	 * Escreve o conteúdo de uma celula do tipo Float.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeFloatCell(Integer rowIndex, String columnName, Float value) {
+		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -329,6 +373,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 	
 	/**
+	 * Escreve o conteúdo de uma celula do tipo Long.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeLongCell(Integer rowIndex, String columnName, Long value) {
+		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	}
+	
+	/**
 	 * Lê o conteúdo de uma celula do tipo Integer.
 	 * 
 	 * @param columnName Nome da coluna
@@ -337,6 +392,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	protected Integer readIntegerCell(String columnName) {
 		Double doubleValue = readDoubleCell(columnName);
 		return doubleValue == null ? null : doubleValue.intValue();
+	}
+	
+	/**
+	 * Escreve o conteúdo de uma celula do tipo Integer.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeIntegerCell(Integer rowIndex, String columnName, Integer value) {
+		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -349,6 +415,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		Double doubleValue = readDoubleCell(columnName);
 		return doubleValue == null ? null : doubleValue.shortValue();
 	}
+
+	/**
+	 * Escreve o conteúdo de uma celula do tipo Short.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeShortCell(Integer rowIndex, String columnName, Short value) {
+		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	}
 	
 	/**
 	 * Lê o conteúdo de uma celula do tipo Byte.
@@ -359,6 +436,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	protected Byte readByteCell(String columnName) {
 		Double doubleValue = readDoubleCell(columnName);
 		return doubleValue == null ? null : doubleValue.byteValue();
+	}
+	
+	/**
+	 * Escreve o conteúdo de uma celula do tipo Byte.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeByteCell(Integer rowIndex, String columnName, Byte value) {
+		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -378,6 +466,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 	
 	/**
+	 * Escreve o conteúdo de uma celula do tipo Boolean.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeBooleanCell(Integer rowIndex, String columnName,Boolean value) {
+		getRowCell(rowIndex, columnName).setCellValue(value);
+	}
+	
+	/**
 	 * Lê o conteúdo de uma celula do tipo Date.
 	 * 
 	 * @param columnName Nome da coluna
@@ -391,6 +490,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		}
 		
 		return cell.getDateCellValue();
+	}
+	
+	/**
+	 * escreve o conteúdo de uma celula do tipo Date.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeDateCell(Integer rowIndex, String columnName, Date value) {
+		getRowCell(rowIndex, columnName).setCellValue(value);
 	}
 	
 	/**
@@ -410,6 +520,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		calendar.setTime(date);
 		
 		return calendar;
+	}
+	
+	/**
+	 * Escreve o conteúdo de uma celula do tipo Calendar.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value Conteúdo da célula
+	 */
+	protected void writeCalendarCell(Integer rowIndex, String columnName, Calendar value) {
+		getRowCell(rowIndex, columnName).setCellValue(value);
 	}
 
 	/**
@@ -434,6 +555,17 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 	
 	/**
+	 * Escreve o conteúdo de uma celula do tipo Flag Y/N.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 * @param value True para o conteúdo 'Y', False para o conteúdo 'N'
+	 */
+	protected void writeYesNoCell(Integer rowIndex, String columnName, Boolean value) {
+		getRowCell(rowIndex, columnName).setCellValue(value ? VALUE_STRING_Y : VALUE_STRING_N);
+	}
+	
+	/**
 	 * Recupera uma célula da linha atual a partir do nome da sua coluna.
 	 * 
 	 * @param name Nome da coluna da célula
@@ -442,13 +574,26 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * inexistente
 	 */
 	private Cell getCurrentRowCell(String name) {
+		return getRowCell(currRow, name);
+	}
+	
+	/**
+	 * Recupera uma célula de uma linha a partir do nome da sua coluna.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param name Nome da coluna da célula
+	 * @return Célula encontrada
+	 * @throws InvalidParameterException Se o nome da coluna for inválido ou se a coluna for
+	 * inexistente
+	 */
+	private Cell getRowCell(Integer rowIndex, String name) {
 		if (name == null) {
 			throw new InvalidParameterException(ERROR_NULL_COLUMN_NAME);
 		}else if (!columnMap.containsKey(name)) {
 			throw new InvalidParameterException(String.format(ERROR_NON_EXISTING_COLUMN, name));
 		}
 		
-		return sheet.getRow(currRow).getCell(columnMap.get(name));
+		return sheet.getRow(rowIndex).getCell(columnMap.get(name));
 	}
 	
 	@Override
