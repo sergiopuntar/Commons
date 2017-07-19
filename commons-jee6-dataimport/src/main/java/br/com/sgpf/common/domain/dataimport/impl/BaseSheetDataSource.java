@@ -76,12 +76,12 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	private static enum ImportActionHeader { INSERT, UPDATE, MERGE, REMOVE, FORCE, SYNC };
 	
 	private File file;
-	private InputStream is;
+	private transient InputStream is;
 	private Type type;
 	private int sheetId;
 	
-	private Workbook workbook;
-	private Sheet sheet;
+	private transient Workbook workbook;
+	private transient Sheet sheet;
 	private int currRow;
 	private boolean changed;
 	private Map<String, Integer> columnMap = new HashMap<String, Integer>();
@@ -622,15 +622,15 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
 		} catch (IOException e) {
 			throw new ImportDataSourceIOException(ERROR_WRITING_CHANGES, e);
-		} finally {
-			try {
-				workbook.close();
-				workbook = null;
-				sheet = null;
-				reset();
-			} catch (IOException e) {
-				throw new ImportDataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
-			}
+		}
+		
+		try {
+			workbook.close();
+			workbook = null;
+			sheet = null;
+			reset();
+		} catch (IOException e) {
+			throw new ImportDataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
 		}
 	}
 	
