@@ -14,13 +14,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.google.common.collect.Lists;
 
+import br.com.sgpf.common.util.CanEqual;
+
 /**
  * Classe Wrapper de dados utilizada no processo de importação.
  *
  * @param <ID> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public class DataImportItem<ID extends Serializable, T extends Serializable> implements Serializable {
+public class DataImportItem<ID extends Serializable, T extends Serializable> implements Serializable, CanEqual {
 	private static final long serialVersionUID = -4993453059086257679L;
 	
 	private static final List<DataImportResult.Status> CHANGED_STATUS = Lists.newArrayList(INSERTED, UPDATED, FORCE_UPDATED, DELETED, OVERRIDDEN);
@@ -94,17 +96,22 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(5, 11)
-				.append(getId()).toHashCode();
+				.append(this.getId()).toHashCode();
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof DataImportResult) {
-			DataImportItem<?, ?> eii = (DataImportItem<?, ?>) obj;
+		if (obj instanceof DataImportItem) {
+			DataImportItem<?, ?> that = (DataImportItem<?, ?>) obj;
 			return new EqualsBuilder()
-					.append(getId(), eii.getId()).isEquals();
+					.append(this.getId(), that.getId()).isEquals();
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean canEqual(Object obj) {
+		return obj instanceof DataImportItem;
 	}
 }

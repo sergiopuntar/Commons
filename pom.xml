@@ -123,8 +123,6 @@
 			<properties>
 				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 			</properties>
-			<build>
-			</build>
 		</profile>
 	</profiles>
 	
@@ -137,8 +135,8 @@
 		<google.guava.version>21.0</google.guava.version>
 		<junit.version>4.11</junit.version>
 		<mockito.version>1.9.5</mockito.version>
-		<openpojo.version>0.8.1</openpojo.version>
-		<nl.jqno.equalsverifier.version>1.7.5</nl.jqno.equalsverifier.version>
+		<openpojo.version>0.8.6</openpojo.version>
+		<nl.jqno.equalsverifier.version>2.3.1</nl.jqno.equalsverifier.version>
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.19</maven-surefire-plugin.version>

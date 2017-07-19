@@ -13,13 +13,15 @@ import javax.persistence.Version;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import br.com.sgpf.common.util.CanEqual;
+
 /**
  * Super classe abstrata para todas as entidades do sistema.
  * 
  * @param <ID> Tipo do identificador da entidade
  */
 @MappedSuperclass
-public abstract class AbstractEntity<ID extends Serializable> implements Entity<ID> {
+public abstract class AbstractEntity<ID extends Serializable> implements Entity<ID>, CanEqual {
 	private static final long serialVersionUID = 7899846729108918584L;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -83,46 +85,23 @@ public abstract class AbstractEntity<ID extends Serializable> implements Entity<
 	
 	@Override
 	public int hashCode() {
-		if (getId() != null) {
-			return new HashCodeBuilder(5, 11).append(getId()).toHashCode();
-		} else {
-			return unpersistedHashCode();
-		}
+		return new HashCodeBuilder(5, 11)
+				.append(this.getId())
+				.append(this.getVersao())
+				.toHashCode();
 	}
 	
-	/**
-	 * Implementação do método hashcode para objetos ainda não persistidos.
-	 * 
-	 * @return Hashcode do objeto
-	 */
-	public abstract int unpersistedHashCode();
-
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AbstractEntity && getId() != null) {
-			AbstractEntity<?> ae = (AbstractEntity<?>) obj;
-			return ae.canEqual(this) && new EqualsBuilder().append(getId(), ae.getId()).isEquals();
-		} else if (obj instanceof AbstractEntity) {
-			return unpersistedEquals(obj);
+		if (obj instanceof AbstractEntity) {
+			AbstractEntity<?> that = (AbstractEntity<?>) obj;
+			return that.canEqual(this) &&
+					new EqualsBuilder()
+					.append(this.getId(), that.getId())
+					.append(this.getVersao(), that.getVersao())
+					.isEquals();
 		}
 
 		return false;
 	}
-	
-	/**
-	 * Indica se uma determinada entidade pode ser utilizada para comparação
-	 * com esta entidade.
-	 * 
-	 * @param entity Entidade que se deseja comparar
-	 * @return Flag indicando se a entidade pode ser comparada com esta
-	 */
-	protected abstract boolean canEqual(AbstractEntity<?> entity);
-
-	/**
-	 * Implementação do método equals para objetos ainda não persistidos.
-	 * 
-	 * @param obj Objeto a ser comparado
-	 * @return True se os objetos são equivalentes, false caso contrário
-	 */
-	public abstract boolean unpersistedEquals(Object obj);
 }
