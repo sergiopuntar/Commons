@@ -3,33 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>br.com.sgpf</groupId>
-		<artifactId>commons</artifactId>
+		<artifactId>commons-jee6</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>commons-jee6</artifactId>
-	<name>SGPF : Commons : JEE6</name>
-	<description>Biblioteca de componentes e utilitários de apoio para projetos JEE 6</description>
-	
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-			    <groupId>org.jboss.bom</groupId>
-			    <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
-			    <version>${org.jboss.bom.version}</version>
-			    <type>pom</type>
-			    <scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+	<artifactId>commons-jee6-core</artifactId>
+	<name>SGPF : Commons JEE6 : Core</name>
+	<description>Biblioteca núcleo de componentes e utilitários de apoio para projetos JEE 6</description>
 	
 	<dependencies>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>${javaee.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		
 		<!-- Hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -51,10 +32,4 @@
 	<build>
 		<finalName>${project.artifactId}</finalName>
 	</build>
-	
-	<properties>
-		<!-- Dependencies -->
-		<org.jboss.bom.version>1.0.7.Final</org.jboss.bom.version>
-		<javaee.version>6.0</javaee.version>
-	</properties>
 </project>

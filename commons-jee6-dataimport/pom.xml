@@ -3,17 +3,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>br.com.sgpf</groupId>
-		<artifactId>commons</artifactId>
+		<artifactId>commons-jee6</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>commons-jee6-dataimport</artifactId>
-	<name>SGPF : Commons : JEE6 : Data Import</name>
+	<name>SGPF : Commons JEE6 : Data Import</name>
 	<description>Biblioteca de componentes de importação de dados para projetos JEE 6</description>
 	
 	<dependencies>
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
-			<artifactId>commons-jee6</artifactId>
+			<artifactId>commons-jee6-core</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
 		<dependency>

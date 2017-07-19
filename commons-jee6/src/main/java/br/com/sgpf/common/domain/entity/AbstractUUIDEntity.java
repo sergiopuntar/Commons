@@ -18,7 +18,7 @@ public abstract class AbstractUUIDEntity extends AbstractEntity<String> {
 	private static final String ERROR_EQUALS_HASHCODE_UNSUPPORTED = "Os métodos unpersistedEquals e unpersistedHashCode não são suportados pela classe AbstractUUIDEntity, pois objetos desse tipo devem sempre possuir um id baseeado em UUID.";
 
 	@Id
-	// TODO Subistituir String por UUID
+	// O ideal seria que o id fosse do tipo UUID, mas o JPA 2.1 não suporta converter em IDs 
 	private String id;
 	
 	/**

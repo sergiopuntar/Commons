@@ -2,18 +2,36 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.sgpf</groupId>
-	<artifactId>commons</artifactId>
+	<artifactId>commons-jee6</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>SGPF : Commons</name>
-	<description>Biblioteca de componentes e utilitários de apoio para projetos Java</description>
+	<name>SGPF : Commons JEE6</name>
+	<description>Biblioteca agregadora de componentes e utilitários de apoio para projetos JEE6</description>
 	
 	<modules>
-		<module>commons-jee6</module>
+		<module>commons-jee6-core</module>
 		<module>commons-jee6-dataimport</module>
 	</modules>
 	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+			    <groupId>org.jboss.bom</groupId>
+			    <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
+			    <version>${org.jboss.bom.version}</version>
+			    <type>pom</type>
+			    <scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>${javaee.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -89,6 +107,8 @@
 	
 	<properties>
 		<!-- Dependencies -->
+		<org.jboss.bom.version>1.0.7.Final</org.jboss.bom.version>
+		<javaee.version>6.0</javaee.version>
 		<apache.commons-lang3.version>3.4</apache.commons-lang3.version>
 		<slf4j.version>1.7.12</slf4j.version>
 		<google.guava.version>21.0</google.guava.version>
