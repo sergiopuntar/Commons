@@ -10,6 +10,7 @@
 	
 	<modules>
 		<module>commons-jee6-core</module>
+		<module>commons-jee6-test</module>
 		<module>commons-jee6-dataimport</module>
 	</modules>
 	
@@ -52,32 +53,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>${google.guava.version}</version>
-		</dependency>
-		
-		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.openpojo</groupId>
-			<artifactId>openpojo</artifactId>
-			<version>${openpojo.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.jqno.equalsverifier</groupId>
-			<artifactId>equalsverifier</artifactId>
-			<version>${nl.jqno.equalsverifier.version}</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	
@@ -133,10 +108,6 @@
 		<apache.commons-lang3.version>3.4</apache.commons-lang3.version>
 		<slf4j.version>1.7.12</slf4j.version>
 		<google.guava.version>21.0</google.guava.version>
-		<junit.version>4.11</junit.version>
-		<mockito.version>1.9.5</mockito.version>
-		<openpojo.version>0.8.6</openpojo.version>
-		<nl.jqno.equalsverifier.version>2.3.1</nl.jqno.equalsverifier.version>
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.19</maven-surefire-plugin.version>

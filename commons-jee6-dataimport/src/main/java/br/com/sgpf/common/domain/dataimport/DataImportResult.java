@@ -2,18 +2,13 @@ package br.com.sgpf.common.domain.dataimport;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import br.com.sgpf.common.util.CanEqual;
-
 /**
  * Classe que representa o resultado da importação de dados.
  */
-public class DataImportResult implements Serializable, CanEqual {
+public class DataImportResult implements Serializable {
 	private static final long serialVersionUID = 6106162065670933764L;
 
-	public static enum Status { 
+	public enum Status { 
 		/**
 		 * Os dados da origem foram importados no destino como um novo registro.
 		 */
@@ -86,39 +81,5 @@ public class DataImportResult implements Serializable, CanEqual {
 
 	public void setException(Exception exception) {
 		this.exception = exception;
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(5, 11)
-				.append(this.getStatus())
-				.append(this.isSynced())
-				.append(this.getMessage())
-				.append(this.getException()).toHashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof DataImportResult) {
-			DataImportResult that = (DataImportResult) obj;
-			return that.canEqual(this) && new EqualsBuilder()
-					.append(this.getStatus(), that.getStatus())
-					.append(this.isSynced(), that.isSynced())
-					.append(this.getMessage(), that.getMessage())
-					.append(this.getException(), that.getException()).isEquals();
-		}
-
-		return false;
-	}
-	
-	/**
-	 * Indica se um determinado objeto pode ser utilizado para comparação
-	 * com este.
-	 * 
-	 * @param obj Objeto que se deseja comparar
-	 * @return Flag indicando se o objeto pode ser comparado a este
-	 */
-	public boolean canEqual(Object obj) {
-		return obj instanceof DataImportResult;
 	}
 }

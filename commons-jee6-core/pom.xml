@@ -27,6 +27,14 @@
 			<artifactId>hibernate-validator</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Test -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>commons-jee6-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	
 	<build>

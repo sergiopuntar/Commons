@@ -33,6 +33,14 @@
 			<version>${org.apache.poi.version}</version>
 			<classifier>javadoc</classifier>
 		</dependency>
+		
+		<!-- Test -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>commons-jee6-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	
 	<build>
