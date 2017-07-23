@@ -11,20 +11,20 @@ import br.com.sgpf.common.domain.entity.AbstractIdentityEntity;
  *
  * @param <E> Tipo da entidade
  */
-public abstract class IdentityEntitySheetdataSource<E extends AbstractIdentityEntity> extends EntitySheetDataSource<Long, E> {
+public abstract class IdentityEntitySheetDataSource<E extends AbstractIdentityEntity> extends EntitySheetDataSource<Long, E> {
 	private static final long serialVersionUID = 8096959271007933357L;
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public IdentityEntitySheetdataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public IdentityEntitySheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		super(file, sheetId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IdentityEntitySheetdataSource(InputStream is, int sheetId) {
+	public IdentityEntitySheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 

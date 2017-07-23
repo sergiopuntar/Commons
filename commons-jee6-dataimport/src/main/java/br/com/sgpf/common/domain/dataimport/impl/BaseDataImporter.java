@@ -1,7 +1,6 @@
 package br.com.sgpf.common.domain.dataimport.impl;
 
 import java.io.Serializable;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,22 +14,22 @@ import br.com.sgpf.common.domain.dataimport.ImportDataSource;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 
 /**
- * Implementação padrão para os importadores de dados.
+ * Implementação base para os importadores de dados.
  * 
  * @param <ID> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public class DataImporterImpl<ID extends Serializable, T extends Serializable> implements DataImporter<ID, T> {
+public abstract class BaseDataImporter<ID extends Serializable, T extends Serializable> implements DataImporter<ID, T> {
 	private static final long serialVersionUID = 5124248593928945081L;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataImporterImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BaseDataImporter.class);
 	
 	private static final String ERROR_NULL_DATASOURCE = "A fonte de dados não pode ser nula.";
 	
 	@Override
 	public Collection<DataImportItem<ID, T>> importData(ImportDataSource<ID, T> dataSource, boolean sync) throws DataImportException {
 		if (dataSource == null) {
-			throw new InvalidParameterException(ERROR_NULL_DATASOURCE);
+			throw new IllegalArgumentException(ERROR_NULL_DATASOURCE);
 		}
 		
 		LOGGER.info("Iniciando importação a partir da fonte de dados [{0}].", dataSource);
@@ -46,6 +45,9 @@ public class DataImporterImpl<ID extends Serializable, T extends Serializable> i
 		
 		while (dataSource.hasNext()) {
 			DataImportItem<ID, T> item = dataSource.next();
+			
+			importData(item);
+			//TODO mover para dentro do método importData ou mudar log de acordo com status
 			LOGGER.debug("Dados com identificador '{0}' importados.", item.getId());
 			
 			if (sync && item.dataChanged() && item.isSync() && dataSource.isWritable()) {
@@ -61,6 +63,7 @@ public class DataImporterImpl<ID extends Serializable, T extends Serializable> i
 		}
 		
 		LOGGER.info("Importação a partir da fonte de dados [{0}] finalizada.", dataSource);
+		//TODO separar no log itens importados com sucesso e com falha
 		LOGGER.info("Total de itens importados: ", itens.size());
 		
 		if (sync && !dataSource.isWritable()) {
@@ -71,4 +74,11 @@ public class DataImporterImpl<ID extends Serializable, T extends Serializable> i
 		
 		return itens;
 	}
+
+	/**
+	 * Realiza a importação dos dados de um item da origem no destino.
+	 * 
+	 * @param item Item a ser importado no destino
+	 */
+	protected abstract void importData(DataImportItem<ID, T> item);
 }

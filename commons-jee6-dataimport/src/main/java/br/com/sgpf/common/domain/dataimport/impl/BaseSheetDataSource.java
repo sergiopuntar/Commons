@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,8 +57,9 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	private static final String ERROR_NO_HEADER = "A planilha não possui um cabeçalho.";
 	private static final String ERROR_NO_MORE_ITENS = "A Planilha não possui mais itens.";
 	private static final String ERROR_NON_EXISTING_COLUMN = "A planilha não possui uma coluna com o nome [%s].";
+	private static final String ERROR_NON_EXISTING_ROW = "A planilha não possui uma linha com o índice[%d].";
 	private static final String ERROR_CHAR_FORMART = "A coluna [%s] não possui conteúdo no formato Character.";
-	private static final String ERROR_YES_NO_FORMART = "A coluna [%s] não possui conteúdo no formato Y/N.";
+	private static final String ERROR_YES_NO_FORMAT = "A coluna [%s] não possui conteúdo no formato Y/N.";
 	
 	private static final String ERROR_WRITING_CHANGES = "Não foi possível gravar as alterações no documento.";
 	private static final String ERROR_CLOSING_DOCUMENT = "Ocorreu um erro ao fechar o documento.";
@@ -69,7 +69,6 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	
 	private static final String VALUE_STRING_Y = "Y";
 	private static final String VALUE_STRING_N = "N";
-
 
 	private static enum Type { FILE, INPUT_STREAM };
 	
@@ -103,7 +102,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		this(Type.FILE, sheetId);
 		
 		if (file == null) {
-			throw new InvalidParameterException(ERROR_NULL_FILE);
+			throw new IllegalArgumentException(ERROR_NULL_FILE);
 		} else if (!file.exists()) {
 			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
 		}
@@ -120,8 +119,8 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	public BaseSheetDataSource(InputStream is, int sheetId) {
 		this(Type.INPUT_STREAM, sheetId);
 		
-		if (file == null) {
-			throw new InvalidParameterException(ERROR_NULL_IS);
+		if (is == null) {
+			throw new IllegalArgumentException(ERROR_NULL_IS);
 		}
 		
 		this.is = is;
@@ -142,10 +141,10 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 			throw new ImportDataSourceException(ERROR_UNDEFINED_TYPE);
 		}
 		
-		sheet = workbook.getSheetAt(sheetId);
-		
-		if (sheet == null) {
-			throw new ImportDataSourceDocumentException(String.format(ERROR_NON_EXISTING_SHEET, sheetId));
+		try {
+			sheet = workbook.getSheetAt(sheetId);
+		} catch (IllegalArgumentException e) {
+			throw new ImportDataSourceDocumentException(String.format(ERROR_NON_EXISTING_SHEET, sheetId), e);
 		}
 		
 		reset();
@@ -164,7 +163,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		}
 		
 		try {
-			return WorkbookFactory.create(file);
+			return WorkbookFactory.create(file, null, !file.canWrite());
 		} catch (EncryptedDocumentException e) {
 			throw new ImportDataSourceDocumentException(ERROR_ENCRYPTED_DOCUMENT, e);
 		} catch (InvalidFormatException e) {
@@ -239,13 +238,14 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		
 		currRow++;
 		
-		boolean insert = readYesNoCell(ImportActionHeader.INSERT.name());
-		boolean update = readYesNoCell(ImportActionHeader.UPDATE.name());
-		boolean remove = readYesNoCell(ImportActionHeader.REMOVE.name());
-		boolean force = readYesNoCell(ImportActionHeader.FORCE.name());
-		boolean sync = readYesNoCell(ImportActionHeader.SYNC.name());
+		Boolean insert = readYesNoCell(ImportActionHeader.INSERT.name());
+		Boolean update = readYesNoCell(ImportActionHeader.UPDATE.name());
+		Boolean merge = readYesNoCell(ImportActionHeader.MERGE.name());
+		Boolean remove = readYesNoCell(ImportActionHeader.REMOVE.name());
+		Boolean force = readYesNoCell(ImportActionHeader.FORCE.name());
+		Boolean sync = readYesNoCell(ImportActionHeader.SYNC.name());
 		
-		return new DataImportItem<Integer, T>(currRow, readCurrentItemData(), insert, update, remove, force, sync);
+		return new DataImportItem<Integer, T>(currRow, readCurrentItemData(), insert, update, merge, remove, force, sync);
 	}
 
 	/**
@@ -279,7 +279,11 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param value Conteúdo da célula
 	 */
 	protected void writeStringCell(Integer rowIndex, String columnName, String value) {
-		getRowCell(rowIndex, columnName).setCellValue(value);
+		if (value == null) {
+			writeNullValue(rowIndex, columnName);
+		} else {
+			getRowCell(rowIndex, columnName).setCellValue(value);
+		}
 	}
 	
 	/**
@@ -336,7 +340,11 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param value Conteúdo da célula
 	 */
 	protected void writeDoubleCell(Integer rowIndex, String columnName, Double value) {
-		getRowCell(rowIndex, columnName).setCellValue(value);
+		if (value == null) {
+			writeNullValue(rowIndex, columnName);
+		} else {
+			getRowCell(rowIndex, columnName).setCellValue(value);
+		}
 	}
 	
 	/**
@@ -473,7 +481,11 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param value Conteúdo da célula
 	 */
 	protected void writeBooleanCell(Integer rowIndex, String columnName,Boolean value) {
-		getRowCell(rowIndex, columnName).setCellValue(value);
+		if (value == null) {
+			writeNullValue(rowIndex, columnName);
+		} else {
+			getRowCell(rowIndex, columnName).setCellValue(value);
+		}
 	}
 	
 	/**
@@ -500,7 +512,11 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param value Conteúdo da célula
 	 */
 	protected void writeDateCell(Integer rowIndex, String columnName, Date value) {
-		getRowCell(rowIndex, columnName).setCellValue(value);
+		if (value == null) {
+			writeNullValue(rowIndex, columnName);
+		} else {
+			getRowCell(rowIndex, columnName).setCellValue(value);
+		}
 	}
 	
 	/**
@@ -530,7 +546,11 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param value Conteúdo da célula
 	 */
 	protected void writeCalendarCell(Integer rowIndex, String columnName, Calendar value) {
-		getRowCell(rowIndex, columnName).setCellValue(value);
+		if (value == null) {
+			writeNullValue(rowIndex, columnName);
+		} else {
+			getRowCell(rowIndex, columnName).setCellValue(value);
+		}
 	}
 
 	/**
@@ -548,7 +568,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		} else if (VALUE_STRING_N.equalsIgnoreCase(value)) {
 			return false;
 		} else if (value != null && !value.isEmpty()) {
-			throw new ImportDataSourceFormatException(String.format(ERROR_YES_NO_FORMART, columnName));
+			throw new ImportDataSourceFormatException(String.format(ERROR_YES_NO_FORMAT, columnName));
 		}
 		
 		return null;
@@ -562,7 +582,24 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param value True para o conteúdo 'Y', False para o conteúdo 'N'
 	 */
 	protected void writeYesNoCell(Integer rowIndex, String columnName, Boolean value) {
-		getRowCell(rowIndex, columnName).setCellValue(value ? VALUE_STRING_Y : VALUE_STRING_N);
+		if (value == null) {
+			writeNullValue(rowIndex, columnName);
+		} else {
+			getRowCell(rowIndex, columnName).setCellValue(value ? VALUE_STRING_Y : VALUE_STRING_N);
+		}
+	}
+	
+	/**
+	 * Escreve o conteúdo nulo de uma celula.
+	 * 
+	 * @param rowIndex Índice da linha
+	 * @param columnName Nome da coluna
+	 */
+	private void writeNullValue(Integer rowIndex, String columnName) {
+		String value = null;
+		Cell cell = getRowCell(rowIndex, columnName);
+		cell.setCellValue(value);
+		cell.setCellType(CellType.BLANK);
 	}
 	
 	/**
@@ -570,7 +607,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * 
 	 * @param name Nome da coluna da célula
 	 * @return Célula encontrada
-	 * @throws InvalidParameterException Se o nome da coluna for inválido ou se a coluna for
+	 * @throws IllegalArgumentException Se o nome da coluna for inválido ou se a coluna for
 	 * inexistente
 	 */
 	private Cell getCurrentRowCell(String name) {
@@ -583,23 +620,29 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param rowIndex Índice da linha
 	 * @param name Nome da coluna da célula
 	 * @return Célula encontrada
-	 * @throws InvalidParameterException Se o nome da coluna for inválido ou se a coluna for
+	 * @throws IllegalArgumentException Se o nome da coluna for inválido ou se a coluna for
 	 * inexistente
 	 */
 	private Cell getRowCell(Integer rowIndex, String name) {
 		if (name == null) {
-			throw new InvalidParameterException(ERROR_NULL_COLUMN_NAME);
+			throw new IllegalArgumentException(ERROR_NULL_COLUMN_NAME);
 		}else if (!columnMap.containsKey(name)) {
-			throw new InvalidParameterException(String.format(ERROR_NON_EXISTING_COLUMN, name));
+			throw new IllegalArgumentException(String.format(ERROR_NON_EXISTING_COLUMN, name));
 		}
 		
-		return sheet.getRow(rowIndex).getCell(columnMap.get(name));
+		Row row = sheet.getRow(rowIndex);
+		
+		if (row == null) {
+			throw new IllegalArgumentException(String.format(ERROR_NON_EXISTING_ROW, rowIndex));
+		}
+		
+		return row.getCell(columnMap.get(name));
 	}
 	
 	@Override
 	public void sync(DataImportItem<Integer, T> item) throws ImportDataSourceException {
 		validadeIsOpen();
-		syncRow(item.getId(), item.getData());
+		changed = changed || syncRow(item.getId(), item.getData());
 	}
 
 	/**
@@ -607,8 +650,9 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * 
 	 * @param rowIndex Índice da linha
 	 * @param data Dados da linha
+	 * @return True se houve uma mudança real nos dados da planilha, False caso contrário.
 	 */
-	protected abstract void syncRow(Integer rowIndex, T data);
+	protected abstract boolean syncRow(Integer rowIndex, T data);
 
 	@Override
 	public void close() throws ImportDataSourceException {
@@ -644,7 +688,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		if (file == null || !file.canWrite()) {
 			return;
 		}
-		
+		// TODO: https://stackoverflow.com/questions/35078399/is-it-possible-to-first-read-and-then-write-into-same-spreadsheet-file
 		workbook.write(new FileOutputStream(file));
 	}
 

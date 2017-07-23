@@ -63,12 +63,15 @@ public abstract class EntitySheetDataSource<ID extends Serializable, E extends E
 	protected abstract E readCurrentItemData(ID id, Date creationDate, Date updateDate, Long version);
 
 	@Override
-	protected void syncRow(Integer rowIndex, E data) {
+	protected boolean syncRow(Integer rowIndex, E data) {
 		writeEntityId(rowIndex, EntityMetadataHeader.ID.name(), data.getId());
 		writeDateCell(rowIndex, EntityMetadataHeader.CREATION_DATE.name(), data.getDataCriacao());
 		writeDateCell(rowIndex, EntityMetadataHeader.UPDATE_DATE.name(), data.getDataAtualizacao());
 		writeLongCell(rowIndex, EntityMetadataHeader.VERSION.name(), data.getVersao());
 		writeItemData(rowIndex, data);
+		
+		// TODO: validar se houve mudança real nos dados da planilha
+		return true;
 	}
 	
 	/**

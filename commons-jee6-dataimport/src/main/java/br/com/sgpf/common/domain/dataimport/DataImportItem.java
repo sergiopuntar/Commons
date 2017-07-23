@@ -29,21 +29,23 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 	
 	private ID id;
 	private T data;
-	private boolean insert;
-	private boolean update;
-	private boolean merge;
-	private boolean remove;
-	private boolean force;
-	private boolean sync;
+	private Boolean insert;
+	private Boolean update;
+	private Boolean merge;
+	private Boolean remove;
+	private Boolean force;
+	private Boolean sync;
 	private DataImportResult result;
 	
-	public DataImportItem(ID id, T data, boolean insert, boolean update, boolean remove, boolean force, boolean sync) {
+	public DataImportItem(ID id, T data, Boolean insert, Boolean update, Boolean merge, Boolean remove, Boolean force, Boolean sync) {
 		super();
 		this.id = id;
 		this.data = data;
 		this.insert = insert;
 		this.update = update;
+		this.merge = merge;
 		this.remove = remove;
+		this.force = force;
 		this.sync = sync;
 		this.result = new DataImportResult();
 	}
@@ -56,27 +58,27 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 		return data;
 	}
 
-	public boolean isInsert() {
+	public Boolean isInsert() {
 		return insert;
 	}
 
-	public boolean isUpdate() {
+	public Boolean isUpdate() {
 		return update;
 	}
 
-	public boolean isMerge() {
+	public Boolean isMerge() {
 		return merge;
 	}
 
-	public boolean isRemove() {
+	public Boolean isRemove() {
 		return remove;
 	}
 
-	public boolean isForce() {
+	public Boolean isForce() {
 		return force;
 	}
 
-	public boolean isSync() {
+	public Boolean isSync() {
 		return sync;
 	}
 
@@ -89,7 +91,7 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 	 * 
 	 * @return True se houve alteração, False caso contrário 
 	 */
-	public boolean dataChanged() {
+	public Boolean dataChanged() {
 		return CHANGED_STATUS.contains(getResult().getStatus());
 	}
 
@@ -103,7 +105,8 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 	public boolean equals(Object obj) {
 		if (obj instanceof DataImportItem) {
 			DataImportItem<?, ?> that = (DataImportItem<?, ?>) obj;
-			return new EqualsBuilder()
+			return that.canEqual(this) &&
+					new EqualsBuilder()
 					.append(this.getId(), that.getId()).isEquals();
 		}
 

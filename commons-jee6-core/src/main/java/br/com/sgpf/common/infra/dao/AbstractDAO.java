@@ -24,7 +24,7 @@ public abstract class AbstractDAO<E extends Entity<ID>, ID extends Serializable>
 	private static final String ERRO_TIPO_RESULTADO = "O objeto %s não é do tipo esperado %s.";
 
 	@PersistenceContext
-	protected EntityManager em;
+	protected transient EntityManager em;
 
 	protected Class<E> clazz;
 

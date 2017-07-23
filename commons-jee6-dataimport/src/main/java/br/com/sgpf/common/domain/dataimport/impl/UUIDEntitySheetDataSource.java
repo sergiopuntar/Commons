@@ -11,20 +11,20 @@ import br.com.sgpf.common.domain.entity.AbstractUUIDEntity;
  *
  * @param <E> Tipo da entidade
  */
-public abstract class UUIDEntitySheetdataSource<E extends AbstractUUIDEntity> extends EntitySheetDataSource<String, E> {
+public abstract class UUIDEntitySheetDataSource<E extends AbstractUUIDEntity> extends EntitySheetDataSource<String, E> {
 	private static final long serialVersionUID = 8096959271007933357L;
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public UUIDEntitySheetdataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public UUIDEntitySheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		super(file, sheetId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public UUIDEntitySheetdataSource(InputStream is, int sheetId) {
+	public UUIDEntitySheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 

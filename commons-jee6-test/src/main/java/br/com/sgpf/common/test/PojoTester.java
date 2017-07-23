@@ -26,97 +26,221 @@ import com.openpojo.validation.test.impl.SetterTester;
  * Classe utilitária para teste de pojos.
  */
 public class PojoTester {
+	
+	/**
+	 * Array de regras de estrutura estritas.
+	 * <ul>
+	 *    <li>Devem existir Getter e Setter para todas as propriedades;</li>
+	 *    <li>Nenhum campo deve possuir tipo primitivo;</li>
+	 *    <li>Não devem existir classes aninhadas;</li>
+	 *    <li>Campos <i>static</i> devem ser <i>final</i>;</li>
+	 *    <li>Classes <i>Serializable</i> devem possuir <i>serialVersionUID</i> definido;</li>
+	 *    <li>Propriedades de classes superiores não devem ser redefinidas (field shadowing);</li>
+	 *    <li>Campos <i>public</i> devem ser <i>static final</i>;</li>
+	 *    <li>Classes de teste devem ser nomeadas de acordo com as classes testadas.</li>
+	 * </ul>
+	 */
+	public static final Rule[] STRICT_RULES = new Rule[] {
+			new GetterMustExistRule(),
+			new SetterMustExistRule(),
+			new NoPrimitivesRule(),
+			new NoNestedClassRule(),
+			new NoStaticExceptFinalRule(),
+			new SerializableMustHaveSerialVersionUIDRule(),
+			new NoFieldShadowingRule(),
+			new NoPublicFieldsExceptStaticFinalRule(),
+			new TestClassMustBeProperlyNamedRule()
+		};
 
+	/**
+	 * Array de testes de comportamento estritas.
+	 * <ul>
+	 *    <li>Getter;</li>
+	 *    <li>Setter;</li>
+	 *    <li>Nenhum campo deve possuir valor padrão nulo, a não ser que seja primitivo ou <i>final</i>.</li>
+	 * </ul>
+	 */
+	public static final Tester[] STRICT_TESTERS = new Tester[] {
+			new SetterTester(),
+			new GetterTester(),
+			new DefaultValuesNullTester()
+		};
+	
+	/**
+	 * Array de regras de estrutura frouxas.
+	 * <ul>
+	 *    <li>Devem existir Getter e Setter para todas as propriedades;</li>
+	 *    <li>Não devem existir classes aninhadas;</li>
+	 *    <li>Campos <i>static</i> devem ser <i>final</i>;</li>
+	 *    <li>Classes <i>Serializable</i> devem possuir <i>serialVersionUID</i> definido;</li>
+	 *    <li>Propriedades de classes superiores não devem ser redefinidas (field shadowing);</li>
+	 *    <li>Campos <i>public</i> devem ser <i>static final</i>.</li>
+	 * </ul>
+	 */
+	public static final Rule[] LOOSE_RULES = new Rule[] {
+			new GetterMustExistRule(),
+			new SetterMustExistRule(),
+			new NoNestedClassRule(),
+			new NoStaticExceptFinalRule(),
+			new SerializableMustHaveSerialVersionUIDRule(),
+			new NoFieldShadowingRule(),
+			new NoPublicFieldsExceptStaticFinalRule()
+		};
+	
+	/**
+	 * Array de testes de comportamento frouxas.
+	 * <ul>
+	 *    <li>Getter;</li>
+	 *    <li>Setter.</li>
+	 * </ul>
+	 */
+	public static final Tester[] LOOSE_TESTERS = new Tester[] {
+			new SetterTester(),
+			new GetterTester()
+		};
+	
+	/**
+	 * Array de regras de estrutura para pojos com conteúdo imutável.
+	 * <ul>
+	 *    <li>Devem existir Getter para todas as propriedades;</li>
+	 *    <li>Nenhum campo deve possuir tipo primitivo;</li>
+	 *    <li>Não devem existir classes aninhadas;</li>
+	 *    <li>Campos <i>static</i> devem ser <i>final</i>;</li>
+	 *    <li>Classes <i>Serializable</i> devem possuir <i>serialVersionUID</i> definido;</li>
+	 *    <li>Propriedades de classes superiores não devem ser redefinidas (field shadowing);</li>
+	 *    <li>Campos <i>public</i> devem ser <i>static final</i>;</li>
+	 *    <li>Classes de teste devem ser nomeadas de acordo com as classes testadas.</li>
+	 * </ul>
+	 */
+	public static final Rule[] UNMUTABLE_RULES = new Rule[] {
+			new GetterMustExistRule(),
+			new NoPrimitivesRule(),
+			new NoNestedClassRule(),
+			new NoStaticExceptFinalRule(),
+			new SerializableMustHaveSerialVersionUIDRule(),
+			new NoFieldShadowingRule(),
+			new NoPublicFieldsExceptStaticFinalRule(),
+			new TestClassMustBeProperlyNamedRule()
+		};
+	
+	/**
+	 * Array de testes de comportamento para pojos com conteúdo imutável.
+	 * <ul>
+	 *    <li>Getter;</li>
+	 * </ul>
+	 */
+	public static final Tester[] UNMUTABLE_TESTERS = new Tester[] {
+			new GetterTester()
+		};
+	
 	private List<PojoClass> pojoClasses;
 	
+	/**
+	 * Cria um Pojo tester para todas as classes em um pacote.
+	 * 
+	 * @param packageName Nome do pacote
+	 */
 	public PojoTester(String packageName) {
+		super();
 		pojoClasses = PojoClassFactory.getPojoClasses(packageName);
 	}
 	
+	/**
+	 * Cria um Pojo tester para uma classe.
+	 * 
+	 * @param clazz Classe a ser testada
+	 */
 	public PojoTester(Class<?> clazz) {
+		super();
 		pojoClasses = Lists.newArrayList(PojoClassFactory.getPojoClass(clazz));
 	}
 	
-	public void pojoTest(Rule[] rules, Tester[] testers) {
+	/**
+	 * Valida um Pojo utilizando determinadas regras de estrutura e testes de comportamento. 
+	 * 
+	 * @param rules Regras de estrutura a serem aplicadas
+	 * @param testers Testes de comportamento a serem executados
+	 */
+	public void validatePojo(Rule[] rules, Tester[] testers) {
 		Validator validator = ValidatorBuilder.create().with(rules).with(testers).build();
 		validator.validate(pojoClasses);
 	}
 	
-	public void loosePojoStructAndBehaviourTest() {
-		pojoTest(new Rule[] {
-					// Make sure we have a getter and setter
-					new GetterMustExistRule(),
-					new SetterMustExistRule(),
-					// Static fields must be final
-					new NoStaticExceptFinalRule(),
-					// Serializable must have serialVersionUID
-					new SerializableMustHaveSerialVersionUIDRule(),
-					// Don't shadow parent's field names.
-					new NoFieldShadowingRule(),
-					// What about public fields, use one of the following rules allow them only if they are static and final.
-					new NoPublicFieldsExceptStaticFinalRule(),
-					// Finally, what if you are testing your Testing code? Make sure your tests are properly named
-					new TestClassMustBeProperlyNamedRule()
-				},
-				new Tester[] {
-					// Make sure our setters and getters are behaving as expected.
-					new SetterTester(),
-					new GetterTester()
-				}
-		);
+	/**
+	 * Valida um Pojo utilizando determinados testes de comportamento. 
+	 * 
+	 * @param testers Testes de comportamento a serem executados
+	 */
+	public void validatePojo(Tester[] testers) {
+		validatePojo(new Rule[] {},	testers);
 	}
 
-	public void strictPojoStructAndBehaviourTest() {
-		pojoTest(new Rule[] {
-					// Make sure we have a getter and setter
-					new GetterMustExistRule(),
-					new SetterMustExistRule(),
-					// We don't want any primitives in our Pojos.
-					new NoPrimitivesRule(),
-					// Pojo's should stay simple, don't allow nested classes, anonymous or declared.
-					new NoNestedClassRule(),
-					// Static fields must be final
-					new NoStaticExceptFinalRule(),
-					// Serializable must have serialVersionUID
-					new SerializableMustHaveSerialVersionUIDRule(),
-					// Don't shadow parent's field names.
-					new NoFieldShadowingRule(),
-					// What about public fields, use one of the following rules allow them only if they are static and final.
-					new NoPublicFieldsExceptStaticFinalRule(),
-					// Finally, what if you are testing your Testing code? Make sure your tests are properly named
-					new TestClassMustBeProperlyNamedRule()
-				},
-				new Tester[] {
-					// Make sure our setters and getters are behaving as expected.
-					new SetterTester(),
-					new GetterTester(),
-					// We don't want any default values to any fields - unless they are declared final or are primitive.
-					new DefaultValuesNullTester()
-				}
-		);
+	/**
+	 * Valida a estrutura e comportamento de um Pojo de modo estrito.<br>
+	 * <b>Regras de estrutura aplicadas:</b>
+	 * <ul>
+	 *    <li>Devem existir Getter e Setter para todas as propriedades;</li>
+	 *    <li>Nenhum campo deve possuir tipo primitivo;</li>
+	 *    <li>Não devem existir classes aninhadas;</li>
+	 *    <li>Campos <i>static</i> devem ser <i>final</i>;</li>
+	 *    <li>Classes <i>Serializable</i> devem possuir <i>serialVersionUID</i> definido;</li>
+	 *    <li>Propriedades de classes superiores não devem ser redefinidas (field shadowing);</li>
+	 *    <li>Campos <i>public</i> devem ser <i>static final</i>;</li>
+	 *    <li>Classes de teste devem ser nomeadas de acordo com as classes testadas.</li>
+	 * </ul>
+	 * <b>Testes de comportamento executados:</b>
+	 * <ul>
+	 *    <li>Getter;</li>
+	 *    <li>Setter;</li>
+	 *    <li>Nenhum campo deve possuir valor padrão nulo, a não ser que seja primitivo ou <i>final</i>.</li>
+	 * </ul>
+	 */
+	public void strictValidatePojoStructAndBehaviour() {
+		validatePojo(STRICT_RULES, STRICT_TESTERS);
+	}
+	
+	/**
+	 * Valida a estrutura e comportamento de um Pojo de modo frouxo.<br>
+	 * <b>Regras de estrutura aplicadas:</b>
+	 * <ul>
+	 *    <li>Devem existir Getter e Setter para todas as propriedades;</li>
+	 *    <li>Campos <i>static</i> devem ser <i>final</i>;</li>
+	 *    <li>Classes <i>Serializable</i> devem possuir <i>serialVersionUID</i> definido;</li>
+	 *    <li>Propriedades de classes superiores não devem ser redefinidas (field shadowing);</li>
+	 *    <li>Campos <i>public</i> devem ser <i>static final</i>.</li>
+	 * </ul>
+	 * <b>Testes de comportamento executados:</b>
+	 * <ul>
+	 *    <li>Getter;</li>
+	 *    <li>Setter.</li>
+	 * </ul>
+	 */
+	public void looseValidatePojoStructAndBehaviour() {
+		validatePojo(LOOSE_RULES, LOOSE_TESTERS);
 	}
 
-	public void loosePojoBehaviourTest() {
-		pojoTest(new Rule[] {},
-				new Tester[] {
-					// Make sure our setters and getters are behaving as expected.
-					new SetterTester(),
-					new GetterTester(),
-					// We don't want any default values to any fields - unless they are declared final or are primitive.
-					new DefaultValuesNullTester()
-				}
-		);
+	/**
+	 * Valida o comportamento de um Pojo de modo estrito.<br>
+	 * <b>Testes de comportamento executados:</b>
+	 * <ul>
+	 *    <li>Getter;</li>
+	 *    <li>Setter;</li>
+	 *    <li>Nenhum campo deve possuir valor padrão nulo, a não ser que seja primitivo oi <i>final</i>.</li>
+	 * </ul>
+	 */
+	public void strictValidatePojoBehaviour() {
+		validatePojo(STRICT_TESTERS);
 	}
 
-	public void strictPojoBehaviourTest() {
-		pojoTest(new Rule[] {},
-				new Tester[] {
-					// Make sure our setters and getters are behaving as expected.
-					new SetterTester(),
-					new GetterTester(),
-					// We don't want any default values to any fields - unless they are declared final or are primitive.
-					new DefaultValuesNullTester()
-				}
-		);
+	/**
+	 * Valida o comportamento de um Pojo de modo frouxo.<br>
+	 * <b>Testes de comportamento executados:</b>
+	 * <ul>
+	 *    <li>Getter;</li>
+	 *    <li>Setter.</li>
+	 * </ul>
+	 */
+	public void looseValidatePojoBehaviour() {
+		validatePojo(LOOSE_TESTERS);
 	}
 }

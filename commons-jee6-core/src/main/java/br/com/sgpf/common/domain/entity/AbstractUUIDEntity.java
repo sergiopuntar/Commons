@@ -8,7 +8,7 @@ import javax.persistence.MappedSuperclass;
  * próprio baseado em UUID.<br>
  * <b>Essa abordagem é válida somente em ambientes sem redundância.</b><br>
  * Se a applicação roda de forma reduntante, duas instâncias tem uma baixíssima
- * porem existente possibilidade de gerar UUIDs iguais 
+ * porém existente possibilidade de gerar UUIDs iguais 
  */
 @MappedSuperclass
 public abstract class AbstractUUIDEntity extends AbstractEntity<String> {

@@ -19,7 +19,7 @@ public class DataImportResult implements Serializable {
 		 */		
 		UPDATED,
 		/**
-		 * Os dados da origem foram importados em um registro pré-existente no destino, mesmo que o
+		 * Os dados da origem foram importados em um registro pré-existente no destino, mesmo o
 		 * detino contendo dados mais recentes.
 		 */
 		FORCE_UPDATED, 
@@ -40,7 +40,7 @@ public class DataImportResult implements Serializable {
 		 * O item foi ignorado pois não haviam instruções sobre o que fazer. 
 		 */
 		IGNORED
-	};
+	}
 	
 	private Status status;
 	private boolean synced = false;

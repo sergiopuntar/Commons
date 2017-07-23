@@ -1,7 +1,7 @@
 package br.com.sgpf.common.util;
 
 /**
- * Interface para objetos que sobrescrevem o método equals usando a abordagem CanEqual.
+ * Interface para objetos que sobrescrevem o método equals usando a abordagem CanEqual.<br>
  * http://www.artima.com/lejava/articles/equality.html
  */
 public interface CanEqual {
