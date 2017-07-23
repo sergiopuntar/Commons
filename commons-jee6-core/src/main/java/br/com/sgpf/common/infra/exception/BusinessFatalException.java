@@ -6,16 +6,8 @@ package br.com.sgpf.common.infra.exception;
 public class BusinessFatalException extends SystemFatalException {
 	private static final long serialVersionUID = 4113122929766666683L;
 
-	public BusinessFatalException() {
-		super();
-	}
-
 	public BusinessFatalException(String message) {
 		super(message);
-	}
-
-	public BusinessFatalException(Throwable cause) {
-		super(cause);
 	}
 
 	public BusinessFatalException(String message, Throwable cause) {

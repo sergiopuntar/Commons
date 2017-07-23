@@ -1,6 +1,7 @@
 package br.com.sgpf.common.domain.dataimport.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,7 +49,6 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	private static final String ERROR_NULL_IS = "O input stream não pode ser nulo.";
 	private static final String ERROR_NULL_COLUMN_NAME = "O nome da coluna não pode ser nulo.";
 	private static final String ERROR_FILE_NOT_FOUND = "Não foi possível encontrar o arquivo [%s].";
-	private static final String ERROR_UNDEFINED_TYPE = "O tipo da fonte de dados não foi definido.";
 	private static final String ERROR_READING_DOCUMENT = "Ocorreu um erro na leitura do documento.";
 	private static final String ERROR_ENCRYPTED_DOCUMENT = "O documento está criptografado.";
 	private static final String ERROR_INVALID_DOCUMENT_FORMAT = "O documento possui um formato inválido.";
@@ -61,6 +61,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	private static final String ERROR_CHAR_FORMART = "A coluna [%s] não possui conteúdo no formato Character.";
 	private static final String ERROR_YES_NO_FORMAT = "A coluna [%s] não possui conteúdo no formato Y/N.";
 	
+	private static final String ERROR_RELEASING_INPUT_STREAM = "Ocorreu um erro ao liberar o input stream do documento.";
 	private static final String ERROR_WRITING_CHANGES = "Não foi possível gravar as alterações no documento.";
 	private static final String ERROR_CLOSING_DOCUMENT = "Ocorreu um erro ao fechar o documento.";
 	
@@ -105,6 +106,8 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 			throw new IllegalArgumentException(ERROR_NULL_FILE);
 		} else if (!file.exists()) {
 			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
+		} else if (!file.canRead()) {
+			throw new ImportDataSourceFileException(String.format(ERROR_NON_READABLE_FILE, file.getAbsolutePath()));
 		}
 		
 		this.file = file;
@@ -113,7 +116,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	/**
 	 * Cria uma fonte de dados a partir de um input stream.
 	 * 
-	 * @param is Input stream com os dados da planilha
+	 * @param is Input Stream com os dados da planilha
 	 * @param sheetId Índice da planilha
 	 */
 	public BaseSheetDataSource(InputStream is, int sheetId) {
@@ -130,15 +133,22 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	public void open() throws ImportDataSourceException {
 		validadeIsClosed();
 		
-		switch (type) {
-		case FILE:
-			workbook = openFromFile();
-			break;
-		case INPUT_STREAM:
-			workbook = openFromInputStream();
-			break;
-		default:
-			throw new ImportDataSourceException(ERROR_UNDEFINED_TYPE);
+		if (type.equals(Type.FILE)) {
+			try {
+				is = new FileInputStream(file);
+			} catch (FileNotFoundException e) {
+				throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
+			}
+		}
+		
+		try {
+			workbook = WorkbookFactory.create(is);
+		} catch (EncryptedDocumentException e) {
+			throw new ImportDataSourceDocumentException(ERROR_ENCRYPTED_DOCUMENT, e);
+		} catch (InvalidFormatException e) {
+			throw new ImportDataSourceDocumentException(ERROR_INVALID_DOCUMENT_FORMAT, e);
+		} catch (IOException e) {
+			throw new ImportDataSourceIOException(ERROR_READING_DOCUMENT, e);
 		}
 		
 		try {
@@ -149,46 +159,6 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		
 		reset();
 		mapColumns();
-	}
-
-	/**
-	 * Abre o workbook a partir de um arquivo.
-	 * 
-	 * @return Workbook aberto
-	 * @throws ImportDataSourceException Se ocorrer um erro na abertura do workbook
-	 */
-	private Workbook openFromFile() throws ImportDataSourceException {
-		if (!file.canRead()) {
-			throw new ImportDataSourceIOException(String.format(ERROR_NON_READABLE_FILE, file.getAbsolutePath()));
-		}
-		
-		try {
-			return WorkbookFactory.create(file, null, !file.canWrite());
-		} catch (EncryptedDocumentException e) {
-			throw new ImportDataSourceDocumentException(ERROR_ENCRYPTED_DOCUMENT, e);
-		} catch (InvalidFormatException e) {
-			throw new ImportDataSourceDocumentException(ERROR_INVALID_DOCUMENT_FORMAT, e);
-		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_READING_DOCUMENT, e);
-		}
-	}
-
-	/**
-	 * Abre o workbook a partir de um input stream.
-	 * 
-	 * @return Workbook aberto
-	 * @throws ImportDataSourceException Se ocorrer um erro na abertura do workbook
-	 */
-	private Workbook openFromInputStream() throws ImportDataSourceException {
-		try {
-			return WorkbookFactory.create(is);
-		} catch (EncryptedDocumentException e) {
-			throw new ImportDataSourceDocumentException(ERROR_ENCRYPTED_DOCUMENT, e);
-		} catch (InvalidFormatException e) {
-			throw new ImportDataSourceDocumentException(ERROR_INVALID_DOCUMENT_FORMAT, e);
-		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_READING_DOCUMENT, e);
-		}
 	}
 
 	/**
@@ -659,37 +629,44 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		validadeIsOpen();
 		
 		try {
-			if (changed && isWritable()) {
-				flush();
-			}
-		} catch (FileNotFoundException e) {
-			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
+			is.close();
 		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_WRITING_CHANGES, e);
+			throw new ImportDataSourceIOException(ERROR_RELEASING_INPUT_STREAM, e);
+		} finally {
+			is = null;
+		}
+		
+		if (changed && isWritable()) {
+			flush();
 		}
 		
 		try {
 			workbook.close();
+		} catch (IOException e) {
+			throw new ImportDataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
+		} finally {
 			workbook = null;
 			sheet = null;
 			reset();
-		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
 		}
 	}
 	
 	/**
 	 * Salva o workbook no arquivo de onde foi lido.
 	 * 
-	 * @throws FileNotFoundException Se o arquivo não for encontrado
-	 * @throws IOException Se ocorrer um erro na escrita do arquivo
+	 * @throws ImportDataSourceFileException Se o arquivo não for encontrado
+	 * @throws ImportDataSourceIOException Se ocorrer um erro na escrita do arquivo
 	 */
-	private void flush() throws FileNotFoundException, IOException {
-		if (file == null || !file.canWrite()) {
-			return;
+	private void flush() throws ImportDataSourceFileException, ImportDataSourceIOException {
+		if (type.equals(Type.FILE) && file != null && file.canWrite()) {
+			try {
+				workbook.write(new FileOutputStream(file));
+			} catch (FileNotFoundException e) {
+				throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
+			} catch (IOException e) {
+				throw new ImportDataSourceIOException(ERROR_WRITING_CHANGES, e);
+			}
 		}
-		// TODO: https://stackoverflow.com/questions/35078399/is-it-possible-to-first-read-and-then-write-into-same-spreadsheet-file
-		workbook.write(new FileOutputStream(file));
 	}
 
 	/**

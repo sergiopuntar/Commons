@@ -24,7 +24,6 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceDocumentEx
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFormatException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceIOException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceInvalidStateException;
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreItensException;
 
@@ -78,12 +77,11 @@ public class BaseSheetDataSourceTest {
 		new BaseSheetDataSourceImpl(new File("invalid.xls"), SHEET_INDEX);
 	}
 	
-	@Test(expected = ImportDataSourceIOException.class)
-	public void unreadableFileOpenTest() throws ImportDataSourceException {
+	@Test(expected = ImportDataSourceFileException.class)
+	public void unreadableFileConstructorTest() throws ImportDataSourceException {
 		TEST_SHEET_FILE_UNREADABLE.setReadable(false);
 		try {
-			BaseSheetDataSource<DataElement> sheetDataSource = new BaseSheetDataSourceImpl(TEST_SHEET_FILE_UNREADABLE, SHEET_INDEX);
-			sheetDataSource.open();
+			new BaseSheetDataSourceImpl(TEST_SHEET_FILE_UNREADABLE, SHEET_INDEX);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -392,7 +390,7 @@ public class BaseSheetDataSourceTest {
 		sheetDataSource.close();
 	}
 	
-//	@Test
+	@Test
 	public void closedChangedDataSourceTest() throws ImportDataSourceException {
 		long before = TEST_SHEET_FILE.lastModified();
 		
