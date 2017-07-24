@@ -112,7 +112,7 @@
 		<javaee.version>6.0</javaee.version>
 		<apache.commons-lang3.version>3.4</apache.commons-lang3.version>
 		<slf4j.version>1.7.12</slf4j.version>
-		<google.guava.version>21.0</google.guava.version>
+		<google.guava.version>20.0</google.guava.version> <!-- Última versão compatível com JDK 1.7 -->
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
