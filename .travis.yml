@@ -1,8 +1,8 @@
 language: java
-script: mvn package -B
+install: mvn dependency:resolve dependency:resolve-plugins
+script: mvn clean package
 jdk:
   - oraclejdk7
-  - openjdk7
-  - openjdk6
+  - oraclejdk8
 branches:
   only: master
