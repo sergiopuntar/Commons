@@ -3,7 +3,7 @@ install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script: mvn test
 dist: trusty
 jdk:
-  - oraclejdk7
   - oraclejdk8
+  - openjdk7
 branches:
   only: master

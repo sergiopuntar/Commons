@@ -11,23 +11,6 @@
 	<description>Biblioteca núcleo de componentes e utilitários de apoio para projetos JEE 6</description>
 	
 	<dependencies>
-		<!-- Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
 		<!-- Test -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
