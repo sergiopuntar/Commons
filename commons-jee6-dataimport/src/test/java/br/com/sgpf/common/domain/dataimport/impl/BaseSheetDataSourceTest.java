@@ -17,6 +17,7 @@ import java.util.Calendar;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
@@ -30,8 +31,8 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreIten
 @RunWith(MockitoJUnitRunner.class)
 public class BaseSheetDataSourceTest {
 	private static final File TEST_SHEET_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/BaseSheetDataSourceTest.xls");
-	private static final File TEST_SHEET_FILE_UNREADABLE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/BaseSheetDataSourceTest-unreadable.xls");
-	private static final File TEST_SHEET_FILE_UNWRITABLE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/BaseSheetDataSourceTest-unwritable.xls");
+	private static final File TEST_SHEET_FILE_UNREADABLE = Mockito.spy(TEST_SHEET_FILE);
+	private static final File TEST_SHEET_FILE_UNWRITABLE = Mockito.spy(TEST_SHEET_FILE);
 	
 	private static final int SHEET_INDEX = 0;
 	private static final int SHEET_INDEX_NOHEADER = 1;
@@ -58,6 +59,8 @@ public class BaseSheetDataSourceTest {
 	@BeforeClass
 	public static void beforeClass() throws ParseException {
 		CALENDAR_VALUE.setTime(DATE_FORMAT.parse("01/01/2017"));
+		Mockito.when(TEST_SHEET_FILE_UNREADABLE.canRead()).thenReturn(false);
+		Mockito.when(TEST_SHEET_FILE_UNWRITABLE.canWrite()).thenReturn(false);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)

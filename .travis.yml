@@ -1,8 +1,8 @@
 language: java
 script: mvn package -B
 jdk:
-  - oraclejdk8
   - oraclejdk7
   - openjdk7
+  - openjdk6
 branches:
   only: master
