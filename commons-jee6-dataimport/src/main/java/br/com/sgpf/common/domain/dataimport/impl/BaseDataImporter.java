@@ -16,10 +16,10 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 /**
  * Implementação base para os importadores de dados.
  * 
- * @param <ID> Identificador o item de importação
+ * @param <Id> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public abstract class BaseDataImporter<ID extends Serializable, T extends Serializable> implements DataImporter<ID, T> {
+public abstract class BaseDataImporter<Id extends Serializable, T extends Serializable> implements DataImporter<Id, T> {
 	private static final long serialVersionUID = 5124248593928945081L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseDataImporter.class);
@@ -27,13 +27,13 @@ public abstract class BaseDataImporter<ID extends Serializable, T extends Serial
 	private static final String ERROR_NULL_DATASOURCE = "A fonte de dados não pode ser nula.";
 	
 	@Override
-	public Collection<DataImportItem<ID, T>> importData(ImportDataSource<ID, T> dataSource, boolean sync) throws DataImportException {
+	public Collection<DataImportItem<Id, T>> importData(ImportDataSource<Id, T> dataSource, boolean sync) throws DataImportException {
 		if (dataSource == null) {
 			throw new IllegalArgumentException(ERROR_NULL_DATASOURCE);
 		}
 		
 		LOGGER.info("Iniciando importação a partir da fonte de dados [{0}].", dataSource);
-		List<DataImportItem<ID, T>> itens = new ArrayList<DataImportItem<ID, T>>();
+		List<DataImportItem<Id, T>> itens = new ArrayList<DataImportItem<Id, T>>();
 		
 		dataSource.open();
 		
@@ -44,7 +44,7 @@ public abstract class BaseDataImporter<ID extends Serializable, T extends Serial
 		int synced = 0;
 		
 		while (dataSource.hasNext()) {
-			DataImportItem<ID, T> item = dataSource.next();
+			DataImportItem<Id, T> item = dataSource.next();
 			
 			importData(item);
 			//TODO mover para dentro do método importData ou mudar log de acordo com status
@@ -80,5 +80,5 @@ public abstract class BaseDataImporter<ID extends Serializable, T extends Serial
 	 * 
 	 * @param item Item a ser importado no destino
 	 */
-	protected abstract void importData(DataImportItem<ID, T> item);
+	protected abstract void importData(DataImportItem<Id, T> item);
 }

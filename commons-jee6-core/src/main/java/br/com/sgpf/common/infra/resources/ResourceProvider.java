@@ -14,7 +14,11 @@ import br.com.sgpf.common.infra.exception.SystemFatalException;
  * Classe que provê recursos do sistema estaticamente.
  */
 public class ResourceProvider {
-	private static final String ERRO_LOOKUP_BEAN_MANAGER = "Não foi possível encontrar o registro do Bean Manager no JNDI.";
+	private static final String ERROR_LOOKUP_BEAN_MANAGER = "Não foi possível encontrar o registro do Bean Manager no JNDI.";
+
+	public ResourceProvider() {
+		super();
+	}
 
 	/**
 	 * Recupera o CDI Bean Manager.
@@ -26,7 +30,7 @@ public class ResourceProvider {
 			InitialContext initialContext = new InitialContext();
 			return (BeanManager) initialContext.lookup("java:comp/BeanManager");
 		} catch (NamingException e) {
-			throw new SystemFatalException(ERRO_LOOKUP_BEAN_MANAGER, e);
+			throw new SystemFatalException(ERROR_LOOKUP_BEAN_MANAGER, e);
 		}
 	}
 	
@@ -42,8 +46,7 @@ public class ResourceProvider {
 		Set<Bean<? extends Object>> beans = beanManager.getBeans(clazz);
 		Bean<T> bean = (Bean<T>) beanManager.resolve(beans);
 		CreationalContext<T> ctx = beanManager.createCreationalContext(bean);
-		T reference = (T) beanManager.getReference(bean, clazz, ctx);
 		
-		return reference;
+		return (T) beanManager.getReference(bean, clazz, ctx);
 	}
 }

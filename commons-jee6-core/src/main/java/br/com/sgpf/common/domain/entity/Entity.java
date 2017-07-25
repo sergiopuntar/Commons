@@ -6,25 +6,25 @@ import java.util.Date;
 /**
  * Interface padrão para todas as entidades do sistema.
  * 
- * @param <ID> Tipo do identificador da entidade
+ * @param <Id> Tipo do identificador da entidade
  */
-public interface Entity<ID extends Serializable> extends Serializable, Cloneable {
+public interface Entity<Id extends Serializable> extends Serializable, Cloneable {
 
-	ID getId();
+	Id getId();
 
-	void setId(ID id);
+	void setId(Id id);
 
-	Date getDataCriacao();
+	Date getCreationDate();
 
-	void setDataCriacao(Date dataCriacao);
+	void setCreationDate(Date creationDate);
 
-	void setDataAtualizacao(Date dataAtualizacao);
+	void setUpdateDate(Date updateDate);
 
-	Date getDataAtualizacao();
+	Date getUpdateDate();
 	
-	Long getVersao();
+	Long getVersion();
 
-	void setVersao(Long versao);
+	void setVersion(Long version);
 	
 	/**
 	 * Verifica se a entidade foi persistida.

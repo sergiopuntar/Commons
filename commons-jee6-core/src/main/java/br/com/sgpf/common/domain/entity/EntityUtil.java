@@ -9,26 +9,30 @@ import java.util.UUID;
  */
 public class EntityUtil {
 
+	public EntityUtil() {
+		super();
+	}
+
 	/**
 	 * Gera um UUID para ser usado como identificador de uma entidade.
 	 * 
 	 * @return UUID gerado
 	 */
-	public static String gerarUUID() {
+	public static String generateUUID() {
 		return UUID.randomUUID().toString().toUpperCase();
 	}
 	
 	/**
 	 * Recupera uma entidade de uma lista a partir do seu identificador.
 	 * 
-	 * @param entidades Lista de entidades
+	 * @param entities Lista de entidades
 	 * @param id Identificador da entidade
 	 * @return Entidade recuperada, null se ela não estiver presente na lista
 	 */
-	public static <T extends Entity<ID>, ID extends Serializable> T recuperarEntidade(Collection<T> entidades, ID id) {
-		for (T entidade : entidades) {
-			if(entidade.getId() != null && entidade.getId().equals(id)) {
-				return entidade;
+	public static <T extends Entity<ID>, ID extends Serializable> T recoverEntity(Collection<T> entities, ID id) {
+		for (T entity : entities) {
+			if(entity.getId() != null && entity.getId().equals(id)) {
+				return entity;
 			}
 		}
 		

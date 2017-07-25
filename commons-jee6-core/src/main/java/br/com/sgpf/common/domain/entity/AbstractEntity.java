@@ -18,64 +18,64 @@ import br.com.sgpf.common.util.CanEqual;
 /**
  * Super classe abstrata para todas as entidades do sistema.
  * 
- * @param <ID> Tipo do identificador da entidade
+ * @param <Id> Tipo do identificador da entidade
  */
 @MappedSuperclass
-public abstract class AbstractEntity<ID extends Serializable> implements Entity<ID>, CanEqual {
+public abstract class AbstractEntity<Id extends Serializable> implements Entity<Id>, CanEqual {
 	private static final long serialVersionUID = 7899846729108918584L;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataCriacao;
+	private Date creationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataAtualizacao;
+	private Date updateDate;
 	
 	@Version
-	private Long versao;
+	private Long version;
 	
 	@PrePersist
 	public void prePersist() {
-		setDataCriacao(new Date());
+		setCreationDate(new Date());
 	}
 	
 	@PreUpdate
 	public void preUpdate() {
-		setDataAtualizacao(new Date());
+		setUpdateDate(new Date());
 	}
 	
 	@Override
-	public Date getDataCriacao() {
-		return dataCriacao;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
 	@Override
-	public void setDataCriacao(Date dataCriacao) {
-		this.dataCriacao = dataCriacao;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	@Override
-	public Date getDataAtualizacao() {
-		return dataAtualizacao;
+	public Date getUpdateDate() {
+		return updateDate;
 	}
 
 	@Override
-	public void setDataAtualizacao(Date dataAtualizacao) {
-		this.dataAtualizacao = dataAtualizacao;
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 
 	@Override
-	public Long getVersao() {
-		return versao;
+	public Long getVersion() {
+		return version;
 	}
 
 	@Override
-	public void setVersao(Long versao) {
-		this.versao = versao;
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	@Override
 	public boolean isPersisted() {
-		return getDataCriacao() != null;
+		return getCreationDate() != null;
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public abstract class AbstractEntity<ID extends Serializable> implements Entity<
 	public int hashCode() {
 		return new HashCodeBuilder(5, 11)
 				.append(this.getId())
-				.append(this.getVersao())
+				.append(this.getVersion())
 				.toHashCode();
 	}
 	
@@ -98,7 +98,7 @@ public abstract class AbstractEntity<ID extends Serializable> implements Entity<
 			return that.canEqual(this) &&
 					new EqualsBuilder()
 					.append(this.getId(), that.getId())
-					.append(this.getVersao(), that.getVersao())
+					.append(this.getVersion(), that.getVersion())
 					.isEquals();
 		}
 

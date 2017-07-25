@@ -7,8 +7,6 @@ import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.IGNOR
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.INSERTED;
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.OVERRIDDEN;
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.UPDATED;
-import static br.com.sgpf.common.test.PojoTester.UNMUTABLE_RULES;
-import static br.com.sgpf.common.test.PojoTester.UNMUTABLE_TESTERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +37,7 @@ public class DataImportItemTest {
 	@Test
 	public void pojoTest() {
 		PojoTester pojoTester =  new PojoTester(DataImportItem.class);
-		pojoTester.validatePojo(UNMUTABLE_RULES, UNMUTABLE_TESTERS);	
+		pojoTester.validatePojo(PojoTester.getUnmutableRules(), PojoTester.getUnmutableTesters());	
 	}
 	
 	@Test

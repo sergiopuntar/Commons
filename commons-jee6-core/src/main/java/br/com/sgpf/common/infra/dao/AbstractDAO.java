@@ -21,7 +21,7 @@ import br.com.sgpf.common.infra.exception.DAOException;
 public abstract class AbstractDAO<E extends Entity<ID>, ID extends Serializable> implements Repository<E, ID> {
 	private static final long serialVersionUID = -6837735901842866300L;
 	
-	private static final String ERRO_TIPO_RESULTADO = "O objeto %s não é do tipo esperado %s.";
+	private static final String ERROR_RESULT_TYPE = "O objeto [%s] não é do tipo esperado [%s].";
 
 	@PersistenceContext
 	protected transient EntityManager em;
@@ -79,21 +79,21 @@ public abstract class AbstractDAO<E extends Entity<ID>, ID extends Serializable>
 	 * Recupera o primeiro resultado de uma lista de resultados de consulta.
 	 * 
 	 * @param resultList Lista de resultados de consulta
-	 * @param tipoResultado Tipo dos itens da lista
+	 * @param resultType Tipo dos itens da lista
 	 * @return Primeiro resultado da lista
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> T recuperarPrimeiroResultado(List<?> resultList, Class<T> tipoResultado) {
-		T primeiroResultado = null;
+	protected <T> T firstResult(List<?> resultList, Class<T> resultType) {
+		T firstResult = null;
 
 		Object object = (resultList != null && !resultList.isEmpty()) ? resultList.get(0) : null;
 
-		if (tipoResultado.isInstance(object)) {
-			primeiroResultado = (T) object;
+		if (resultType.isInstance(object)) {
+			firstResult = (T) object;
 		} else if (object != null) {
-			throw new DAOException(String.format(ERRO_TIPO_RESULTADO, object, tipoResultado.getName()));
+			throw new DAOException(String.format(ERROR_RESULT_TYPE, object, resultType.getName()));
 		}
 
-		return primeiroResultado;
+		return firstResult;
 	}
 }

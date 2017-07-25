@@ -35,15 +35,15 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceInvalidSta
 import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreItensException;
 
 /**
- * Implementação base da fonte de dados em planilha Excel simples.
+ * Implementação fonte de dados em planilha Excel simples.
  *
  * @param <ID> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public abstract class BaseSheetDataSource<T extends Serializable> implements ImportDataSource<Integer, T> {
+public abstract class SimpleSheetDataSource<T extends Serializable> implements ImportDataSource<Integer, T> {
 	private static final long serialVersionUID = -7387063988593887736L;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(BaseSheetDataSource.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSheetDataSource.class);
 	
 	private static final String ERROR_NULL_FILE = "O arquivo não pode ser nulo.";
 	private static final String ERROR_NULL_IS = "O input stream não pode ser nulo.";
@@ -71,9 +71,9 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	private static final String VALUE_STRING_Y = "Y";
 	private static final String VALUE_STRING_N = "N";
 
-	private static enum Type { FILE, INPUT_STREAM };
+	private enum Type { FILE, INPUT_STREAM }
 	
-	private static enum ImportActionHeader { INSERT, UPDATE, MERGE, REMOVE, FORCE, SYNC };
+	private enum ImportActionHeader { INSERT, UPDATE, MERGE, REMOVE, FORCE, SYNC }
 	
 	private File file;
 	private transient InputStream is;
@@ -84,9 +84,9 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	private transient Sheet sheet;
 	private int currRow;
 	private boolean changed;
-	private Map<String, Integer> columnMap = new HashMap<String, Integer>();
+	private Map<String, Integer> columnMap = new HashMap<>();
 	
-	private BaseSheetDataSource(Type type, int sheetId) {
+	private SimpleSheetDataSource(Type type, int sheetId) {
 		super();
 		this.type = type;
 		this.sheetId = sheetId;
@@ -99,7 +99,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param sheetId Índice da planilha
 	 * @throws ImportDataSourceFileException Se o arquivo não for encontrado
 	 */
-	public BaseSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public SimpleSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		this(Type.FILE, sheetId);
 		
 		if (file == null) {
@@ -119,7 +119,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	 * @param is Input Stream com os dados da planilha
 	 * @param sheetId Índice da planilha
 	 */
-	public BaseSheetDataSource(InputStream is, int sheetId) {
+	public SimpleSheetDataSource(InputStream is, int sheetId) {
 		this(Type.INPUT_STREAM, sheetId);
 		
 		if (is == null) {
@@ -180,7 +180,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 			columnMap.put(cell.getStringCellValue().toUpperCase(), cell.getColumnIndex());
 		}
 		
-		LOGGER.debug("Colunas mapeadas: " + columnMap);
+		LOGGER.debug("Colunas mapeadas: %s", columnMap);
 	}
 
 	@Override
@@ -199,7 +199,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 	}
 
 	@Override
-	public DataImportItem<Integer, T> next() throws ImportDataSourceNoMoreItensException, ImportDataSourceException {
+	public DataImportItem<Integer, T> next() throws ImportDataSourceException {
 		validadeIsOpen();
 		
 		if (!hasNext()) {
@@ -215,7 +215,7 @@ public abstract class BaseSheetDataSource<T extends Serializable> implements Imp
 		Boolean force = readYesNoCell(ImportActionHeader.FORCE.name());
 		Boolean sync = readYesNoCell(ImportActionHeader.SYNC.name());
 		
-		return new DataImportItem<Integer, T>(currRow, readCurrentItemData(), insert, update, merge, remove, force, sync);
+		return new DataImportItem<>(currRow, readCurrentItemData(), insert, update, merge, remove, force, sync);
 	}
 
 	/**

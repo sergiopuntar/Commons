@@ -19,15 +19,15 @@ import br.com.sgpf.common.util.CanEqual;
 /**
  * Classe Wrapper de dados utilizada no processo de importação.
  *
- * @param <ID> Identificador o item de importação
+ * @param <Id> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public class DataImportItem<ID extends Serializable, T extends Serializable> implements Serializable, CanEqual {
+public class DataImportItem<Id extends Serializable, T extends Serializable> implements Serializable, CanEqual {
 	private static final long serialVersionUID = -4993453059086257679L;
 	
 	private static final List<DataImportResult.Status> CHANGED_STATUS = Lists.newArrayList(INSERTED, UPDATED, FORCE_UPDATED, DELETED, OVERRIDDEN);
 	
-	private ID id;
+	private Id id;
 	private T data;
 	private Boolean insert;
 	private Boolean update;
@@ -37,7 +37,7 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 	private Boolean sync;
 	private DataImportResult result;
 	
-	public DataImportItem(ID id, T data, Boolean insert, Boolean update, Boolean merge, Boolean remove, Boolean force, Boolean sync) {
+	public DataImportItem(Id id, T data, Boolean insert, Boolean update, Boolean merge, Boolean remove, Boolean force, Boolean sync) {
 		super();
 		this.id = id;
 		this.data = data;
@@ -50,7 +50,7 @@ public class DataImportItem<ID extends Serializable, T extends Serializable> imp
 		this.result = new DataImportResult();
 	}
 
-	public ID getId() {
+	public Id getId() {
 		return id;
 	}
 

@@ -8,10 +8,10 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 /**
  * Interface do importador de dados.
  * 
- * @param <ID> Identificador o item de importação
+ * @param <Id> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public interface DataImporter<ID extends Serializable, T extends Serializable> extends Serializable {
+public interface DataImporter<Id extends Serializable, T extends Serializable> extends Serializable {
 	
 	/**
 	 * Processa a importação de todos os item encontrados no DataSource. 
@@ -25,5 +25,5 @@ public interface DataImporter<ID extends Serializable, T extends Serializable> e
 	 * resultados.
 	 * @throws DataImportException Se ocorrer um erro na importação dos dados
 	 */
-	public Collection<DataImportItem<ID, T>> importData(ImportDataSource<ID, T> dataSource, boolean sync) throws DataImportException;
+	public Collection<DataImportItem<Id, T>> importData(ImportDataSource<Id, T> dataSource, boolean sync) throws DataImportException;
 }

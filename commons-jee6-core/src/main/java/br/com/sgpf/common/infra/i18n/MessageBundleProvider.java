@@ -8,6 +8,10 @@ import java.util.ResourceBundle;
  */
 public class MessageBundleProvider {
 
+	public MessageBundleProvider() {
+		super();
+	}
+
 	/**
 	 * Nome basse do arquivo de mensagens
 	 */

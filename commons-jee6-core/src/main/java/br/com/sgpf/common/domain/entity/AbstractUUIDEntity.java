@@ -23,7 +23,7 @@ public abstract class AbstractUUIDEntity extends AbstractEntity<String> {
 	 */
 	public AbstractUUIDEntity() {
 		super();
-		this.id = EntityUtil.gerarUUID();
+		this.id = EntityUtil.generateUUID();
 	}
 
 	@Override

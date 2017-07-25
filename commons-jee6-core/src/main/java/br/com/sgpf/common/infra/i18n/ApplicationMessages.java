@@ -11,6 +11,10 @@ import br.com.sgpf.common.infra.resources.ResourceProvider;
  */
 public class ApplicationMessages {
 
+	public ApplicationMessages() {
+		super();
+	}
+
 	/**
 	 * Recupera uma mensagem a partir da uma chave pré-definida, aplicando os
 	 * parâmetros definidos.

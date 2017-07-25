@@ -9,32 +9,32 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileExcept
 import br.com.sgpf.common.domain.entity.Entity;
 
 /**
- * Implementação base para todas as entidades de uma fonte de dados baseada em planilha.
+ * Implementação base para todas as entidades de uma fonte de dados baseada em planilha Excel simples.
  *
  * @param <E> Tipo da entidade
  */
-public abstract class EntitySheetDataSource<ID extends Serializable, E extends Entity<ID>> extends BaseSheetDataSource<E> {
+public abstract class EntitySimpleSheetDataSource<Id extends Serializable, E extends Entity<Id>> extends SimpleSheetDataSource<E> {
 	private static final long serialVersionUID = 1711265271350804677L;
 	
-	private static enum EntityMetadataHeader {ID, CREATION_DATE, UPDATE_DATE, VERSION };
+	private enum EntityMetadataHeader { ID, CREATION_DATE, UPDATE_DATE, VERSION }
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public EntitySheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public EntitySimpleSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		super(file, sheetId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public EntitySheetDataSource(InputStream is, int sheetId) {
+	public EntitySimpleSheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 
 	@Override
 	protected E readCurrentItemData() {
-		ID id = readEntityId(EntityMetadataHeader.ID.name());
+		Id id = readEntityId(EntityMetadataHeader.ID.name());
 		Date creationDate = readDateCell(EntityMetadataHeader.CREATION_DATE.name());
 		Date updateDate = readDateCell(EntityMetadataHeader.UPDATE_DATE.name());
 		Long version = readLongCell(EntityMetadataHeader.VERSION.name());
@@ -48,7 +48,7 @@ public abstract class EntitySheetDataSource<ID extends Serializable, E extends E
 	 * @param columnName Nome da coluna onde está o identificador.
 	 * @return Identificador da entidade
 	 */
-	protected abstract ID readEntityId(String columnName);
+	protected abstract Id readEntityId(String columnName);
 	
 	/**
 	 * Lê os dados restantes da entidade na panilha.<br>
@@ -60,14 +60,14 @@ public abstract class EntitySheetDataSource<ID extends Serializable, E extends E
 	 * @param version Versão da entidade
 	 * @return Instância da entidade com os dados da planilha
 	 */
-	protected abstract E readCurrentItemData(ID id, Date creationDate, Date updateDate, Long version);
+	protected abstract E readCurrentItemData(Id id, Date creationDate, Date updateDate, Long version);
 
 	@Override
 	protected boolean syncRow(Integer rowIndex, E data) {
 		writeEntityId(rowIndex, EntityMetadataHeader.ID.name(), data.getId());
-		writeDateCell(rowIndex, EntityMetadataHeader.CREATION_DATE.name(), data.getDataCriacao());
-		writeDateCell(rowIndex, EntityMetadataHeader.UPDATE_DATE.name(), data.getDataAtualizacao());
-		writeLongCell(rowIndex, EntityMetadataHeader.VERSION.name(), data.getVersao());
+		writeDateCell(rowIndex, EntityMetadataHeader.CREATION_DATE.name(), data.getCreationDate());
+		writeDateCell(rowIndex, EntityMetadataHeader.UPDATE_DATE.name(), data.getUpdateDate());
+		writeLongCell(rowIndex, EntityMetadataHeader.VERSION.name(), data.getVersion());
 		writeItemData(rowIndex, data);
 		
 		// TODO: validar se houve mudança real nos dados da planilha
@@ -81,7 +81,7 @@ public abstract class EntitySheetDataSource<ID extends Serializable, E extends E
 	 * @param columnName Nome da coluna onde está o identificador.
 	 * @param id Identificador da entidade
 	 */
-	protected abstract void writeEntityId(Integer rowIndex, String columnName, ID id);
+	protected abstract void writeEntityId(Integer rowIndex, String columnName, Id id);
 	
 	/**
 	 * Escreve os dados de uma entidade em uma linha da planilha.

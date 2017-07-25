@@ -7,24 +7,24 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileExcept
 import br.com.sgpf.common.domain.entity.AbstractIdentityEntity;
 
 /**
- * Implementação base para todas as entidades identidade de uma fonte de dados baseada em planilha.
+ * Implementação base para todas as entidades identidade de uma fonte de dados baseada em planilha Excel simples.
  *
  * @param <E> Tipo da entidade
  */
-public abstract class IdentityEntitySheetDataSource<E extends AbstractIdentityEntity> extends EntitySheetDataSource<Long, E> {
+public abstract class IdentityEntitySimpleSheetDataSource<E extends AbstractIdentityEntity> extends EntitySimpleSheetDataSource<Long, E> {
 	private static final long serialVersionUID = 8096959271007933357L;
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public IdentityEntitySheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public IdentityEntitySimpleSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		super(file, sheetId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IdentityEntitySheetDataSource(InputStream is, int sheetId) {
+	public IdentityEntitySimpleSheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 

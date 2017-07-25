@@ -7,24 +7,24 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileExcept
 import br.com.sgpf.common.domain.entity.AbstractUUIDEntity;
 
 /**
- * Implementação base para todas as entidades UUID de uma fonte de dados baseada em planilha.
+ * Implementação base para todas as entidades UUID de uma fonte de dados baseada em planilha Excel simples.
  *
  * @param <E> Tipo da entidade
  */
-public abstract class UUIDEntitySheetDataSource<E extends AbstractUUIDEntity> extends EntitySheetDataSource<String, E> {
+public abstract class UUIDEntitySimpleSheetDataSource<E extends AbstractUUIDEntity> extends EntitySimpleSheetDataSource<String, E> {
 	private static final long serialVersionUID = 8096959271007933357L;
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public UUIDEntitySheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public UUIDEntitySimpleSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
 		super(file, sheetId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public UUIDEntitySheetDataSource(InputStream is, int sheetId) {
+	public UUIDEntitySimpleSheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 
