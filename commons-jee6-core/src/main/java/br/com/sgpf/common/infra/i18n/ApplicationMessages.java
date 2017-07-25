@@ -11,7 +11,7 @@ import br.com.sgpf.common.infra.resources.ResourceProvider;
  */
 public class ApplicationMessages {
 
-	public ApplicationMessages() {
+	private ApplicationMessages() {
 		super();
 	}
 

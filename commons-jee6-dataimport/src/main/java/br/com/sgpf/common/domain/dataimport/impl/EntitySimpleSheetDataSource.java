@@ -13,7 +13,7 @@ import br.com.sgpf.common.domain.entity.Entity;
  *
  * @param <E> Tipo da entidade
  */
-public abstract class EntitySimpleSheetDataSource<Id extends Serializable, E extends Entity<Id>> extends SimpleSheetDataSource<E> {
+public abstract class EntitySimpleSheetDataSource<I extends Serializable, E extends Entity<I>> extends SimpleSheetDataSource<E> {
 	private static final long serialVersionUID = 1711265271350804677L;
 	
 	private enum EntityMetadataHeader { ID, CREATION_DATE, UPDATE_DATE, VERSION }
@@ -34,7 +34,7 @@ public abstract class EntitySimpleSheetDataSource<Id extends Serializable, E ext
 
 	@Override
 	protected E readCurrentItemData() {
-		Id id = readEntityId(EntityMetadataHeader.ID.name());
+		I id = readEntityId(EntityMetadataHeader.ID.name());
 		Date creationDate = readDateCell(EntityMetadataHeader.CREATION_DATE.name());
 		Date updateDate = readDateCell(EntityMetadataHeader.UPDATE_DATE.name());
 		Long version = readLongCell(EntityMetadataHeader.VERSION.name());
@@ -48,7 +48,7 @@ public abstract class EntitySimpleSheetDataSource<Id extends Serializable, E ext
 	 * @param columnName Nome da coluna onde está o identificador.
 	 * @return Identificador da entidade
 	 */
-	protected abstract Id readEntityId(String columnName);
+	protected abstract I readEntityId(String columnName);
 	
 	/**
 	 * Lê os dados restantes da entidade na panilha.<br>
@@ -60,7 +60,7 @@ public abstract class EntitySimpleSheetDataSource<Id extends Serializable, E ext
 	 * @param version Versão da entidade
 	 * @return Instância da entidade com os dados da planilha
 	 */
-	protected abstract E readCurrentItemData(Id id, Date creationDate, Date updateDate, Long version);
+	protected abstract E readCurrentItemData(I id, Date creationDate, Date updateDate, Long version);
 
 	@Override
 	protected boolean syncRow(Integer rowIndex, E data) {
@@ -81,7 +81,7 @@ public abstract class EntitySimpleSheetDataSource<Id extends Serializable, E ext
 	 * @param columnName Nome da coluna onde está o identificador.
 	 * @param id Identificador da entidade
 	 */
-	protected abstract void writeEntityId(Integer rowIndex, String columnName, Id id);
+	protected abstract void writeEntityId(Integer rowIndex, String columnName, I id);
 	
 	/**
 	 * Escreve os dados de uma entidade em uma linha da planilha.

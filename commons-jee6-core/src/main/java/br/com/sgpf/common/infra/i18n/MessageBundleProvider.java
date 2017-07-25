@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
  */
 public class MessageBundleProvider {
 
-	public MessageBundleProvider() {
+	private MessageBundleProvider() {
 		super();
 	}
 

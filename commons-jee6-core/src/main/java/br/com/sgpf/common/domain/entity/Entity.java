@@ -6,13 +6,13 @@ import java.util.Date;
 /**
  * Interface padrão para todas as entidades do sistema.
  * 
- * @param <Id> Tipo do identificador da entidade
+ * @param <I> Tipo do identificador da entidade
  */
-public interface Entity<Id extends Serializable> extends Serializable, Cloneable {
+public interface Entity<I extends Serializable> extends Serializable, Cloneable {
 
-	Id getId();
+	I getId();
 
-	void setId(Id id);
+	void setId(I id);
 
 	Date getCreationDate();
 

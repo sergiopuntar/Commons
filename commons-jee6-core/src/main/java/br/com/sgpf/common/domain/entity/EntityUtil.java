@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class EntityUtil {
 
-	public EntityUtil() {
+	private EntityUtil() {
 		super();
 	}
 

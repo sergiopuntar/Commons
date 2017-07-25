@@ -7,10 +7,10 @@ import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceException;
 /**
  * Interface das fontes de dados de importação.
  * 
- * @param <Id> Identificador o item de importação
+ * @param <I> Identificador o item de importação
  * @param <T> Tipo do dado
  */
-public interface ImportDataSource<Id extends Serializable, T extends Serializable> extends Serializable {
+public interface ImportDataSource<I extends Serializable, T extends Serializable> extends Serializable {
 
 	/**
 	 * Abre a fonte de dados para iniciar a leitura ou escrita.
@@ -40,7 +40,7 @@ public interface ImportDataSource<Id extends Serializable, T extends Serializabl
 	 * @return Item lido da fonte de dados
 	 * @throws ImportDataSourceException Se ocorrer um erro na leitura da fonte de dados.
 	 */
-	public DataImportItem<Id, T> next() throws ImportDataSourceException;
+	public DataImportItem<I, T> next() throws ImportDataSourceException;
 	
 	/**
 	 * Sincroniza os dados de um item na fonte de dados.<br>
@@ -49,7 +49,7 @@ public interface ImportDataSource<Id extends Serializable, T extends Serializabl
 	 * @param item Item a ser sincronizado na fonte de dados.
 	 * @throws ImportDataSourceException Se ocorrer um erro na escrita da fonte de dados.
 	 */
-	public void sync(DataImportItem<Id, T> item) throws ImportDataSourceException;
+	public void sync(DataImportItem<I, T> item) throws ImportDataSourceException;
 	
 	/**
 	 * Fecha a fonte de dados e libera os recursos ocupados.

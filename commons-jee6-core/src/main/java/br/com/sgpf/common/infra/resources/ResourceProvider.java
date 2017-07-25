@@ -16,7 +16,7 @@ import br.com.sgpf.common.infra.exception.SystemFatalException;
 public class ResourceProvider {
 	private static final String ERROR_LOOKUP_BEAN_MANAGER = "Não foi possível encontrar o registro do Bean Manager no JNDI.";
 
-	public ResourceProvider() {
+	private ResourceProvider() {
 		super();
 	}
 

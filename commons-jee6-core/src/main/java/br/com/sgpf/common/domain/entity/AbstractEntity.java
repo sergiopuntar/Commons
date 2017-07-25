@@ -18,10 +18,10 @@ import br.com.sgpf.common.util.CanEqual;
 /**
  * Super classe abstrata para todas as entidades do sistema.
  * 
- * @param <Id> Tipo do identificador da entidade
+ * @param <I> Tipo do identificador da entidade
  */
 @MappedSuperclass
-public abstract class AbstractEntity<Id extends Serializable> implements Entity<Id>, CanEqual {
+public abstract class AbstractEntity<I extends Serializable> implements Entity<I>, CanEqual {
 	private static final long serialVersionUID = 7899846729108918584L;
 	
 	@Temporal(TemporalType.TIMESTAMP)
