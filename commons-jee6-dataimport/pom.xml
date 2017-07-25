@@ -48,7 +48,7 @@
 	</build>
 	
 	<properties>
-		<!-- Dependencies -->
+		<!-- Dependencies Versions -->
 		<org.apache.poi.version>3.16</org.apache.poi.version>
 	</properties>
 </project>

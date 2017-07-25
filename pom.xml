@@ -51,15 +51,6 @@
 	</dependencies>
 	
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.sonarsource.scanner.maven</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>${sonar-maven-plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -76,19 +67,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>process-test-classes</phase>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	
@@ -98,7 +76,33 @@
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<phase>process-test-classes</phase>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonarsource.scanner.maven</groupId>
+						<artifactId>sonar-maven-plugin</artifactId>
+						<version>${sonar-maven-plugin.version}</version>
+					</plugin>
+				</plugins>
+			</build>
 			<properties>
+				<!-- Plugins Versions -->
+				<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
+				<sonar-maven-plugin.version>3.3.0.603</sonar-maven-plugin.version>
+				<!-- Sonar Properties -->
 				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 				<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 				<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -108,16 +112,14 @@
 	</profiles>
 	
 	<properties>
-		<!-- Dependencies -->
+		<!-- Dependencies Versions -->
 		<javaee.version>6.0</javaee.version>
 		<apache.commons-lang3.version>3.4</apache.commons-lang3.version>
 		<slf4j.version>1.7.12</slf4j.version>
 		<google.guava.version>20.0</google.guava.version> <!-- Última versão compatível com JDK 1.7 -->
-		<!-- Plugins -->
+		<!-- Plugins Versions -->
 		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
-		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-		<sonar-maven-plugin.version>3.3.0.603</sonar-maven-plugin.version>
 		<!-- Outras Configurações -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.java.version>1.7</target.java.version>
