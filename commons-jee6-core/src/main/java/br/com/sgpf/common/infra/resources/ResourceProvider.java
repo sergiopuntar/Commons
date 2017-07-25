@@ -8,7 +8,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import br.com.sgpf.common.infra.exception.SystemFatalException;
+import br.com.sgpf.common.infra.exception.InfraestructureFatalException;
 
 /**
  * Classe que provê recursos do sistema estaticamente.
@@ -30,7 +30,7 @@ public class ResourceProvider {
 			InitialContext initialContext = new InitialContext();
 			return (BeanManager) initialContext.lookup("java:comp/BeanManager");
 		} catch (NamingException e) {
-			throw new SystemFatalException(ERROR_LOOKUP_BEAN_MANAGER, e);
+			throw new InfraestructureFatalException(ERROR_LOOKUP_BEAN_MANAGER, e);
 		}
 	}
 	

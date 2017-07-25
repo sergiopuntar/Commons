@@ -3,14 +3,14 @@ package br.com.sgpf.common.domain.dataimport.exception;
 /**
  * Exceção de erro de formato de dados em DataSource de importação.
  */
-public class ImportDataSourceFormatException extends ImportDataSourceException {
+public class DataSourceFormatException extends DataImportException {
 	private static final long serialVersionUID = -8220075413533232533L;
 
-	public ImportDataSourceFormatException(String message) {
+	public DataSourceFormatException(String message) {
 		super(message);
 	}
 
-	public ImportDataSourceFormatException(String message, Throwable cause) {
+	public DataSourceFormatException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

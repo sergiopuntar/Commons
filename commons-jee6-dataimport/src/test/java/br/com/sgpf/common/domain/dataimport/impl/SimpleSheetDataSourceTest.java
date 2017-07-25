@@ -19,12 +19,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceDocumentException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFormatException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceInvalidStateException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreItensException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
+import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceFormatException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceInvalidStateException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensException;
 
 public class SimpleSheetDataSourceTest {
 	private static final File TEST_SHEET_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/SimpleSheetDataSourceTest.xls");
@@ -67,18 +67,18 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void nullFileConstructorTest() throws ImportDataSourceFileException {
+	public void nullFileConstructorTest() throws DataSourceFileException {
 		File file = null;
 		new SimpleSheetDataSourceImpl(file, SHEET_INDEX);
 	}
 	
-	@Test(expected = ImportDataSourceFileException.class)
-	public void invalidFileConstructorTest() throws ImportDataSourceFileException {
+	@Test(expected = DataSourceFileException.class)
+	public void invalidFileConstructorTest() throws DataSourceFileException {
 		new SimpleSheetDataSourceImpl(new File("invalid.xls"), SHEET_INDEX);
 	}
 	
-	@Test(expected = ImportDataSourceFileException.class)
-	public void unreadableFileConstructorTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceFileException.class)
+	public void unreadableFileConstructorTest() throws DataImportException {
 		TEST_SHEET_FILE_UNREADABLE.setReadable(false);
 		try {
 			new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNREADABLE, SHEET_INDEX);
@@ -89,34 +89,34 @@ public class SimpleSheetDataSourceTest {
 		}
 	}
 	
-	@Test(expected = ImportDataSourceDocumentException.class)
-	public void nonExistingSheetOpenTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceDocumentException.class)
+	public void nonExistingSheetOpenTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX_INVALID);
 		simpleSheetDataSource.open();
 	}
 	
-	@Test(expected = ImportDataSourceException.class)
-	public void nonExistingSheetHeaderOpenTest() throws ImportDataSourceException {
+	@Test(expected = DataImportException.class)
+	public void nonExistingSheetHeaderOpenTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX_NOHEADER);
 		simpleSheetDataSource.open();
 	}
 	
-	@Test(expected = ImportDataSourceInvalidStateException.class)
-	public void openAlreadyOpenDataSourceTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceInvalidStateException.class)
+	public void openAlreadyOpenDataSourceTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		simpleSheetDataSource.open();
 	}
 	
 	@Test
-	public void openFileDataSourceTest() throws ImportDataSourceException {
+	public void openFileDataSourceTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		simpleSheetDataSource.close();
 	}
 	
 	@Test
-	public void openInputStreamDataSourceTest() throws ImportDataSourceException, FileNotFoundException {
+	public void openInputStreamDataSourceTest() throws DataImportException, FileNotFoundException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
 		simpleSheetDataSource.open();
 		simpleSheetDataSource.close();
@@ -131,27 +131,27 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test
-	public void writeableFileIsWritableTest() throws ImportDataSourceFileException {
+	public void writeableFileIsWritableTest() throws DataSourceFileException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		
 		assertTrue(simpleSheetDataSource.isWritable());
 	}
 	
 	@Test
-	public void nonWriteableFileIsWritableTest() throws ImportDataSourceFileException {
+	public void nonWriteableFileIsWritableTest() throws DataSourceFileException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNWRITABLE, SHEET_INDEX);
 		
 		assertFalse(simpleSheetDataSource.isWritable());
 	}
 	
-	@Test(expected = ImportDataSourceInvalidStateException.class)
-	public void closedDataSourceHasNextTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceInvalidStateException.class)
+	public void closedDataSourceHasNextTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.hasNext();
 	}
 	
 	@Test
-	public void emptyDataSourceHasNextTest() throws ImportDataSourceException {
+	public void emptyDataSourceHasNextTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX_EMPTY);
 		simpleSheetDataSource.open();
 		
@@ -161,7 +161,7 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test
-	public void notEmptyDataSourceHasNextTest() throws ImportDataSourceException {
+	public void notEmptyDataSourceHasNextTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -170,21 +170,21 @@ public class SimpleSheetDataSourceTest {
 		simpleSheetDataSource.close();
 	}
 	
-	@Test(expected = ImportDataSourceInvalidStateException.class)
-	public void closedDataSourceNextTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceInvalidStateException.class)
+	public void closedDataSourceNextTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.next();
 	}
 	
-	@Test(expected = ImportDataSourceNoMoreItensException.class)
-	public void emptyDataSourceNextTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceNoMoreItensException.class)
+	public void emptyDataSourceNextTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX_EMPTY);
 		simpleSheetDataSource.open();
 		simpleSheetDataSource.next();
 	}
 	
 	@Test
-	public void notEmptyDataSourceNextTest() throws ImportDataSourceException {
+	public void notEmptyDataSourceNextTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		DataImportItem<Integer, DataElement> item = simpleSheetDataSource.next();
@@ -202,15 +202,15 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void readInvalidColumnTest() throws ImportDataSourceException {
+	public void readInvalidColumnTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
 		simpleSheetDataSource.readCharCell(TestColumns.INVALID.name());
 	}
 	
-	@Test(expected = ImportDataSourceFormatException.class)
-	public void readInvalidCharFormatTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceFormatException.class)
+	public void readInvalidCharFormatTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -222,8 +222,8 @@ public class SimpleSheetDataSourceTest {
 		simpleSheetDataSource.readCharCell(TestColumns.CHAR.name());
 	}
 	
-	@Test(expected = ImportDataSourceFormatException.class)
-	public void readInvalidYesNoFormatTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceFormatException.class)
+	public void readInvalidYesNoFormatTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -236,7 +236,7 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test
-	public void readValuesTest() throws ImportDataSourceException {
+	public void readValuesTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -278,7 +278,7 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void writeInvalidColumnTest() throws ImportDataSourceException {
+	public void writeInvalidColumnTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -286,7 +286,7 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void writeInvalidRowTest() throws ImportDataSourceException {
+	public void writeInvalidRowTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -294,7 +294,7 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test
-	public void writeValuesTest() throws ImportDataSourceException {
+	public void writeValuesTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
@@ -375,15 +375,15 @@ public class SimpleSheetDataSourceTest {
 		simpleSheetDataSource.close();
 	}
 	
-	@Test(expected = ImportDataSourceInvalidStateException.class)
-	public void closedDataSourceSyncTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceInvalidStateException.class)
+	public void closedDataSourceSyncTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		DataImportItem<Integer, DataElement> item = new DataImportItem<Integer, SimpleSheetDataSourceTest.DataElement>(1, new DataElement(1L), false, false, true, false, false, true);
 		simpleSheetDataSource.sync(item);
 	}
 	
-	@Test(expected = ImportDataSourceInvalidStateException.class)
-	public void closeAlreadyClosedDataSourceTest() throws ImportDataSourceException {
+	@Test(expected = DataSourceInvalidStateException.class)
+	public void closeAlreadyClosedDataSourceTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, 0);
 		simpleSheetDataSource.open();
 		simpleSheetDataSource.close();
@@ -391,7 +391,7 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test
-	public void closedChangedDataSourceTest() throws ImportDataSourceException {
+	public void closedChangedDataSourceTest() throws DataImportException {
 		long before = TEST_SHEET_FILE.lastModified();
 		
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
@@ -414,7 +414,7 @@ public class SimpleSheetDataSourceTest {
 		
 		private boolean changedRow = false;
 
-		public SimpleSheetDataSourceImpl(File file, int sheetId) throws ImportDataSourceFileException {
+		public SimpleSheetDataSourceImpl(File file, int sheetId) throws DataSourceFileException {
 			super(file, sheetId);
 		}
 

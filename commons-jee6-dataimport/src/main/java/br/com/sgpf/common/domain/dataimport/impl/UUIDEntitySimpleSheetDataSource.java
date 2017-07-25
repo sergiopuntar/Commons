@@ -3,7 +3,7 @@ package br.com.sgpf.common.domain.dataimport.impl;
 import java.io.File;
 import java.io.InputStream;
 
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
 import br.com.sgpf.common.domain.entity.AbstractUUIDEntity;
 
 /**
@@ -17,7 +17,7 @@ public abstract class UUIDEntitySimpleSheetDataSource<E extends AbstractUUIDEnti
 	/**
 	 * {@inheritDoc}
 	 */
-	public UUIDEntitySimpleSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public UUIDEntitySimpleSheetDataSource(File file, int sheetId) throws DataSourceFileException {
 		super(file, sheetId);
 	}
 

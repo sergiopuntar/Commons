@@ -26,13 +26,13 @@ import org.slf4j.LoggerFactory;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceDocumentException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFormatException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceIOException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceInvalidStateException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceNoMoreItensException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
+import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceFormatException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceIOException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceInvalidStateException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensException;
 
 /**
  * Implementação fonte de dados em planilha Excel simples.
@@ -97,17 +97,17 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * 
 	 * @param file Arquivo da planilha
 	 * @param sheetId Índice da planilha
-	 * @throws ImportDataSourceFileException Se o arquivo não for encontrado
+	 * @throws DataSourceFileException Se o arquivo não for encontrado
 	 */
-	public SimpleSheetDataSource(File file, int sheetId) throws ImportDataSourceFileException {
+	public SimpleSheetDataSource(File file, int sheetId) throws DataSourceFileException {
 		this(Type.FILE, sheetId);
 		
 		if (file == null) {
 			throw new IllegalArgumentException(ERROR_NULL_FILE);
 		} else if (!file.exists()) {
-			throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
+			throw new DataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
 		} else if (!file.canRead()) {
-			throw new ImportDataSourceFileException(String.format(ERROR_NON_READABLE_FILE, file.getAbsolutePath()));
+			throw new DataSourceFileException(String.format(ERROR_NON_READABLE_FILE, file.getAbsolutePath()));
 		}
 		
 		this.file = file;
@@ -130,31 +130,31 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 
 	@Override
-	public void open() throws ImportDataSourceException {
+	public void open() throws DataImportException {
 		validadeIsClosed();
 		
 		if (type.equals(Type.FILE)) {
 			try {
 				is = new FileInputStream(file);
 			} catch (FileNotFoundException e) {
-				throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
+				throw new DataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
 			}
 		}
 		
 		try {
 			workbook = WorkbookFactory.create(is);
 		} catch (EncryptedDocumentException e) {
-			throw new ImportDataSourceDocumentException(ERROR_ENCRYPTED_DOCUMENT, e);
+			throw new DataSourceDocumentException(ERROR_ENCRYPTED_DOCUMENT, e);
 		} catch (InvalidFormatException e) {
-			throw new ImportDataSourceDocumentException(ERROR_INVALID_DOCUMENT_FORMAT, e);
+			throw new DataSourceDocumentException(ERROR_INVALID_DOCUMENT_FORMAT, e);
 		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_READING_DOCUMENT, e);
+			throw new DataSourceIOException(ERROR_READING_DOCUMENT, e);
 		}
 		
 		try {
 			sheet = workbook.getSheetAt(sheetId);
 		} catch (IllegalArgumentException e) {
-			throw new ImportDataSourceDocumentException(String.format(ERROR_NON_EXISTING_SHEET, sheetId), e);
+			throw new DataSourceDocumentException(String.format(ERROR_NON_EXISTING_SHEET, sheetId), e);
 		}
 		
 		reset();
@@ -164,13 +164,13 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	/**
 	 * Mapeia as colunas da planilha a partir do seu cabeçalho.
 	 * 
-	 * @throws ImportDataSourceException Se a planilha não possui um cabeçalho 
+	 * @throws DataImportException Se a planilha não possui um cabeçalho 
 	 */
-	private void mapColumns() throws ImportDataSourceException {
+	private void mapColumns() throws DataImportException {
 		Row row = sheet.getRow(++currRow);
 		
 		if (row == null) {
-			throw new ImportDataSourceException(ERROR_NO_HEADER);
+			throw new DataImportException(ERROR_NO_HEADER);
 		}
 		
 		Iterator<Cell> it = row.iterator();
@@ -193,17 +193,17 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 
 	@Override
-	public boolean hasNext() throws ImportDataSourceException {
+	public boolean hasNext() throws DataImportException {
 		validadeIsOpen();
 		return sheet.getRow(currRow + 1) != null;
 	}
 
 	@Override
-	public DataImportItem<Integer, T> next() throws ImportDataSourceException {
+	public DataImportItem<Integer, T> next() throws DataImportException {
 		validadeIsOpen();
 		
 		if (!hasNext()) {
-			throw new ImportDataSourceNoMoreItensException(ERROR_NO_MORE_ITENS);
+			throw new DataSourceNoMoreItensException(ERROR_NO_MORE_ITENS);
 		}
 		
 		currRow++;
@@ -261,15 +261,15 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * 
 	 * @param columnName Nome da coluna
 	 * @return Conteúdo da célula, null se a célula estiver vazia
-	 * @throws ImportDataSourceFormatException Se a célula não possui conteúdo no formado Character
+	 * @throws DataSourceFormatException Se a célula não possui conteúdo no formado Character
 	 */
-	protected Character readCharCell(String columnName) throws ImportDataSourceFormatException {
+	protected Character readCharCell(String columnName) throws DataSourceFormatException {
 		String stringValue = readStringCell(columnName);
 		
 		if (stringValue == null || stringValue.isEmpty()) {
 			return null;
 		} else if (stringValue.length() > 1) {
-			throw new ImportDataSourceFormatException(String.format(ERROR_CHAR_FORMART, columnName));
+			throw new DataSourceFormatException(String.format(ERROR_CHAR_FORMART, columnName));
 		}
 		
 		return stringValue.charAt(0);
@@ -528,9 +528,9 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * 
 	 * @param columnName Nome da coluna
 	 * @return True se o conteúdo for 'Y', False se o conteúdo for 'N' e null se for indefinido
-	 * @throws ImportDataSourceFormatException Se a célula não possui conteúdo no formato Y/N
+	 * @throws DataSourceFormatException Se a célula não possui conteúdo no formato Y/N
 	 */
-	protected Boolean readYesNoCell(String columnName) throws ImportDataSourceFormatException {
+	protected Boolean readYesNoCell(String columnName) throws DataSourceFormatException {
 		String value = getCurrentRowCell(columnName).getStringCellValue();
 		
 		if (VALUE_STRING_Y.equalsIgnoreCase(value)) {
@@ -538,7 +538,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 		} else if (VALUE_STRING_N.equalsIgnoreCase(value)) {
 			return false;
 		} else if (value != null && !value.isEmpty()) {
-			throw new ImportDataSourceFormatException(String.format(ERROR_YES_NO_FORMAT, columnName));
+			throw new DataSourceFormatException(String.format(ERROR_YES_NO_FORMAT, columnName));
 		}
 		
 		return null;
@@ -610,7 +610,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 	
 	@Override
-	public void sync(DataImportItem<Integer, T> item) throws ImportDataSourceException {
+	public void sync(DataImportItem<Integer, T> item) throws DataImportException {
 		validadeIsOpen();
 		changed = changed || syncRow(item.getId(), item.getData());
 	}
@@ -625,13 +625,13 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	protected abstract boolean syncRow(Integer rowIndex, T data);
 
 	@Override
-	public void close() throws ImportDataSourceException {
+	public void close() throws DataImportException {
 		validadeIsOpen();
 		
 		try {
 			is.close();
 		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_RELEASING_INPUT_STREAM, e);
+			throw new DataSourceIOException(ERROR_RELEASING_INPUT_STREAM, e);
 		} finally {
 			is = null;
 		}
@@ -643,7 +643,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 		try {
 			workbook.close();
 		} catch (IOException e) {
-			throw new ImportDataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
+			throw new DataSourceIOException(ERROR_CLOSING_DOCUMENT, e);
 		} finally {
 			workbook = null;
 			sheet = null;
@@ -654,17 +654,17 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	/**
 	 * Salva o workbook no arquivo de onde foi lido.
 	 * 
-	 * @throws ImportDataSourceFileException Se o arquivo não for encontrado
-	 * @throws ImportDataSourceIOException Se ocorrer um erro na escrita do arquivo
+	 * @throws DataSourceFileException Se o arquivo não for encontrado
+	 * @throws DataSourceIOException Se ocorrer um erro na escrita do arquivo
 	 */
-	private void flush() throws ImportDataSourceFileException, ImportDataSourceIOException {
+	private void flush() throws DataSourceFileException, DataSourceIOException {
 		if (type.equals(Type.FILE) && file != null && file.canWrite()) {
 			try {
 				workbook.write(new FileOutputStream(file));
 			} catch (FileNotFoundException e) {
-				throw new ImportDataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
+				throw new DataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()), e);
 			} catch (IOException e) {
-				throw new ImportDataSourceIOException(ERROR_WRITING_CHANGES, e);
+				throw new DataSourceIOException(ERROR_WRITING_CHANGES, e);
 			}
 		}
 	}
@@ -681,22 +681,22 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	/**
 	 * Valida que o documento está aberto.
 	 * 
-	 * @throws ImportDataSourceInvalidStateException Se o documento estiver fechado
+	 * @throws DataSourceInvalidStateException Se o documento estiver fechado
 	 */
-	private void validadeIsOpen() throws ImportDataSourceInvalidStateException {
+	private void validadeIsOpen() throws DataSourceInvalidStateException {
 		if (workbook == null) {
-			throw new ImportDataSourceInvalidStateException(ERROR_DOCUMENT_CLOSED);
+			throw new DataSourceInvalidStateException(ERROR_DOCUMENT_CLOSED);
 		}
 	}
 	
 	/**
 	 * Valida que o documento está fechado.
 	 * 
-	 * @throws ImportDataSourceInvalidStateException Se o documento estiver aberto
+	 * @throws DataSourceInvalidStateException Se o documento estiver aberto
 	 */
-	private void validadeIsClosed() throws ImportDataSourceInvalidStateException {
+	private void validadeIsClosed() throws DataSourceInvalidStateException {
 		if (workbook != null) {
-			throw new ImportDataSourceInvalidStateException(ERROR_DOCUMENT_OPEN);
+			throw new DataSourceInvalidStateException(ERROR_DOCUMENT_OPEN);
 		}
 	}
 }

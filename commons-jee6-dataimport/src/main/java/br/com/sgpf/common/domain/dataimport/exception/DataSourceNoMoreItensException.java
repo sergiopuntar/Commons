@@ -3,14 +3,14 @@ package br.com.sgpf.common.domain.dataimport.exception;
 /**
  * Exceção de erro de DataSource de importação sem mais itens.
  */
-public class ImportDataSourceNoMoreItensException extends ImportDataSourceException {
+public class DataSourceNoMoreItensException extends DataImportException {
 	private static final long serialVersionUID = 8839531543825966534L;
 
-	public ImportDataSourceNoMoreItensException(String message) {
+	public DataSourceNoMoreItensException(String message) {
 		super(message);
 	}
 
-	public ImportDataSourceNoMoreItensException(String message, Throwable cause) {
+	public DataSourceNoMoreItensException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

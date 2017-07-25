@@ -15,8 +15,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceException;
-import br.com.sgpf.common.domain.dataimport.exception.ImportDataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
 import br.com.sgpf.common.domain.entity.AbstractEntity;
 
 public class EntitySimpleSheetDataSourceTest {
@@ -29,21 +29,21 @@ public class EntitySimpleSheetDataSourceTest {
 	private static enum TestColumns {ID, CREATION_DATE, UPDATE_DATE, VERSION };
 	
 	@Test
-	public void fileConstructorTest() throws ImportDataSourceException {
+	public void fileConstructorTest() throws DataImportException {
 		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		entitySimpleSheetDataSource.open();
 		entitySimpleSheetDataSource.close();
 	}
 	
 	@Test
-	public void inputStreamConstructorTest() throws ImportDataSourceException, FileNotFoundException {
+	public void inputStreamConstructorTest() throws DataImportException, FileNotFoundException {
 		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = new EntitySimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
 		entitySimpleSheetDataSource.open();
 		entitySimpleSheetDataSource.close();
 	}
 	
 	@Test
-	public void readCurrentItemDataTest() throws ImportDataSourceException, ParseException {
+	public void readCurrentItemDataTest() throws DataImportException, ParseException {
 		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = Mockito.spy(new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX));
 		entitySimpleSheetDataSource.open();
 		
@@ -59,7 +59,7 @@ public class EntitySimpleSheetDataSourceTest {
 	}
 	
 	//@Test
-	public void syncRowTest() throws ImportDataSourceException, ParseException {
+	public void syncRowTest() throws DataImportException, ParseException {
 		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		entitySimpleSheetDataSource.open();
 		
@@ -89,7 +89,7 @@ public class EntitySimpleSheetDataSourceTest {
 	class EntitySimpleSheetDataSourceImpl extends EntitySimpleSheetDataSource<Long, DataElement> {
 		private static final long serialVersionUID = 1L;
 
-		public EntitySimpleSheetDataSourceImpl(File file, int sheetId) throws ImportDataSourceFileException {
+		public EntitySimpleSheetDataSourceImpl(File file, int sheetId) throws DataSourceFileException {
 			super(file, sheetId);
 		}
 

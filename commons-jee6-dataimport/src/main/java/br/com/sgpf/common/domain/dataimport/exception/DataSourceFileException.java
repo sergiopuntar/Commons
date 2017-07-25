@@ -3,14 +3,14 @@ package br.com.sgpf.common.domain.dataimport.exception;
 /**
  * Exceção de erro no arquivo do DataSource de importação.
  */
-public class ImportDataSourceFileException extends ImportDataSourceException {
+public class DataSourceFileException extends DataImportException {
 	private static final long serialVersionUID = -8969153256862227009L;
 
-	public ImportDataSourceFileException(String message) {
+	public DataSourceFileException(String message) {
 		super(message);
 	}
 
-	public ImportDataSourceFileException(String message, Throwable cause) {
+	public DataSourceFileException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }
