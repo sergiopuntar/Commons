@@ -1,13 +1,18 @@
 language: java
-install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-script: mvn install
-after_success: mvn sonar:sonar -P sonar
+
 dist: trusty
+
 jdk:
-  - oraclejdk8
   - openjdk7
+  - oraclejdk8
+
+addons:
+  sonarcloud:
+    organization: "sergiopuntar-github"
+
+install: mvn install -DskipTests=true -B -V
+script: mvn test
+after_success: ./.travis_after_success.sh
+
 branches:
   only: master
-addons:
-sonarcloud:
-  organization: sergiopuntar-github
