@@ -8,8 +8,6 @@ install: mvn install -DskipTests=true -B -V
 script: mvn test
 after_success:
  - chmod 755 .travis_after_success.sh
- - ls -lrt
- - echo $TRAVIS_JDK_VERSION
  - ./.travis_after_success.sh
 
 branches:
