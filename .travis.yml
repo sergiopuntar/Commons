@@ -1,14 +1,8 @@
 language: java
-
 dist: trusty
-
 jdk:
   - openjdk7
   - oraclejdk8
-
-addons:
-  sonarcloud:
-    organization: "sergiopuntar-github"
 
 install: mvn install -DskipTests=true -B -V
 script: mvn test
