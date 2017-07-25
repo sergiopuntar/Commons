@@ -7,7 +7,7 @@ jdk:
 install: mvn install -DskipTests=true -B -V
 script: mvn test
 after_success:
- - chmod +x .travis_after_success.sh
+ - chmod 755 .travis_after_success.sh
  - ./.travis_after_success.sh
 
 branches:
