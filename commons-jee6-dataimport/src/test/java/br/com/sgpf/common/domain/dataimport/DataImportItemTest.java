@@ -16,28 +16,22 @@ import java.io.Serializable;
 import org.junit.Test;
 
 import br.com.sgpf.common.test.EqualsTester;
-import br.com.sgpf.common.test.PojoTester;
 
 public class DataImportItemTest {
 
 	@Test
 	public void constructorTest() {
-		DataImportItem<Integer, Integer> dataImportItem = new DataImportItem<>(1, 1, true, true, true, true, true, true);
+		DataImportInstructions dataImportInstructions = new DataImportInstructions(true, true, true, true, true, true);
+		DataImportItem<Integer, Integer> dataImportItem = new DataImportItem<>(1, 1, dataImportInstructions);
 		
 		assertEquals(Integer.valueOf(1), dataImportItem.getId());
 		assertEquals(Integer.valueOf(1), dataImportItem.getData());
-		assertTrue(dataImportItem.isInsert());
-		assertTrue(dataImportItem.isUpdate());
-		assertTrue(dataImportItem.isMerge());
-		assertTrue(dataImportItem.isRemove());
-		assertTrue(dataImportItem.isForce());
-		assertTrue(dataImportItem.isSync());
-	}
-	
-	@Test
-	public void pojoTest() {
-		PojoTester pojoTester =  new PojoTester(DataImportItem.class);
-		pojoTester.validatePojo(PojoTester.getUnmutableRules(), PojoTester.getUnmutableTesters());	
+		assertEquals(dataImportInstructions.isInsert(), dataImportItem.isInsert());
+		assertEquals(dataImportInstructions.isUpdate(), dataImportItem.isUpdate());
+		assertEquals(dataImportInstructions.isMerge(), dataImportItem.isMerge());
+		assertEquals(dataImportInstructions.isRemove(), dataImportItem.isRemove());
+		assertEquals(dataImportInstructions.isForce(), dataImportItem.isForce());
+		assertEquals(dataImportInstructions.isSync(), dataImportItem.isSync());
 	}
 	
 	@Test
@@ -45,8 +39,8 @@ public class DataImportItemTest {
 		class DataImportItemSub<ID extends Serializable, T extends Serializable> extends DataImportItem<ID, T> {
 			private static final long serialVersionUID = 1L;
 
-			public DataImportItemSub(ID id, T data, Boolean insert, Boolean update, Boolean merge, Boolean remove, Boolean force, Boolean sync) {
-				super(id, data, insert, update, merge, remove, force, sync);
+			public DataImportItemSub(ID id, T data, DataImportInstructions dataImportInstructions) {
+				super(id, data, dataImportInstructions);
 			}
 
 			@Override
@@ -61,7 +55,8 @@ public class DataImportItemTest {
 	
 	@Test
 	public void dataChangedTest() {
-		DataImportItem<?, ?> dataImportItem = new DataImportItem<>(null, null, false, false, false, false, false, false);
+		DataImportInstructions dataImportInstructions = new DataImportInstructions(false, false, false, false, false, false);
+		DataImportItem<?, ?> dataImportItem = new DataImportItem<>(null, null, dataImportInstructions);
 		
 		assertFalse(dataImportItem.dataChanged());
 		

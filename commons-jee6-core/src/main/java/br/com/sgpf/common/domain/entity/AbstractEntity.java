@@ -3,6 +3,7 @@ package br.com.sgpf.common.domain.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -24,6 +25,9 @@ import br.com.sgpf.common.util.CanEqual;
 public abstract class AbstractEntity<I extends Serializable> implements Entity<I>, CanEqual {
 	private static final long serialVersionUID = 7899846729108918584L;
 	
+	@Id
+	private I id;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
 	
@@ -41,6 +45,16 @@ public abstract class AbstractEntity<I extends Serializable> implements Entity<I
 	@PreUpdate
 	public void preUpdate() {
 		setUpdateDate(new Date());
+	}
+
+	@Override
+	public I getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(I id) {
+		this.id = id;
 	}
 	
 	@Override

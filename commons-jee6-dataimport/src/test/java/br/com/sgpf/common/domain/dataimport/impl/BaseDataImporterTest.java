@@ -21,6 +21,7 @@ import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
 
+import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.DataImportResult;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
@@ -51,9 +52,9 @@ public class BaseDataImporterTest {
 	@Before
 	public void before() throws Throwable {
 		itemList = Lists.newArrayList(
-				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(0, new DataElement(1L), false, false, true, false, false, true),
-				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(1, new DataElement(2L), false, false, true, false, false, false),
-				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(2, new DataElement(3L), false, false, true, false, false, true));
+				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(0, new DataElement(1L), new DataImportInstructions(false, false, true, false, false, true)),
+				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(1, new DataElement(2L), new DataImportInstructions(false, false, true, false, false, false)),
+				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(2, new DataElement(3L), new DataImportInstructions(false, false, true, false, false, true)));
 		
 		itemList.get(0).getResult().setStatus(DataImportResult.Status.INSERTED);
 		itemList.get(1).getResult().setStatus(DataImportResult.Status.INSERTED);

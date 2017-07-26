@@ -29,7 +29,7 @@ public class EntityUtil {
 	 * @param id Identificador da entidade
 	 * @return Entidade recuperada, null se ela não estiver presente na lista
 	 */
-	public static <T extends Entity<ID>, ID extends Serializable> T recoverEntity(Collection<T> entities, ID id) {
+	public static <T extends Entity<I>, I extends Serializable> T recoverEntity(Collection<T> entities, I id) {
 		for (T entity : entities) {
 			if(entity.getId() != null && entity.getId().equals(id)) {
 				return entity;

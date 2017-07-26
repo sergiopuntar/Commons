@@ -16,9 +16,9 @@ import br.com.sgpf.common.infra.exception.DAOException;
  * Classe abstrata para acesso a dados de entidades.
  *
  * @param <E> Tipo da entidade
- * @param <ID> Tipo do identificador da entidade
+ * @param <I> Tipo do identificador da entidade
  */
-public abstract class AbstractDAO<E extends Entity<ID>, ID extends Serializable> implements Repository<E, ID> {
+public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> implements Repository<E, I> {
 	private static final long serialVersionUID = -6837735901842866300L;
 	
 	private static final String ERROR_RESULT_TYPE = "O objeto [%s] não é do tipo esperado [%s].";
@@ -35,7 +35,7 @@ public abstract class AbstractDAO<E extends Entity<ID>, ID extends Serializable>
 	}
 
 	@Override
-	public E find(ID id) {
+	public E find(I id) {
 		return em.find(clazz, id);
 	}
 

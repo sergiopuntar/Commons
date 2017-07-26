@@ -3,7 +3,7 @@ package br.com.sgpf.common.infra.resources;
 /**
  * Classe de constantes do sistema.
  */
-public interface Constants {
+public final class Constants {
 
 	/**
 	 * String vazia "".

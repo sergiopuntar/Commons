@@ -18,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
@@ -378,7 +379,8 @@ public class SimpleSheetDataSourceTest {
 	@Test(expected = DataSourceInvalidStateException.class)
 	public void closedDataSourceSyncTest() throws DataImportException {
 		SimpleSheetDataSource<DataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
-		DataImportItem<Integer, DataElement> item = new DataImportItem<Integer, SimpleSheetDataSourceTest.DataElement>(1, new DataElement(1L), false, false, true, false, false, true);
+		DataImportInstructions instructions = new DataImportInstructions(false, false, true, false, false, true);
+		DataImportItem<Integer, DataElement> item = new DataImportItem<Integer, SimpleSheetDataSourceTest.DataElement>(1, new DataElement(1L), instructions);
 		simpleSheetDataSource.sync(item);
 	}
 	
@@ -399,7 +401,8 @@ public class SimpleSheetDataSourceTest {
 		
 		// Simulo uma mudança no conteúdo do arquivo
 		((SimpleSheetDataSourceImpl)simpleSheetDataSource).setChangedRow(true);
-		DataImportItem<Integer, DataElement> item = new DataImportItem<Integer, SimpleSheetDataSourceTest.DataElement>(1, new DataElement(1L), false, false, true, false, false, true);
+		DataImportInstructions instructions = new DataImportInstructions(false, false, true, false, false, true);
+		DataImportItem<Integer, DataElement> item = new DataImportItem<Integer, SimpleSheetDataSourceTest.DataElement>(1, new DataElement(1L), instructions);
 		simpleSheetDataSource.sync(item);
 		
 		simpleSheetDataSource.close();

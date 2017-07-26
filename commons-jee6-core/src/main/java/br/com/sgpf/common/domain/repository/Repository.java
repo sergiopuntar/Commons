@@ -9,9 +9,9 @@ import br.com.sgpf.common.domain.entity.Entity;
  * Interface genérica de repositórios de entidades.
  *
  * @param <E> Tipo da entidade
- * @param <ID> Tipo do identificador da entidade
+ * @param <I> Tipo do identificador da entidade
  */
-public interface Repository<E extends Entity<ID>, ID extends Serializable> extends Serializable {
+public interface Repository<E extends Entity<I>, I extends Serializable> extends Serializable {
 
 	/**
 	 * Recupera uma entidade a partir do seu identificador.
@@ -19,7 +19,7 @@ public interface Repository<E extends Entity<ID>, ID extends Serializable> exten
 	 * @param id Identificador da entidade
 	 * @return Entidade recuperada
 	 */
-	E find(ID id);
+	E find(I id);
 
 	/**
 	 * Recupera todas as entidades.

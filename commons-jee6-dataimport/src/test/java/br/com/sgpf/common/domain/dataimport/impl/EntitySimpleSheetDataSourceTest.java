@@ -1,7 +1,6 @@
 package br.com.sgpf.common.domain.dataimport.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +13,7 @@ import java.util.Date;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
@@ -50,7 +50,8 @@ public class EntitySimpleSheetDataSourceTest {
 		DataElement expectedEntity = new DataElement(0L, 0L);
 		expectedEntity.setCreationDate(DATE_FORMAT.parse("01/01/2017"));
 		expectedEntity.setUpdateDate(DATE_FORMAT.parse("01/01/2017"));
-		DataImportItem<Integer, DataElement> expectedImportItem = new DataImportItem<Integer, EntitySimpleSheetDataSourceTest.DataElement>(1, expectedEntity, false, false, true, false, false, true);
+		DataImportInstructions instructions = new DataImportInstructions(false, false, true, false, false, true);
+		DataImportItem<Integer, DataElement> expectedImportItem = new DataImportItem<Integer, EntitySimpleSheetDataSourceTest.DataElement>(1, expectedEntity, instructions);
 		
 		assertEquals(expectedImportItem, entitySimpleSheetDataSource.next());
 		Mockito.verify(entitySimpleSheetDataSource).readCurrentItemData();
@@ -66,7 +67,8 @@ public class EntitySimpleSheetDataSourceTest {
 		DataElement expectedEntity = new DataElement(1L, 1L);
 		expectedEntity.setCreationDate(DATE_FORMAT.parse("10/01/2017"));
 		expectedEntity.setUpdateDate(DATE_FORMAT.parse("10/01/2017"));
-		DataImportItem<Integer, DataElement> expectedImportItem = new DataImportItem<Integer, EntitySimpleSheetDataSourceTest.DataElement>(1, expectedEntity, false, false, true, false, false, true);
+		DataImportInstructions instructions = new DataImportInstructions(false, false, true, false, false, true);
+		DataImportItem<Integer, DataElement> expectedImportItem = new DataImportItem<Integer, EntitySimpleSheetDataSourceTest.DataElement>(1, expectedEntity, instructions);
 		
 		DataImportItem<Integer, DataElement> importItem = entitySimpleSheetDataSource.next();
 		assertEquals(Long.valueOf(1L), importItem.getData().getId());

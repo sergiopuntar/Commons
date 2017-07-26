@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
@@ -214,8 +215,9 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 		Boolean remove = readYesNoCell(ImportActionHeader.REMOVE.name());
 		Boolean force = readYesNoCell(ImportActionHeader.FORCE.name());
 		Boolean sync = readYesNoCell(ImportActionHeader.SYNC.name());
+		DataImportInstructions instructions = new DataImportInstructions(insert, update, merge, remove, force, sync);
 		
-		return new DataImportItem<>(currRow, readCurrentItemData(), insert, update, merge, remove, force, sync);
+		return new DataImportItem<>(currRow, readCurrentItemData(), instructions);
 	}
 
 	/**

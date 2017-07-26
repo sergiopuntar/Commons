@@ -29,24 +29,14 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	
 	private I id;
 	private T data;
-	private Boolean insert;
-	private Boolean update;
-	private Boolean merge;
-	private Boolean remove;
-	private Boolean force;
-	private Boolean sync;
+	private DataImportInstructions instructions;
 	private DataImportResult result;
 	
-	public DataImportItem(I id, T data, Boolean insert, Boolean update, Boolean merge, Boolean remove, Boolean force, Boolean sync) {
+	public DataImportItem(I id, T data, DataImportInstructions instructions) {
 		super();
 		this.id = id;
 		this.data = data;
-		this.insert = insert;
-		this.update = update;
-		this.merge = merge;
-		this.remove = remove;
-		this.force = force;
-		this.sync = sync;
+		this.instructions = instructions;
 		this.result = new DataImportResult();
 	}
 
@@ -59,27 +49,27 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	}
 
 	public Boolean isInsert() {
-		return insert;
+		return instructions.isInsert();
 	}
 
 	public Boolean isUpdate() {
-		return update;
+		return instructions.isUpdate();
 	}
 
 	public Boolean isMerge() {
-		return merge;
+		return instructions.isMerge();
 	}
 
 	public Boolean isRemove() {
-		return remove;
+		return instructions.isRemove();
 	}
 
 	public Boolean isForce() {
-		return force;
+		return instructions.isForce();
 	}
 
 	public Boolean isSync() {
-		return sync;
+		return instructions.isSync();
 	}
 
 	public DataImportResult getResult() {

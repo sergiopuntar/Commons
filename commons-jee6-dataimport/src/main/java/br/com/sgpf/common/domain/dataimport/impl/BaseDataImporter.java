@@ -33,7 +33,7 @@ public abstract class BaseDataImporter<I extends Serializable, T extends Seriali
 		}
 		
 		LOGGER.info("Iniciando importação a partir da fonte de dados [{0}].", dataSource);
-		List<DataImportItem<I, T>> itens = new ArrayList<DataImportItem<I, T>>();
+		List<DataImportItem<I, T>> itens = new ArrayList<>();
 		
 		dataSource.open();
 		

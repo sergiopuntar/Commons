@@ -1,6 +1,5 @@
 package br.com.sgpf.common.domain.entity;
 
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -11,23 +10,10 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractIdentityEntity extends AbstractEntity<Long> {
 	private static final long serialVersionUID = -1470236638046051374L;
 	
-	@Id
-	private Long id;
-	
 	/**
 	 * Construtor padrão.
 	 */
 	public AbstractIdentityEntity() {
 		super();
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 }
