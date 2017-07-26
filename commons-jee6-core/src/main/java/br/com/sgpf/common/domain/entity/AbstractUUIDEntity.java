@@ -22,4 +22,9 @@ public abstract class AbstractUUIDEntity extends AbstractEntity<String> {
 		super();
 		setId(EntityUtil.generateUUID());
 	}
+
+	@Override
+	public boolean canEqual(Object obj) {
+		return obj instanceof AbstractUUIDEntity;
+	}
 }

@@ -34,7 +34,7 @@ public abstract class IdentityEntitySimpleSheetDataSource<E extends AbstractIden
 	}
 
 	@Override
-	protected void writeEntityId(Integer rowIndex, String columnName, Long id) {
-		writeLongCell(rowIndex, columnName, id);
+	protected boolean writeEntityId(Integer rowIndex, String columnName, Long id) {
+		return writeLongCell(rowIndex, columnName, id);
 	}
 }

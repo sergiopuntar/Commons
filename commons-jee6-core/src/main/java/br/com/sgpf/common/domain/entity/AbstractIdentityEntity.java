@@ -3,8 +3,8 @@ package br.com.sgpf.common.domain.entity;
 import javax.persistence.MappedSuperclass;
 
 /**
- * Super classe abstrata para todas as entidades do sistema com identificador
- * baseado em uma coluna de identidade auto incrementada na base de dados.
+ * Super classe abstrata para todas as entidades do sistema com identificador baseado em uma coluna
+ * de identidade auto incrementada na base de dados.
  */
 @MappedSuperclass
 public abstract class AbstractIdentityEntity extends AbstractEntity<Long> {
@@ -15,5 +15,10 @@ public abstract class AbstractIdentityEntity extends AbstractEntity<Long> {
 	 */
 	public AbstractIdentityEntity() {
 		super();
+	}
+
+	@Override
+	public boolean canEqual(Object obj) {
+		return obj instanceof AbstractIdentityEntity;
 	}
 }

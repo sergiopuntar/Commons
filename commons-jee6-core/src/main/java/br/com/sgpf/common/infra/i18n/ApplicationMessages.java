@@ -16,8 +16,7 @@ public class ApplicationMessages {
 	}
 
 	/**
-	 * Recupera uma mensagem a partir da uma chave pré-definida, aplicando os
-	 * parâmetros definidos.
+	 * Recupera uma mensagem a partir da uma chave pré-definida, aplicando os parâmetros definidos.
 	 * 
 	 * @param key Chave pré-definida da mensagem.
 	 * @param params Parâmetros da mensagem
@@ -28,8 +27,7 @@ public class ApplicationMessages {
 	}
 	
 	/**
-	 * Recupera uma mensagem a partir da sua chave, aplicando os parâmetros
-	 * definidos.
+	 * Recupera uma mensagem a partir da sua chave, aplicando os parâmetros definidos.
 	 * 
 	 * @param key Chave da mensagem.
 	 * @param params Parâmetros da mensagem
@@ -40,8 +38,8 @@ public class ApplicationMessages {
 	}
 
 	/**
-	 * Recupera a mensagem plana, na forma que foi definida no arquivo de
-	 * propriedades, sem definição de nenhum parâmetro.
+	 * Recupera a mensagem plana, na forma que foi definida no arquivo de propriedades, sem
+	 * definição de nenhum parâmetro.
 	 * 
 	 * @param key Chave da mensagem.
 	 * @return Mensagem recuperada

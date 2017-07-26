@@ -3,7 +3,6 @@ package br.com.sgpf.common.domain.dataimport.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Date;
 
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
 import br.com.sgpf.common.domain.entity.Entity;
@@ -34,13 +33,19 @@ public abstract class EntitySimpleSheetDataSource<I extends Serializable, E exte
 
 	@Override
 	protected E readCurrentItemData() {
-		I id = readEntityId(EntityMetadataHeader.ID.name());
-		Date creationDate = readDateCell(EntityMetadataHeader.CREATION_DATE.name());
-		Date updateDate = readDateCell(EntityMetadataHeader.UPDATE_DATE.name());
-		Long version = readLongCell(EntityMetadataHeader.VERSION.name());
+		E entity = createEntityInstance();
+		entity.setId(readEntityId(EntityMetadataHeader.ID.name()));
+		entity.setCreationDate(readDateCell(EntityMetadataHeader.CREATION_DATE.name()));
+		entity.setUpdateDate(readDateCell(EntityMetadataHeader.UPDATE_DATE.name()));
+		entity.setVersion(readLongCell(EntityMetadataHeader.VERSION.name()));
 		
-		return readCurrentItemData(id, creationDate, updateDate, version);
+		return entity;
 	}
+	
+	/**
+	 * Cria uma nova instância vazia da entidade. 
+	 */
+	protected abstract E createEntityInstance();
 	
 	/**
 	 * Lê o identificador da entidade na planilha.
@@ -49,29 +54,16 @@ public abstract class EntitySimpleSheetDataSource<I extends Serializable, E exte
 	 * @return Identificador da entidade
 	 */
 	protected abstract I readEntityId(String columnName);
-	
-	/**
-	 * Lê os dados restantes da entidade na panilha.<br>
-	 * Os dados genéricos passados são incluídos na entidade.
-	 * 
-	 * @param id Identificador da entidade
-	 * @param creationDate Data de criação da entidade
-	 * @param updateDate Data de atualização da entidade
-	 * @param version Versão da entidade
-	 * @return Instância da entidade com os dados da planilha
-	 */
-	protected abstract E readCurrentItemData(I id, Date creationDate, Date updateDate, Long version);
 
 	@Override
 	protected boolean syncRow(Integer rowIndex, E data) {
-		writeEntityId(rowIndex, EntityMetadataHeader.ID.name(), data.getId());
-		writeDateCell(rowIndex, EntityMetadataHeader.CREATION_DATE.name(), data.getCreationDate());
-		writeDateCell(rowIndex, EntityMetadataHeader.UPDATE_DATE.name(), data.getUpdateDate());
-		writeLongCell(rowIndex, EntityMetadataHeader.VERSION.name(), data.getVersion());
-		writeItemData(rowIndex, data);
+		boolean idChanged = writeEntityId(rowIndex, EntityMetadataHeader.ID.name(), data.getId());
+		boolean creationDateChanged = writeDateCell(rowIndex, EntityMetadataHeader.CREATION_DATE.name(), data.getCreationDate());
+		boolean updateDateChanged = writeDateCell(rowIndex, EntityMetadataHeader.UPDATE_DATE.name(), data.getUpdateDate());
+		boolean versionChanged = writeLongCell(rowIndex, EntityMetadataHeader.VERSION.name(), data.getVersion());
+		boolean itemChanged = writeItemData(rowIndex, data);
 		
-		// TODO: validar se houve mudança real nos dados da planilha
-		return true;
+		return idChanged || creationDateChanged || updateDateChanged || versionChanged || itemChanged;
 	}
 	
 	/**
@@ -80,14 +72,16 @@ public abstract class EntitySimpleSheetDataSource<I extends Serializable, E exte
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna onde está o identificador.
 	 * @param id Identificador da entidade
+	 * @return Flag indicando se houve mudança real no conteúdo da planilha
 	 */
-	protected abstract void writeEntityId(Integer rowIndex, String columnName, I id);
+	protected abstract boolean writeEntityId(Integer rowIndex, String columnName, I id);
 	
 	/**
 	 * Escreve os dados de uma entidade em uma linha da planilha.
 	 * 
 	 * @param rowIndex Índice da linha
 	 * @param data Dados da entidade
+	 * @return Flag indicando se houve mudança real no conteúdo da planilha
 	 */
-	protected abstract void writeItemData(Integer rowIndex, E data);
+	protected abstract boolean writeItemData(Integer rowIndex, E data);
 }

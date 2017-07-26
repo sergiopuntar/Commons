@@ -7,8 +7,7 @@ package br.com.sgpf.common.util;
 public interface CanEqual {
 	
 	/**
-	 * Indica se um determinado objeto pode ser utilizado para comparação
-	 * com este.
+	 * Indica se um determinado objeto pode ser utilizado para comparação com este.
 	 * 
 	 * @param obj Objeto que se deseja comparar
 	 * @return Flag indicando se o objeto pode ser comparado a este

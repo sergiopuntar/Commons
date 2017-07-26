@@ -19,4 +19,8 @@ public final class Constants {
 	 * String traço "-".
 	 */
 	public static final String STR_DASH = "-";
+
+	public Constants() {
+		super();
+	}
 }

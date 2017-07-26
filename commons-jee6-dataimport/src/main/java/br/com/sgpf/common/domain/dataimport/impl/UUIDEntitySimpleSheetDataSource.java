@@ -34,7 +34,7 @@ public abstract class UUIDEntitySimpleSheetDataSource<E extends AbstractUUIDEnti
 	}
 
 	@Override
-	protected void writeEntityId(Integer rowIndex, String columnName, String id) {
-		writeStringCell(rowIndex, columnName, id);
+	protected boolean writeEntityId(Integer rowIndex, String columnName, String id) {
+		return writeStringCell(rowIndex, columnName, id);
 	}
 }

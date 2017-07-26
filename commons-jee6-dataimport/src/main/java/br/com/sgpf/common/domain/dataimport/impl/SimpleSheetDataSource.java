@@ -45,6 +45,9 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	private static final long serialVersionUID = -7387063988593887736L;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSheetDataSource.class);
+
+	private static final String TO_STRING_PATTERN_FILE = "File Based %s: \"%s\"";
+	private static final String TO_STRING_PATTERN_INPUT_STREAM = "In Memory Based %s";
 	
 	private static final String ERROR_NULL_FILE = "O arquivo não pode ser nulo.";
 	private static final String ERROR_NULL_IS = "O input stream não pode ser nulo.";
@@ -57,6 +60,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	private static final String ERROR_NON_EXISTING_SHEET = "O documento não possui planilha com índice [%d].";
 	private static final String ERROR_NO_HEADER = "A planilha não possui um cabeçalho.";
 	private static final String ERROR_NO_MORE_ITENS = "A Planilha não possui mais itens.";
+	private static final String ERROR_NEXT_NEVER_CALLED = "Não existe elemento corrente porque o método next() não foi chamado desde que o Data Source foi aberto.";
 	private static final String ERROR_NON_EXISTING_COLUMN = "A planilha não possui uma coluna com o nome [%s].";
 	private static final String ERROR_NON_EXISTING_ROW = "A planilha não possui uma linha com o índice[%d].";
 	private static final String ERROR_CHAR_FORMART = "A coluna [%s] não possui conteúdo no formato Character.";
@@ -181,7 +185,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 			columnMap.put(cell.getStringCellValue().toUpperCase(), cell.getColumnIndex());
 		}
 		
-		LOGGER.debug("Colunas mapeadas: %s", columnMap);
+		LOGGER.debug("Colunas mapeadas: {0}", columnMap);
 	}
 
 	@Override
@@ -194,13 +198,13 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 
 	@Override
-	public boolean hasNext() throws DataImportException {
+	public boolean hasNext() throws DataSourceInvalidStateException {
 		validadeIsOpen();
 		return sheet.getRow(currRow + 1) != null;
 	}
 
 	@Override
-	public DataImportItem<Integer, T> next() throws DataImportException {
+	public DataImportItem<Integer, T> next() throws DataSourceInvalidStateException, DataSourceNoMoreItensException, DataSourceFormatException {
 		validadeIsOpen();
 		
 		if (!hasNext()) {
@@ -208,6 +212,17 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 		}
 		
 		currRow++;
+		
+		return current();
+	}
+
+	@Override
+	public DataImportItem<Integer, T> current() throws DataSourceInvalidStateException, DataSourceFormatException {
+		validadeIsOpen();
+		
+		if (currRow < 1) {
+			throw new DataSourceInvalidStateException(ERROR_NEXT_NEVER_CALLED);
+		}
 		
 		Boolean insert = readYesNoCell(ImportActionHeader.INSERT.name());
 		Boolean update = readYesNoCell(ImportActionHeader.UPDATE.name());
@@ -249,13 +264,21 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeStringCell(Integer rowIndex, String columnName, String value) {
+	protected boolean writeStringCell(Integer rowIndex, String columnName, String value) {
 		if (value == null) {
-			writeNullValue(rowIndex, columnName);
-		} else {
+			return writeNullValue(rowIndex, columnName);
+		}
+		
+		String currVal = getRowCell(rowIndex, columnName).getStringCellValue();
+		boolean change = !value.equals(currVal);
+		
+		if (change) {
 			getRowCell(rowIndex, columnName).setCellValue(value);
 		}
+		
+		return change;
 	}
 	
 	/**
@@ -283,9 +306,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @return value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeCharCell(Integer rowIndex, String columnName, Character value) {
-		writeStringCell(rowIndex, columnName, value == null ? null : String.valueOf(value));
+	protected boolean writeCharCell(Integer rowIndex, String columnName, Character value) {
+		return writeStringCell(rowIndex, columnName, value == null ? null : String.valueOf(value));
 	}
 	
 	/**
@@ -310,13 +334,21 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeDoubleCell(Integer rowIndex, String columnName, Double value) {
+	protected boolean writeDoubleCell(Integer rowIndex, String columnName, Double value) {
 		if (value == null) {
-			writeNullValue(rowIndex, columnName);
-		} else {
+			return writeNullValue(rowIndex, columnName);
+		}
+		
+		Double currVal = getRowCell(rowIndex, columnName).getNumericCellValue();
+		boolean change = !value.equals(currVal);
+		
+		if (change) {
 			getRowCell(rowIndex, columnName).setCellValue(value);
 		}
+		
+		return change;
 	}
 	
 	/**
@@ -336,9 +368,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeFloatCell(Integer rowIndex, String columnName, Float value) {
-		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	protected boolean writeFloatCell(Integer rowIndex, String columnName, Float value) {
+		return writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -358,9 +391,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeLongCell(Integer rowIndex, String columnName, Long value) {
-		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	protected boolean writeLongCell(Integer rowIndex, String columnName, Long value) {
+		return writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -380,9 +414,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeIntegerCell(Integer rowIndex, String columnName, Integer value) {
-		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	protected boolean writeIntegerCell(Integer rowIndex, String columnName, Integer value) {
+		return writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -402,9 +437,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeShortCell(Integer rowIndex, String columnName, Short value) {
-		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	protected boolean writeShortCell(Integer rowIndex, String columnName, Short value) {
+		return writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -424,9 +460,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeByteCell(Integer rowIndex, String columnName, Byte value) {
-		writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
+	protected boolean writeByteCell(Integer rowIndex, String columnName, Byte value) {
+		return writeDoubleCell(rowIndex, columnName, value == null ? null : Double.valueOf(value));
 	}
 	
 	/**
@@ -451,13 +488,21 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeBooleanCell(Integer rowIndex, String columnName,Boolean value) {
+	protected boolean writeBooleanCell(Integer rowIndex, String columnName,Boolean value) {
 		if (value == null) {
-			writeNullValue(rowIndex, columnName);
-		} else {
+			return writeNullValue(rowIndex, columnName);
+		}
+		
+		Boolean currVal = getRowCell(rowIndex, columnName).getBooleanCellValue();
+		boolean change = !value.equals(currVal);
+		
+		if (change) {
 			getRowCell(rowIndex, columnName).setCellValue(value);
 		}
+		
+		return change;
 	}
 	
 	/**
@@ -482,13 +527,21 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeDateCell(Integer rowIndex, String columnName, Date value) {
+	protected boolean writeDateCell(Integer rowIndex, String columnName, Date value) {
 		if (value == null) {
-			writeNullValue(rowIndex, columnName);
-		} else {
+			return writeNullValue(rowIndex, columnName);
+		}
+		
+		Date currVal = getRowCell(rowIndex, columnName).getDateCellValue();
+		boolean change = !value.equals(currVal);
+		
+		if (change) {
 			getRowCell(rowIndex, columnName).setCellValue(value);
 		}
+		
+		return change;
 	}
 	
 	/**
@@ -516,13 +569,28 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value Conteúdo da célula
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeCalendarCell(Integer rowIndex, String columnName, Calendar value) {
+	protected boolean writeCalendarCell(Integer rowIndex, String columnName, Calendar value) {
 		if (value == null) {
-			writeNullValue(rowIndex, columnName);
-		} else {
+			return writeNullValue(rowIndex, columnName);
+		}
+		
+		Date dateVal = getRowCell(rowIndex, columnName).getDateCellValue();
+		Calendar currVal = null;
+		
+		if (dateVal != null) {
+			currVal = Calendar.getInstance();
+			currVal.setTime(dateVal);
+		}
+		
+		boolean change = !value.equals(currVal);
+		
+		if (change) {
 			getRowCell(rowIndex, columnName).setCellValue(value);
 		}
+		
+		return change;
 	}
 
 	/**
@@ -552,13 +620,23 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
 	 * @param value True para o conteúdo 'Y', False para o conteúdo 'N'
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	protected void writeYesNoCell(Integer rowIndex, String columnName, Boolean value) {
+	protected boolean writeYesNoCell(Integer rowIndex, String columnName, Boolean value) {
 		if (value == null) {
-			writeNullValue(rowIndex, columnName);
-		} else {
+			return writeNullValue(rowIndex, columnName);
+		}
+		
+		String currVal = getRowCell(rowIndex, columnName).getStringCellValue();
+		boolean change = (!VALUE_STRING_Y.equals(currVal) && !VALUE_STRING_N.equals(currVal))
+				|| (VALUE_STRING_Y.equals(currVal) && !value)
+				|| (VALUE_STRING_N.equals(currVal) && value);
+		
+		if (change) {
 			getRowCell(rowIndex, columnName).setCellValue(value ? VALUE_STRING_Y : VALUE_STRING_N);
 		}
+		
+		return change;
 	}
 	
 	/**
@@ -566,12 +644,20 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * 
 	 * @param rowIndex Índice da linha
 	 * @param columnName Nome da coluna
+	 * @return Flag indicando se houve mudança real no conteúdo da célula.
 	 */
-	private void writeNullValue(Integer rowIndex, String columnName) {
-		String value = null;
+	private boolean writeNullValue(Integer rowIndex, String columnName) {
 		Cell cell = getRowCell(rowIndex, columnName);
+		
+		if (CellType.BLANK.equals(cell.getCellTypeEnum())) {
+			return false;
+		}
+		
+		String value = null;
 		cell.setCellValue(value);
 		cell.setCellType(CellType.BLANK);
+		
+		return true;
 	}
 	
 	/**
@@ -612,9 +698,11 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 	
 	@Override
-	public void sync(DataImportItem<Integer, T> item) throws DataImportException {
+	public boolean sync(DataImportItem<Integer, T> item) throws DataImportException {
 		validadeIsOpen();
-		changed = changed || syncRow(item.getId(), item.getData());
+		boolean rowChanged = syncRow(item.getId(), item.getData());
+		changed = changed || rowChanged;
+		return changed;
 	}
 
 	/**
@@ -700,5 +788,14 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 		if (workbook != null) {
 			throw new DataSourceInvalidStateException(ERROR_DOCUMENT_OPEN);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		if (file != null) {
+			return String.format(TO_STRING_PATTERN_FILE, getClass().getSimpleName(), file.getAbsolutePath());
+		}
+		
+		return String.format(TO_STRING_PATTERN_INPUT_STREAM, getClass().getSimpleName());
 	}
 }
