@@ -31,7 +31,7 @@ public class CustomNoFieldShadowingRule implements Rule {
 	}
 
 	public void evaluate(final PojoClass pojoClass) {
-		final List<PojoField> parentPojoFields = new LinkedList<PojoField>();
+		final List<PojoField> parentPojoFields = new LinkedList<>();
 		PojoClass parentPojoClass = pojoClass.getSuperClass();
 		while (parentPojoClass != null) {
 			parentPojoFields.addAll(parentPojoClass.getPojoFields());
@@ -40,18 +40,18 @@ public class CustomNoFieldShadowingRule implements Rule {
 
 		final List<PojoField> childPojoFields = pojoClass.getPojoFields();
 		for (final PojoField childPojoField : childPojoFields) {
-			if (!childPojoField.isSynthetic() && !isSerializable(childPojoField, pojoClass) && !inSkipList(childPojoField))
-				if (contains(childPojoField.getName(), parentPojoFields))
-					Affirm.fail(MessageFormatter.format("Field=[{0}] shadows field with the same name in parent class=[{1}]",
-							childPojoField, parentPojoFields));
+			if (!childPojoField.isSynthetic() && !isSerializable(childPojoField, pojoClass) && !inSkipList(childPojoField) && contains(childPojoField.getName(), parentPojoFields)) {
+				Affirm.fail(MessageFormatter.format("Field=[{0}] shadows field with the same name in parent class=[{1}]", childPojoField, parentPojoFields));
+			}
 		}
-
 	}
 
 	private boolean inSkipList(PojoField field) {
-		for (String skipEntry : fieldNamesToSkip)
-			if (skipEntry.equals(field.getName()))
+		for (String skipEntry : fieldNamesToSkip) {
+			if (skipEntry.equals(field.getName())) {
 				return true;
+			}
+		}
 
 		return false;
 	}

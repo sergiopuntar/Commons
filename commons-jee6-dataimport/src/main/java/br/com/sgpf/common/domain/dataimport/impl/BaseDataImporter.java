@@ -48,7 +48,7 @@ public abstract class BaseDataImporter<I extends Serializable, T extends Seriali
 			
 			importData(item);
 			
-			LOGGER.debug("Status final da importação do item '{0}': {1}.", item.getId(), item.getResult().getStatus().name());
+			LOGGER.debug("Status final da importação do item '{0}': {1}.", item.getId(), item.getResult().getStatus());
 			
 			if (sync && item.dataChanged() && item.isSync() && dataSource.isWritable()) {
 				LOGGER.debug("Iniciando sincronização do item '{0}' com a origem.", item.getId());

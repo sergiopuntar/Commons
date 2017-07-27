@@ -39,8 +39,7 @@ public class ResourceProvider {
 	 */
 	public static BeanManager getBeanManager() {
 		try {
-			System.out.println(beanManagerName);
-			return (BeanManager) InitialContext.doLookup(beanManagerName);
+			return InitialContext.doLookup(beanManagerName);
 		} catch (NamingException e) {
 			throw new InfraestructureFatalException(ERROR_LOOKUP_BEAN_MANAGER, e);
 		}

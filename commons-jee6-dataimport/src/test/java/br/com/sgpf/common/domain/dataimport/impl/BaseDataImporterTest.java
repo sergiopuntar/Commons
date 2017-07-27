@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
@@ -50,6 +50,7 @@ public class BaseDataImporterTest {
 	 * Índice 2: Item com sincronização ativada e que sofreu erro durante a importação.<br>
 	 */
 	@Before
+	@SuppressWarnings("unchecked")
 	public void before() throws Throwable {
 		itemList = Lists.newArrayList(
 				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(0, new DataElement(1L), new DataImportInstructions(false, false, true, false, false, true)),
