@@ -1,4 +1,4 @@
-package br.com.sgpf.common.test;
+package br.com.sgpf.common.test.pojo;
 
 import java.util.List;
 
@@ -9,7 +9,6 @@ import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.rule.Rule;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
-import com.openpojo.validation.rule.impl.NoFieldShadowingRule;
 import com.openpojo.validation.rule.impl.NoNestedClassRule;
 import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
@@ -21,6 +20,8 @@ import com.openpojo.validation.test.Tester;
 import com.openpojo.validation.test.impl.DefaultValuesNullTester;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
+
+import br.com.sgpf.common.test.pojo.rules.CustomNoFieldShadowingRule;
 
 /**
  * Classe utilitária para teste de pojos.
@@ -47,7 +48,7 @@ public class PojoTester {
 			new NoNestedClassRule(),
 			new NoStaticExceptFinalRule(),
 			new SerializableMustHaveSerialVersionUIDRule(),
-			new NoFieldShadowingRule(),
+			new CustomNoFieldShadowingRule(),
 			new NoPublicFieldsExceptStaticFinalRule(),
 			new TestClassMustBeProperlyNamedRule()
 		};
@@ -83,7 +84,7 @@ public class PojoTester {
 			new NoNestedClassRule(),
 			new NoStaticExceptFinalRule(),
 			new SerializableMustHaveSerialVersionUIDRule(),
-			new NoFieldShadowingRule(),
+			new CustomNoFieldShadowingRule(),
 			new NoPublicFieldsExceptStaticFinalRule()
 		};
 	
@@ -118,7 +119,7 @@ public class PojoTester {
 			new NoNestedClassRule(),
 			new NoStaticExceptFinalRule(),
 			new SerializableMustHaveSerialVersionUIDRule(),
-			new NoFieldShadowingRule(),
+			new CustomNoFieldShadowingRule(),
 			new NoPublicFieldsExceptStaticFinalRule(),
 			new TestClassMustBeProperlyNamedRule()
 		};

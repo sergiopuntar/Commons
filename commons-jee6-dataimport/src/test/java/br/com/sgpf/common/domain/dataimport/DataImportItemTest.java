@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 import org.junit.Test;
 
-import br.com.sgpf.common.test.EqualsTester;
+import br.com.sgpf.common.test.equals.EqualsTester;
 
 public class DataImportItemTest {
 

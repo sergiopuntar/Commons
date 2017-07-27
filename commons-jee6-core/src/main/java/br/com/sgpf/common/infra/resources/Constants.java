@@ -20,7 +20,7 @@ public final class Constants {
 	 */
 	public static final String STR_DASH = "-";
 
-	public Constants() {
+	private Constants() {
 		super();
 	}
 }

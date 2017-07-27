@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import br.com.sgpf.common.test.PojoTester;
+import br.com.sgpf.common.test.pojo.PojoTester;
 
 public class DataImportInstructionsTest {
 

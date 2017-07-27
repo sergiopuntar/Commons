@@ -21,6 +21,13 @@
 	</modules>
 	
 	<dependencies>
+		<!-- Importo GlassFish Embedded antes da JavaEE API porque preciso das implementações para alguns testes -->
+	    <dependency>
+			<groupId>org.glassfish.extras</groupId>
+			<artifactId>glassfish-embedded-all</artifactId>
+			<version>${glassfish-embedded-all.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -116,6 +123,7 @@
 	
 	<properties>
 		<!-- Dependencies Versions -->
+		<glassfish-embedded-all.version>3.1.1</glassfish-embedded-all.version>
 		<javaee.version>6.0</javaee.version>
 		<apache.commons-lang3.version>3.4</apache.commons-lang3.version>
 		<slf4j.version>1.7.25</slf4j.version>

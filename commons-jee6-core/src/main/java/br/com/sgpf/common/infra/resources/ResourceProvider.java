@@ -15,9 +15,21 @@ import br.com.sgpf.common.infra.exception.InfraestructureFatalException;
  */
 public class ResourceProvider {
 	private static final String ERROR_LOOKUP_BEAN_MANAGER = "Não foi possível encontrar o registro do Bean Manager no JNDI.";
+	
+	private static String beanManagerName = "java:comp/BeanManager";
 
 	private ResourceProvider() {
 		super();
+	}
+
+	/**
+	 * Altera o nome usado para lookup do CDI BeanManager.<br>
+	 * O nome padrão é: "java:comp/BeanManager".
+	 * 
+	 * @param beanManagerName Nome para lookup do BeanManager
+	 */
+	public static void setBeanManagerName(String beanManagerName) {
+		ResourceProvider.beanManagerName = beanManagerName;
 	}
 
 	/**
@@ -27,8 +39,8 @@ public class ResourceProvider {
 	 */
 	public static BeanManager getBeanManager() {
 		try {
-			InitialContext initialContext = new InitialContext();
-			return (BeanManager) initialContext.lookup("java:comp/BeanManager");
+			System.out.println(beanManagerName);
+			return (BeanManager) InitialContext.doLookup(beanManagerName);
 		} catch (NamingException e) {
 			throw new InfraestructureFatalException(ERROR_LOOKUP_BEAN_MANAGER, e);
 		}

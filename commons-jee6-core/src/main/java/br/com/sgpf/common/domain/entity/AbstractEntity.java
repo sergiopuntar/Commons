@@ -37,9 +37,15 @@ public abstract class AbstractEntity<I extends Serializable> implements Entity<I
 	@Version
 	private Long version;
 	
+	public AbstractEntity() {
+		super();
+	}
+
 	@PrePersist
 	public void prePersist() {
-		setCreationDate(new Date());
+		Date now = new Date();
+		setCreationDate(now);
+		setUpdateDate(now);
 	}
 	
 	@PreUpdate

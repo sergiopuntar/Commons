@@ -77,7 +77,8 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	}
 	
 	/**
-	 * Verifica se os dados contidos no item foram alterados após a importação.
+	 * Verifica se os dados contidos no item foram alterados (no destino ou na origem) após a
+	 * importação.
 	 * 
 	 * @return True se houve alteração, False caso contrário 
 	 */

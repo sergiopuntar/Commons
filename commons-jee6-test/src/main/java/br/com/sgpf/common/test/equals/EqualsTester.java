@@ -1,4 +1,4 @@
-package br.com.sgpf.common.test;
+package br.com.sgpf.common.test.equals;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
