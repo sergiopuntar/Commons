@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,7 @@ public class SimpleSheetDataSourceTest {
 	private static final File TEST_SHEET_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/SimpleSheetDataSourceTest.xls");
 	private static final File TEST_SHEET_FILE_UNREADABLE = Mockito.spy(TEST_SHEET_FILE);
 	private static final File TEST_SHEET_FILE_UNWRITABLE = Mockito.spy(TEST_SHEET_FILE);
+	private static final File INVALID_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/invalid.xls");
 	
 	private static final int SHEET_INDEX = 0;
 	private static final int SHEET_INDEX_NOHEADER = 1;
@@ -75,7 +77,7 @@ public class SimpleSheetDataSourceTest {
 	
 	@Test(expected = DataSourceFileException.class)
 	public void invalidFileConstructorTest() throws DataSourceFileException {
-		new SimpleSheetDataSourceImpl(new File("invalid.xls"), SHEET_INDEX);
+		new SimpleSheetDataSourceImpl(INVALID_FILE, SHEET_INDEX);
 	}
 	
 	@Test(expected = DataSourceFileException.class)
@@ -88,6 +90,14 @@ public class SimpleSheetDataSourceTest {
 		} finally {
 			TEST_SHEET_FILE_UNREADABLE.setReadable(true);			
 		}
+	}
+	
+	@Test(expected = DataSourceFileException.class)
+	public void nonExistingFileOpenTest() throws DataImportException, IOException {
+		INVALID_FILE.createNewFile();
+		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(INVALID_FILE, SHEET_INDEX_INVALID);
+		INVALID_FILE.delete();
+		simpleSheetDataSource.open();
 	}
 	
 	@Test(expected = DataSourceDocumentException.class)

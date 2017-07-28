@@ -16,20 +16,28 @@ import br.com.sgpf.common.infra.exception.InfraestructureFatalException;
 public class ResourceProvider {
 	private static final String ERROR_LOOKUP_BEAN_MANAGER = "Não foi possível encontrar o registro do Bean Manager no JNDI.";
 	
-	private static String beanManagerName = "java:comp/BeanManager";
-
-	private ResourceProvider() {
-		super();
-	}
+	public static final String DEFAULT_BEAN_MANAGER_NAME = "java:comp/BeanManager";
+	
+	private String beanManagerName;
 
 	/**
-	 * Altera o nome usado para lookup do CDI BeanManager.<br>
-	 * O nome padrão é: "java:comp/BeanManager".
+	 * Constrói um Resource Provider que usa o nome de lookup padrão para o CDI BeanManager:
+	 * {@link #DEFAULT_BEAN_MANAGER_NAME}.
 	 * 
 	 * @param beanManagerName Nome para lookup do BeanManager
 	 */
-	public static void setBeanManagerName(String beanManagerName) {
-		ResourceProvider.beanManagerName = beanManagerName;
+	public ResourceProvider() {
+		this(DEFAULT_BEAN_MANAGER_NAME);
+	}
+
+	/**
+	 * Constrói um Resource Provider que usa um nome de lookup específico para o CDI BeanManager.
+	 * 
+	 * @param beanManagerName Nome de lookup do BeanManager
+	 */
+	public ResourceProvider(String beanManagerName) {
+		super();
+		this.beanManagerName = beanManagerName;
 	}
 
 	/**
@@ -37,7 +45,7 @@ public class ResourceProvider {
 	 * 
 	 * @return CDI Bean Manager
 	 */
-	public static BeanManager getBeanManager() {
+	public BeanManager getBeanManager() {
 		try {
 			return InitialContext.doLookup(beanManagerName);
 		} catch (NamingException e) {
@@ -52,7 +60,7 @@ public class ResourceProvider {
 	 * @return Referência contextual da classe
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getContextualReference(Class<T> clazz) {
+	public <T> T getContextualReference(Class<T> clazz) {
 		BeanManager beanManager = getBeanManager();
 		Set<Bean<? extends Object>> beans = beanManager.getBeans(clazz);
 		Bean<T> bean = (Bean<T>) beanManager.resolve(beans);

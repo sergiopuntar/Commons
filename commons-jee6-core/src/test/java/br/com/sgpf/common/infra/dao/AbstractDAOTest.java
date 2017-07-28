@@ -140,6 +140,7 @@ public class AbstractDAOTest {
 	
 	@Test
 	public void firstResultEmptyListTest() {
+		assertNull(dao.firstResult(null, AbstractEntityImpl.class));
 		assertNull(dao.firstResult(Lists.newArrayList(), AbstractEntityImpl.class));
 	}
 	

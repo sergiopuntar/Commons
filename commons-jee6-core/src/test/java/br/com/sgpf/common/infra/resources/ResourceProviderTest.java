@@ -24,34 +24,32 @@ import br.com.sgpf.common.infra.exception.InfraestructureFatalException;
 @PrepareForTest(InitialContext.class)
 public class ResourceProviderTest {
 	
-	private static final String DEFAULT_BEAN_MANAGER_NAME = "java:comp/BeanManager";
 	private static final String TEST_BEAN_MANAGER_NAME = "java:test/BeanManager";
 
 	@Test(expected = InfraestructureFatalException.class)
 	public void getBeanManagerErrorTest() throws NamingException {
-		ResourceProvider.getBeanManager();
+		ResourceProvider resourceProvider = new ResourceProvider();
+		resourceProvider.getBeanManager();
 	}
 
 	@Test
 	public void getBeanManagerTest() throws NamingException {
 		BeanManager beanManager = Mockito.mock(BeanManager.class);
 		PowerMockito.mockStatic(InitialContext.class);
-		Mockito.when(InitialContext.doLookup(DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
+		Mockito.when(InitialContext.doLookup(ResourceProvider.DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
 		
-		assertEquals(beanManager, ResourceProvider.getBeanManager());
+		ResourceProvider resourceProvider = new ResourceProvider();
+		assertEquals(beanManager, resourceProvider.getBeanManager());
 	}
 	
 	@Test
-	public void setBeanManagerNameTest() throws NamingException {
+	public void setBeanManagerNameConstructorTest() throws NamingException {
 		BeanManager beanManager = Mockito.mock(BeanManager.class);
 		PowerMockito.mockStatic(InitialContext.class);
 		Mockito.when(InitialContext.doLookup(TEST_BEAN_MANAGER_NAME)).thenReturn(beanManager);
 		
-		ResourceProvider.setBeanManagerName(TEST_BEAN_MANAGER_NAME);
-		assertEquals(beanManager, ResourceProvider.getBeanManager());
-		
-		// Reverto o BeanManagerName para o padrão
-		ResourceProvider.setBeanManagerName(DEFAULT_BEAN_MANAGER_NAME);
+		ResourceProvider resourceProvider = new ResourceProvider(TEST_BEAN_MANAGER_NAME);
+		assertEquals(beanManager, resourceProvider.getBeanManager());
 	}
 	
 	@Test
@@ -69,8 +67,9 @@ public class ResourceProviderTest {
 		Mockito.doReturn(object).when(beanManager).getReference(bean, Object.class, ctx);
 		
 		PowerMockito.mockStatic(InitialContext.class);
-		Mockito.when(InitialContext.doLookup(DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
+		Mockito.when(InitialContext.doLookup(ResourceProvider.DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
 		
-		assertEquals(object, ResourceProvider.getContextualReference(Object.class));
+		ResourceProvider resourceProvider = new ResourceProvider();
+		assertEquals(object, resourceProvider.getContextualReference(Object.class));
 	}
 }

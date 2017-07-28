@@ -3,15 +3,19 @@ package br.com.sgpf.common.infra.i18n;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-import br.com.sgpf.common.infra.i18n.MessageBundleProvider;
+import javax.inject.Inject;
+
 import br.com.sgpf.common.infra.resources.ResourceProvider;
 
 /**
  * Classe de recuperação das mensages da aplicação.
  */
 public class ApplicationMessages {
+	
+	@Inject
+	private ResourceProvider resourceProvider;
 
-	private ApplicationMessages() {
+	public ApplicationMessages() {
 		super();
 	}
 
@@ -22,7 +26,7 @@ public class ApplicationMessages {
 	 * @param params Parâmetros da mensagem
 	 * @return Mensagem recuperada
 	 */
-	public static String getMessage(MessageKey key, Object... params) {
+	public String getMessage(MessageKey key, Object... params) {
 		return getMessage(key.getName(), params);
 	}
 	
@@ -33,7 +37,7 @@ public class ApplicationMessages {
 	 * @param params Parâmetros da mensagem
 	 * @return Mensagem recuperada
 	 */
-	public static String getMessage(String key, Object... params) {
+	public String getMessage(String key, Object... params) {
 		return MessageFormat.format(getPlainMessage(key), params);
 	}
 
@@ -44,7 +48,7 @@ public class ApplicationMessages {
 	 * @param key Chave da mensagem.
 	 * @return Mensagem recuperada
 	 */
-	private static String getPlainMessage(String key) {
-		return MessageBundleProvider.getMessageBundle(ResourceProvider.getContextualReference(Locale.class)).getString(key);
+	private String getPlainMessage(String key) {
+		return MessageBundleProvider.getMessageBundle(resourceProvider.getContextualReference(Locale.class)).getString(key);
 	}
 }

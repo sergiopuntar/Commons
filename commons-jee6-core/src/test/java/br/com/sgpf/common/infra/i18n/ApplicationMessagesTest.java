@@ -6,27 +6,31 @@ import java.util.Locale;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import br.com.sgpf.common.infra.resources.ResourceProvider;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ResourceProvider.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ApplicationMessagesTest {
 
+	@Mock
+	private ResourceProvider resourceProvider;
+	
+	@InjectMocks
+	private ApplicationMessages applicationMessages = new ApplicationMessages();
+	
 	@Test
 	public void getMessage() {
-		PowerMockito.mockStatic(ResourceProvider.class);
-		Mockito.when(ResourceProvider.getContextualReference(Locale.class)).thenReturn(Locale.US);
+		Mockito.when(resourceProvider.getContextualReference(Locale.class)).thenReturn(Locale.US);
 		
-		assertEquals("value", ApplicationMessages.getMessage(MessageKeyImpl.TEST));
-		assertEquals("param: paramValue", ApplicationMessages.getMessage(MessageKeyImpl.TEST_PARAM, "paramValue"));
+		assertEquals("value", applicationMessages.getMessage(MessageKeyImpl.TEST));
+		assertEquals("param: paramValue", applicationMessages.getMessage(MessageKeyImpl.TEST_PARAM, "paramValue"));
 		
-		assertEquals("value", ApplicationMessages.getMessage("test"));
-		assertEquals("param: paramValue", ApplicationMessages.getMessage("test.param", "paramValue"));
+		assertEquals("value", applicationMessages.getMessage("test"));
+		assertEquals("param: paramValue", applicationMessages.getMessage("test.param", "paramValue"));
 	}
 	
 	enum MessageKeyImpl implements MessageKey {

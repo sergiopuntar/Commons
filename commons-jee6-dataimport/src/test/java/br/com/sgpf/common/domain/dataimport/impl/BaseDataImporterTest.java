@@ -50,11 +50,13 @@ public class BaseDataImporterTest {
 		itemList = Lists.newArrayList(
 				new DataImportItem<Integer, SimpleDataElement>(0, new SimpleDataElement(1L), new DataImportInstructions(false, false, true, false, false, true)),
 				new DataImportItem<Integer, SimpleDataElement>(1, new SimpleDataElement(2L), new DataImportInstructions(false, false, true, false, false, false)),
-				new DataImportItem<Integer, SimpleDataElement>(2, new SimpleDataElement(3L), new DataImportInstructions(false, false, true, false, false, true)));
+				new DataImportItem<Integer, SimpleDataElement>(2, new SimpleDataElement(3L), new DataImportInstructions(false, false, true, false, false, true)),
+				new DataImportItem<Integer, SimpleDataElement>(2, new SimpleDataElement(4L), new DataImportInstructions(false, false, true, false, false, true)));
 		
 		itemList.get(0).getResult().setStatus(DataImportResult.Status.INSERTED);
 		itemList.get(1).getResult().setStatus(DataImportResult.Status.INSERTED);
 		itemList.get(2).getResult().setStatus(DataImportResult.Status.ERROR);
+		itemList.get(3).getResult().setStatus(DataImportResult.Status.OVERRIDDEN);
 		
 		final Iterator<DataImportItem<Integer, SimpleDataElement>> itemIterator = itemList.iterator();
 		
@@ -71,6 +73,10 @@ public class BaseDataImporterTest {
 					return itemIterator.next();
 				}
 			});
+		
+		when(dataSource.sync(itemList.get(0))).thenReturn(false);
+		when(dataSource.sync(itemList.get(2))).thenReturn(false);
+		when(dataSource.sync(itemList.get(3))).thenReturn(true);
 	}
 	
 	/**

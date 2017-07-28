@@ -51,7 +51,7 @@ public class AbstractEntityTest {
 		
 		Date before = new Date();
 		TimeUnit.SECONDS.sleep(1);
-		abstractEntity.prePersist();
+		abstractEntity.preUpdate();
 		TimeUnit.SECONDS.sleep(1);
 		Date after = new Date();
 		
