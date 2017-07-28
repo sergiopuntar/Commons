@@ -18,8 +18,10 @@ public class MessageBundleProviderTest {
 	
 	@Test
 	public void getMessageBundle() {
-		assertEquals("value", MessageBundleProvider.getMessageBundle().getString("test"));
-		assertEquals("value", MessageBundleProvider.getMessageBundle(null).getString("test"));
-		assertEquals("valor", MessageBundleProvider.getMessageBundle(new Locale("pt", "BR")).getString("test"));
+		MessageBundleProvider messageBundleProvider = new MessageBundleProvider();
+		
+		assertEquals("value", messageBundleProvider.getMessageBundle().getString("test"));
+		assertEquals("value", messageBundleProvider.getMessageBundle(null).getString("test"));
+		assertEquals("valor", messageBundleProvider.getMessageBundle(new Locale("pt", "BR")).getString("test"));
 	}
 }

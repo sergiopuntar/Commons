@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
  */
 public class MessageBundleProvider {
 
-	private MessageBundleProvider() {
+	public MessageBundleProvider() {
 		super();
 	}
 
@@ -22,7 +22,7 @@ public class MessageBundleProvider {
 	 * 
 	 * @return Message Bundle básico
 	 */
-	public static ResourceBundle getMessageBundle() {
+	public ResourceBundle getMessageBundle() {
 		return getMessageBundle(null);
 	}
 	
@@ -32,7 +32,7 @@ public class MessageBundleProvider {
 	 * @param locale Local do Message Bundle.
 	 * @return Message Bundle do local.
 	 */
-	public static ResourceBundle getMessageBundle(Locale locale) {
+	public ResourceBundle getMessageBundle(Locale locale) {
 		return locale == null ? ResourceBundle.getBundle(MESSAGE_BUNDLE_BASE_NAME) : ResourceBundle.getBundle(MESSAGE_BUNDLE_BASE_NAME, locale);
 	}
 }

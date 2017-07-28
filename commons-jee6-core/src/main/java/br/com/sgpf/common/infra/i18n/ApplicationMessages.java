@@ -14,6 +14,9 @@ public class ApplicationMessages {
 	
 	@Inject
 	private ResourceProvider resourceProvider;
+	
+	@Inject
+	private MessageBundleProvider messageBundleProvider;
 
 	public ApplicationMessages() {
 		super();
@@ -49,6 +52,6 @@ public class ApplicationMessages {
 	 * @return Mensagem recuperada
 	 */
 	private String getPlainMessage(String key) {
-		return MessageBundleProvider.getMessageBundle(resourceProvider.getContextualReference(Locale.class)).getString(key);
+		return messageBundleProvider.getMessageBundle(resourceProvider.getContextualReference(Locale.class)).getString(key);
 	}
 }

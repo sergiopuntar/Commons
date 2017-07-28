@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import br.com.sgpf.common.infra.resources.ResourceProvider;
@@ -18,6 +19,9 @@ public class ApplicationMessagesTest {
 
 	@Mock
 	private ResourceProvider resourceProvider;
+	
+	@Spy
+	private MessageBundleProvider messageBundleProvider = new MessageBundleProvider();
 	
 	@InjectMocks
 	private ApplicationMessages applicationMessages = new ApplicationMessages();
