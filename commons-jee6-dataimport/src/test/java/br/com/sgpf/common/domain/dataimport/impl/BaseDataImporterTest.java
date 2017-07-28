@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -26,21 +25,17 @@ import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.DataImportResult;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
+import br.com.sgpf.common.domain.vo.SimpleDataElement;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseDataImporterTest {
 	
-	private BaseDataImporter<Integer, DataElement> baseDataImporter =  new BaseDataImporter<Integer, DataElement>() {
-		private static final long serialVersionUID = 1L;
-		
-		@Override
-		protected void importData(DataImportItem<Integer, DataElement> item) {}
-	};
+	private BaseDataImporter<Integer, SimpleDataElement> baseDataImporter =  new BaseDataImporterImpl();
 	
 	@Mock
-	private ImportDataSource<Integer, DataElement> dataSource;
+	private ImportDataSource<Integer, SimpleDataElement> dataSource;
 	
-	private List<DataImportItem<Integer, BaseDataImporterTest.DataElement>> itemList;
+	private List<DataImportItem<Integer, SimpleDataElement>> itemList;
 	
 	/**
 	 * Configura o comportamento do DataSource mockado e a lista de itens de importação da seguinte
@@ -53,15 +48,15 @@ public class BaseDataImporterTest {
 	@SuppressWarnings("unchecked")
 	public void before() throws Throwable {
 		itemList = Lists.newArrayList(
-				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(0, new DataElement(1L), new DataImportInstructions(false, false, true, false, false, true)),
-				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(1, new DataElement(2L), new DataImportInstructions(false, false, true, false, false, false)),
-				new DataImportItem<Integer, BaseDataImporterTest.DataElement>(2, new DataElement(3L), new DataImportInstructions(false, false, true, false, false, true)));
+				new DataImportItem<Integer, SimpleDataElement>(0, new SimpleDataElement(1L), new DataImportInstructions(false, false, true, false, false, true)),
+				new DataImportItem<Integer, SimpleDataElement>(1, new SimpleDataElement(2L), new DataImportInstructions(false, false, true, false, false, false)),
+				new DataImportItem<Integer, SimpleDataElement>(2, new SimpleDataElement(3L), new DataImportInstructions(false, false, true, false, false, true)));
 		
 		itemList.get(0).getResult().setStatus(DataImportResult.Status.INSERTED);
 		itemList.get(1).getResult().setStatus(DataImportResult.Status.INSERTED);
 		itemList.get(2).getResult().setStatus(DataImportResult.Status.ERROR);
 		
-		final Iterator<DataImportItem<Integer, BaseDataImporterTest.DataElement>> itemIterator = itemList.iterator();
+		final Iterator<DataImportItem<Integer, SimpleDataElement>> itemIterator = itemList.iterator();
 		
 		when(dataSource.hasNext()).then(new Answer<Boolean>() {
 				@Override
@@ -70,9 +65,9 @@ public class BaseDataImporterTest {
 				}
 			});
 		
-		when(dataSource.next()).then(new Answer<DataImportItem<Integer, DataElement>>() {
+		when(dataSource.next()).then(new Answer<DataImportItem<Integer, SimpleDataElement>>() {
 				@Override
-				public DataImportItem<Integer, DataElement> answer(InvocationOnMock invocation) throws Throwable {
+				public DataImportItem<Integer, SimpleDataElement> answer(InvocationOnMock invocation) throws Throwable {
 					return itemIterator.next();
 				}
 			});
@@ -91,7 +86,7 @@ public class BaseDataImporterTest {
 	 */
 	@Test
 	public void importDataTestNoSync() throws DataImportException {
-		Collection<DataImportItem<Integer, DataElement>> importedItens = baseDataImporter.importData(dataSource, false);
+		Collection<DataImportItem<Integer, SimpleDataElement>> importedItens = baseDataImporter.importData(dataSource, false);
 		
 		assertEquals(itemList, importedItens);
 		assertFalse(itemList.get(0).getResult().isSynced());
@@ -108,7 +103,7 @@ public class BaseDataImporterTest {
 	public void importDataTestNoSyncNoWritable() throws DataImportException {
 		when(dataSource.isWritable()).thenReturn(false);
 		
-		Collection<DataImportItem<Integer, DataElement>> importedItens = baseDataImporter.importData(dataSource, true);
+		Collection<DataImportItem<Integer, SimpleDataElement>> importedItens = baseDataImporter.importData(dataSource, true);
 		
 		assertEquals(itemList, importedItens);
 		assertFalse(itemList.get(0).getResult().isSynced());
@@ -125,7 +120,7 @@ public class BaseDataImporterTest {
 	public void importDataTestNoSyncWritable() throws DataImportException {
 		when(dataSource.isWritable()).thenReturn(true);
 		
-		Collection<DataImportItem<Integer, DataElement>> importedItens = baseDataImporter.importData(dataSource, true);
+		Collection<DataImportItem<Integer, SimpleDataElement>> importedItens = baseDataImporter.importData(dataSource, true);
 		
 		assertEquals(itemList, importedItens);
 		assertTrue(itemList.get(0).getResult().isSynced());
@@ -133,24 +128,5 @@ public class BaseDataImporterTest {
 		assertFalse(itemList.get(2).getResult().isSynced());
 		verify(dataSource).open();
 		verify(dataSource).close();
-	}
-	
-	class DataElement implements Serializable {
-		private static final long serialVersionUID = 1L;
-		
-		private Long id;
-		
-		public DataElement(Long id) {
-			super();
-			this.id = id;
-		}
-		
-		public Long getId() {
-			return id;
-		}
-		
-		public void setId(Long id) {
-			this.id = id;
-		}
 	}
 }

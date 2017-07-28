@@ -46,30 +46,30 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 	}
 
 	@Override
-	public void persist(E entidade) {
-		em.persist(entidade);
+	public void persist(E entity) {
+		em.persist(entity);
 		em.flush();
 	}
 
 	@Override
-	public E merge(E entidade) {
-		E entidadePersistida = em.merge(entidade);
+	public E merge(E entity) {
+		E persistedEntity = em.merge(entity);
 		em.flush();
 
-		return entidadePersistida;
+		return persistedEntity;
 	}
 
 	@Override
-	public void refresh(E entidade) {
-		em.refresh(entidade);
+	public void refresh(E entity) {
+		em.refresh(entity);
 	}
 
 	@Override
-	public void remove(E entidade) {
-		if (!em.contains(entidade)) {
-			em.remove(merge(entidade));
+	public void remove(E entity) {
+		if (!em.contains(entity)) {
+			em.remove(em.merge(entity));
 		} else {
-			em.remove(entidade);
+			em.remove(entity);
 		}
 		
 		em.flush();

@@ -116,7 +116,7 @@
 				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 				<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 				<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-				<sonar.coverage.exclusions>src/main/java/br/com/sgpf/common/test/**</sonar.coverage.exclusions>
+				<sonar.coverage.exclusions>src/main/java/br/com/sgpf/common/test/**,src/main/java/br/com/sgpf/common/**/exception/**</sonar.coverage.exclusions>
 			</properties>
 		</profile>
 	</profiles>
