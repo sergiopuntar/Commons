@@ -1,5 +1,8 @@
 package br.com.sgpf.common.infra.resources;
 
+import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -37,7 +40,7 @@ public class ResourceProvider {
 	 */
 	public ResourceProvider(String beanManagerName) {
 		super();
-		this.beanManagerName = beanManagerName;
+		this.beanManagerName = checkNotNull(beanManagerName, ERROR_NULL_ARGUMENT, "beanManagerName");
 	}
 
 	/**

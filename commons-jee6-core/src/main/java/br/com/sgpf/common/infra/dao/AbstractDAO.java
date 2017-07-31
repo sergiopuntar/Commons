@@ -1,5 +1,8 @@
 package br.com.sgpf.common.infra.dao;
 
+import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -36,6 +39,8 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public E find(I id) {
+		checkNotNull(id, ERROR_NULL_ARGUMENT, "id");
+		
 		return em.find(clazz, id);
 	}
 
@@ -47,12 +52,16 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public void persist(E entity) {
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		
 		em.persist(entity);
 		em.flush();
 	}
 
 	@Override
 	public E merge(E entity) {
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		
 		E persistedEntity = em.merge(entity);
 		em.flush();
 
@@ -61,11 +70,15 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public void refresh(E entity) {
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		
 		em.refresh(entity);
 	}
 
 	@Override
 	public void remove(E entity) {
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		
 		if (!em.contains(entity)) {
 			em.remove(em.merge(entity));
 		} else {
@@ -84,8 +97,9 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T firstResult(List<?> resultList, Class<T> resultType) {
+		checkNotNull(resultType, ERROR_NULL_ARGUMENT, "resultType");
+		
 		T firstResult = null;
-
 		Object object = (resultList != null && !resultList.isEmpty()) ? resultList.get(0) : null;
 
 		if (resultType.isInstance(object)) {

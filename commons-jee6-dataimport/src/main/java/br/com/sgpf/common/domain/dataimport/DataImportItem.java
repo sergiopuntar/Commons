@@ -5,12 +5,12 @@ import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.FORCE
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.INSERTED;
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.OVERRIDDEN;
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.UPDATED;
+import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.List;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.util.Objects;
 
 import com.google.common.collect.Lists;
 
@@ -34,9 +34,9 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	
 	public DataImportItem(I id, T data, DataImportInstructions instructions) {
 		super();
-		this.id = id;
-		this.data = data;
-		this.instructions = instructions;
+		this.id = checkNotNull(id, ERROR_NULL_ARGUMENT, "id");
+		this.data = checkNotNull(data, ERROR_NULL_ARGUMENT, "data");
+		this.instructions = checkNotNull(instructions, ERROR_NULL_ARGUMENT, "instructions");
 		this.result = new DataImportResult();
 	}
 
@@ -88,8 +88,7 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(5, 11)
-				.append(this.getId()).toHashCode();
+		return Objects.hash(this.getId());
 	}
 	
 	@Override
@@ -97,8 +96,7 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 		if (obj instanceof DataImportItem) {
 			DataImportItem<?, ?> that = (DataImportItem<?, ?>) obj;
 			return that.canEqual(this) &&
-					new EqualsBuilder()
-					.append(this.getId(), that.getId()).isEquals();
+					Objects.equals(this.getId(), that.getId());
 		}
 
 		return false;

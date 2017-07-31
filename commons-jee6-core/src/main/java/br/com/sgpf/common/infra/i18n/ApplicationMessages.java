@@ -1,5 +1,8 @@
 package br.com.sgpf.common.infra.i18n;
 
+import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -41,6 +44,7 @@ public class ApplicationMessages {
 	 * @return Mensagem recuperada
 	 */
 	public String getMessage(String key, Object... params) {
+		checkNotNull(key, ERROR_NULL_ARGUMENT, "key");
 		return MessageFormat.format(getPlainMessage(key), params);
 	}
 

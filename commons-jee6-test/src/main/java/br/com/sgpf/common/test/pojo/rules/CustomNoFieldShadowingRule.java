@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang3.ClassUtils;
-
+import com.google.common.reflect.TypeToken;
 import com.openpojo.log.utils.MessageFormatter;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoField;
@@ -59,7 +58,7 @@ public class CustomNoFieldShadowingRule implements Rule {
 	private boolean isSerializable(PojoField field, PojoClass pojoClass) {
 		return field.getName().equals(SERIAL_VERSION_UID_FIELD_NAME)
 				&& field.getType().equals(SERIAL_VERSION_UID_FIELD_TYPE)
-				&& ClassUtils.getAllInterfaces(pojoClass.getClazz()).contains(Serializable.class);
+				&& TypeToken.of(pojoClass.getClazz()).isSubtypeOf(TypeToken.of(Serializable.class));
 	}
 
 	private boolean contains(final String fieldName, final List<PojoField> pojoFields) {

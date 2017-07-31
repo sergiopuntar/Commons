@@ -1,8 +1,10 @@
 package br.com.sgpf.common.infra.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -18,6 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.google.common.collect.Lists;
 
 import br.com.sgpf.common.domain.entity.AbstractEntityImpl;
+import br.com.sgpf.common.domain.entity.Entity;
 import br.com.sgpf.common.infra.exception.DAOException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,6 +36,11 @@ public class AbstractDAOTest {
 	public void before() {
 		dao.postConstruct();
 		assertEquals(AbstractEntityImpl.class, dao.clazz);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void findNullIdTest() {
+		dao.find(null);
 	}
 	
 	@Test
@@ -60,6 +68,11 @@ public class AbstractDAOTest {
 		assertEquals(entities, dao.findAll());
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void persistNullEntityTest() {
+		dao.persist(null);
+	}
+	
 	@Test
 	public void persistTest() {
 		AbstractEntityImpl entity = new AbstractEntityImpl();
@@ -69,6 +82,11 @@ public class AbstractDAOTest {
 		
 		Mockito.verify(em).persist(entity);
 		Mockito.verify(em).flush();
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void mergeNullEntityTest() {
+		dao.merge(null);
 	}
 	
 	@Test
@@ -88,6 +106,11 @@ public class AbstractDAOTest {
 		Mockito.verify(em).flush();
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void refreshNullEntityTest() {
+		dao.refresh(null);
+	}
+	
 	@Test
 	public void refreshTest() {
 		AbstractEntityImpl entity = new AbstractEntityImpl();
@@ -96,6 +119,11 @@ public class AbstractDAOTest {
 		dao.refresh(entity);
 		
 		Mockito.verify(em).refresh(entity);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void removeNullEntityTest() {
+		dao.remove(null);
 	}
 	
 	@Test
@@ -128,6 +156,13 @@ public class AbstractDAOTest {
 		Mockito.verify(em).merge(entity);
 		Mockito.verify(em).remove(mergedEntity);
 		Mockito.verify(em).flush();
+	}
+	
+	@Test(expected = NullPointerException.class)
+	@SuppressWarnings("rawtypes")
+	public void firstResultNullResultTypeTest() {
+		List<Entity> entities = Lists.newArrayList();
+		dao.firstResult(entities, null);
 	}
 	
 	@Test(expected = DAOException.class)

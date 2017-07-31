@@ -26,8 +26,20 @@ public class ApplicationMessagesTest {
 	@InjectMocks
 	private ApplicationMessages applicationMessages = new ApplicationMessages();
 	
+	@Test(expected = NullPointerException.class)
+	public void getMessageNullStringKeyTest() {
+		String key = null;
+		applicationMessages.getMessage(key);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void getMessageNullEnumKeyTest() {
+		MessageKeyImpl key = null;
+		applicationMessages.getMessage(key);
+	}
+	
 	@Test
-	public void getMessage() {
+	public void getMessageTest() {
 		Mockito.when(resourceProvider.getContextualReference(Locale.class)).thenReturn(Locale.US);
 		
 		assertEquals("value", applicationMessages.getMessage(MessageKeyImpl.TEST));

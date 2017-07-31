@@ -19,6 +19,23 @@ import br.com.sgpf.common.test.equals.EqualsTester;
 
 public class DataImportItemTest {
 
+	@Test(expected = NullPointerException.class)
+	public void constructorNullIdTest() {
+		DataImportInstructions dataImportInstructions = new DataImportInstructions(true, true, true, true, true, true);
+		new DataImportItem<>(null, 1, dataImportInstructions);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void constructorNullDataTest() {
+		DataImportInstructions dataImportInstructions = new DataImportInstructions(true, true, true, true, true, true);
+		new DataImportItem<>(1, null, dataImportInstructions);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void constructorNullInstructionsTest() {
+		new DataImportItem<>(1, 1, null);
+	}
+	
 	@Test
 	public void constructorTest() {
 		DataImportInstructions dataImportInstructions = new DataImportInstructions(true, true, true, true, true, true);
@@ -56,7 +73,7 @@ public class DataImportItemTest {
 	@Test
 	public void dataChangedTest() {
 		DataImportInstructions dataImportInstructions = new DataImportInstructions(false, false, false, false, false, false);
-		DataImportItem<?, ?> dataImportItem = new DataImportItem<>(null, null, dataImportInstructions);
+		DataImportItem<?, ?> dataImportItem = new DataImportItem<>(1, 1, dataImportInstructions);
 		
 		assertFalse(dataImportItem.dataChanged());
 		

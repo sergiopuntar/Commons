@@ -1,5 +1,8 @@
 package br.com.sgpf.common.domain.dataimport.impl;
 
+import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,13 +27,9 @@ public abstract class BaseDataImporter<I extends Serializable, T extends Seriali
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseDataImporter.class);
 	
-	private static final String ERROR_NULL_DATASOURCE = "A fonte de dados não pode ser nula.";
-	
 	@Override
 	public Collection<DataImportItem<I, T>> importData(ImportDataSource<I, T> dataSource, boolean sync) throws DataImportException {
-		if (dataSource == null) {
-			throw new IllegalArgumentException(ERROR_NULL_DATASOURCE);
-		}
+		checkNotNull(dataSource, ERROR_NULL_ARGUMENT, "dataSource");
 		
 		LOGGER.info("Iniciando importação a partir da fonte de dados [{0}].", dataSource);
 		List<DataImportItem<I, T>> itens = new ArrayList<>();

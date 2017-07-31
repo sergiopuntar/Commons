@@ -1,5 +1,9 @@
 package br.com.sgpf.common.domain.dataimport.impl;
 
+import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,8 +31,8 @@ import org.slf4j.LoggerFactory;
 import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
-import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFormatException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceIOException;
@@ -49,9 +53,6 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	private static final String TO_STRING_PATTERN_FILE = "File Based %s: \"%s\"";
 	private static final String TO_STRING_PATTERN_INPUT_STREAM = "In Memory Based %s";
 	
-	private static final String ERROR_NULL_FILE = "O arquivo não pode ser nulo.";
-	private static final String ERROR_NULL_IS = "O input stream não pode ser nulo.";
-	private static final String ERROR_NULL_COLUMN_NAME = "O nome da coluna não pode ser nulo.";
 	private static final String ERROR_FILE_NOT_FOUND = "Não foi possível encontrar o arquivo [%s].";
 	private static final String ERROR_READING_DOCUMENT = "Ocorreu um erro na leitura do documento.";
 	private static final String ERROR_ENCRYPTED_DOCUMENT = "O documento está criptografado.";
@@ -106,16 +107,13 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 */
 	public SimpleSheetDataSource(File file, int sheetId) throws DataSourceFileException {
 		this(Type.FILE, sheetId);
+		this.file = checkNotNull(file, ERROR_NULL_ARGUMENT, "file");
 		
-		if (file == null) {
-			throw new IllegalArgumentException(ERROR_NULL_FILE);
-		} else if (!file.exists()) {
+		if (!file.exists()) {
 			throw new DataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
 		} else if (!file.canRead()) {
 			throw new DataSourceFileException(String.format(ERROR_NON_READABLE_FILE, file.getAbsolutePath()));
 		}
-		
-		this.file = file;
 	}
 	
 	/**
@@ -126,17 +124,12 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 */
 	public SimpleSheetDataSource(InputStream is, int sheetId) {
 		this(Type.INPUT_STREAM, sheetId);
-		
-		if (is == null) {
-			throw new IllegalArgumentException(ERROR_NULL_IS);
-		}
-		
-		this.is = is;
+		this.is = checkNotNull(is, ERROR_NULL_ARGUMENT, "is");;
 	}
 
 	@Override
 	public void open() throws DataImportException {
-		validadeIsClosed();
+		checkState(workbook == null, ERROR_DOCUMENT_OPEN);
 		
 		if (type.equals(Type.FILE)) {
 			try {
@@ -199,13 +192,13 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 
 	@Override
 	public boolean hasNext() throws DataSourceInvalidStateException {
-		validadeIsOpen();
+		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		return sheet.getRow(currRow + 1) != null;
 	}
 
 	@Override
 	public DataImportItem<Integer, T> next() throws DataSourceInvalidStateException, DataSourceNoMoreItensException, DataSourceFormatException {
-		validadeIsOpen();
+		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		
 		if (!hasNext()) {
 			throw new DataSourceNoMoreItensException(ERROR_NO_MORE_ITENS);
@@ -218,7 +211,8 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 
 	@Override
 	public DataImportItem<Integer, T> current() throws DataSourceInvalidStateException, DataSourceFormatException {
-		validadeIsOpen();
+		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
+		checkState(currRow >= 1, ERROR_NEXT_NEVER_CALLED);
 		
 		if (currRow < 1) {
 			throw new DataSourceInvalidStateException(ERROR_NEXT_NEVER_CALLED);
@@ -682,9 +676,10 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 * inexistente
 	 */
 	private Cell getRowCell(Integer rowIndex, String name) {
-		if (name == null) {
-			throw new IllegalArgumentException(ERROR_NULL_COLUMN_NAME);
-		}else if (!columnMap.containsKey(name)) {
+		checkNotNull(rowIndex, ERROR_NULL_ARGUMENT, "rowIndex");
+		checkNotNull(name, ERROR_NULL_ARGUMENT, "name");
+		
+		if (!columnMap.containsKey(name)) {
 			throw new IllegalArgumentException(String.format(ERROR_NON_EXISTING_COLUMN, name));
 		}
 		
@@ -699,7 +694,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	
 	@Override
 	public boolean sync(DataImportItem<Integer, T> item) throws DataImportException {
-		validadeIsOpen();
+		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		boolean rowChanged = syncRow(item.getId(), item.getData());
 		changed = changed || rowChanged;
 		return changed;
@@ -716,7 +711,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 
 	@Override
 	public void close() throws DataImportException {
-		validadeIsOpen();
+		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		
 		try {
 			is.close();
@@ -766,28 +761,6 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 		changed = false;
 		currRow = -1;
 		columnMap.clear();
-	}
-
-	/**
-	 * Valida que o documento está aberto.
-	 * 
-	 * @throws DataSourceInvalidStateException Se o documento estiver fechado
-	 */
-	private void validadeIsOpen() throws DataSourceInvalidStateException {
-		if (workbook == null) {
-			throw new DataSourceInvalidStateException(ERROR_DOCUMENT_CLOSED);
-		}
-	}
-	
-	/**
-	 * Valida que o documento está fechado.
-	 * 
-	 * @throws DataSourceInvalidStateException Se o documento estiver aberto
-	 */
-	private void validadeIsClosed() throws DataSourceInvalidStateException {
-		if (workbook != null) {
-			throw new DataSourceInvalidStateException(ERROR_DOCUMENT_OPEN);
-		}
 	}
 	
 	@Override

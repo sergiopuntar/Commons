@@ -2,6 +2,7 @@ package br.com.sgpf.common.domain.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -10,9 +11,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import br.com.sgpf.common.util.CanEqual;
 
@@ -105,10 +103,7 @@ public abstract class AbstractEntity<I extends Serializable> implements Entity<I
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(5, 11)
-				.append(this.getId())
-				.append(this.getVersion())
-				.toHashCode();
+		return Objects.hash(this.getId(), this.getVersion());
 	}
 	
 	@Override
@@ -116,10 +111,8 @@ public abstract class AbstractEntity<I extends Serializable> implements Entity<I
 		if (obj instanceof AbstractEntity) {
 			AbstractEntity<?> that = (AbstractEntity<?>) obj;
 			return that.canEqual(this) &&
-					new EqualsBuilder()
-					.append(this.getId(), that.getId())
-					.append(this.getVersion(), that.getVersion())
-					.isEquals();
+					Objects.equals(this.getId(), that.getId()) &&
+					Objects.equals(this.getVersion(), that.getVersion());
 		}
 
 		return false;

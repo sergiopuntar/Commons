@@ -42,6 +42,11 @@ public class ResourceProviderTest {
 		assertEquals(beanManager, resourceProvider.getBeanManager());
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void setBeanManagerNullNameConstructorTest() throws NamingException {
+		new ResourceProvider(null);
+	}
+	
 	@Test
 	public void setBeanManagerNameConstructorTest() throws NamingException {
 		BeanManager beanManager = Mockito.mock(BeanManager.class);

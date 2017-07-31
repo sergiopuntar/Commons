@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -15,6 +16,18 @@ public class EntityUtilTest {
 	@Test
 	public void generateUUIDTest() {
 		assertNotNull(UUID.fromString(EntityUtil.generateUUID()));
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void recoverEntityNullEntitiesTest() {
+		EntityUtil.recoverEntity(null, Long.valueOf(1L));
+	}
+	
+	@Test(expected = NullPointerException.class)
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void recoverEntityNullIdTest() {
+		List<Entity> entities = Lists.newArrayList();
+		EntityUtil.recoverEntity(entities, null);
 	}
 	
 	@Test

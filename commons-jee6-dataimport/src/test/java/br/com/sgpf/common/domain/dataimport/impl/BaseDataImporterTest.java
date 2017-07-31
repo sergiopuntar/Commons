@@ -82,7 +82,7 @@ public class BaseDataImporterTest {
 	/**
 	 * Teste passando DataSource nulo.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void importDataNullDataSourceTest() throws DataImportException {
 		baseDataImporter.importData(null, false);
 	}
