@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.domain.dataimport.impl;
 
 import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
@@ -24,12 +30,14 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
  */
 public abstract class BaseDataImporter<I extends Serializable, T extends Serializable> implements DataImporter<I, T> {
 	private static final long serialVersionUID = 5124248593928945081L;
-
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseDataImporter.class);
+
+	private static final String ARG_NAME_DATA_SOURCE = "dataSource";
 	
 	@Override
 	public Collection<DataImportItem<I, T>> importData(ImportDataSource<I, T> dataSource, boolean sync) throws DataImportException {
-		checkNotNull(dataSource, ERROR_NULL_ARGUMENT, "dataSource");
+		checkNotNull(dataSource, ERROR_NULL_ARGUMENT, ARG_NAME_DATA_SOURCE);
 		
 		LOGGER.info("Iniciando importação a partir da fonte de dados [{0}].", dataSource);
 		List<DataImportItem<I, T>> itens = new ArrayList<>();

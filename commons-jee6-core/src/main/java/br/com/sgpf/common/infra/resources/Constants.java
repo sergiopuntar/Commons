@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.infra.resources;
 
 /**
@@ -9,7 +15,7 @@ public final class Constants {
 	 * Mensagem padrão de error para argumento nulo
 	 */
 	public static final String ERROR_NULL_ARGUMENT = "Argumento [%s] não pode ser nulo.";
-
+	
 	/**
 	 * String vazia "".
 	 */

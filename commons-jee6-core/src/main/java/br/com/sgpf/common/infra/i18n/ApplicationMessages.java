@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.infra.i18n;
 
 import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
@@ -14,6 +20,8 @@ import br.com.sgpf.common.infra.resources.ResourceProvider;
  * Classe de recuperação das mensages da aplicação.
  */
 public class ApplicationMessages {
+	
+	private static final String ARG_NAME_KEY = "key";
 	
 	@Inject
 	private ResourceProvider resourceProvider;
@@ -44,7 +52,7 @@ public class ApplicationMessages {
 	 * @return Mensagem recuperada
 	 */
 	public String getMessage(String key, Object... params) {
-		checkNotNull(key, ERROR_NULL_ARGUMENT, "key");
+		checkNotNull(key, ERROR_NULL_ARGUMENT, ARG_NAME_KEY);
 		return MessageFormat.format(getPlainMessage(key), params);
 	}
 

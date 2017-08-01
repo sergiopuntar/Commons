@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.domain.dataimport.impl;
 
 import static org.junit.Assert.assertEquals;
@@ -45,7 +51,6 @@ public class BaseDataImporterTest {
 	 * Índice 2: Item com sincronização ativada e que sofreu erro durante a importação.<br>
 	 */
 	@Before
-	@SuppressWarnings("unchecked")
 	public void before() throws Throwable {
 		itemList = Lists.newArrayList(
 				new DataImportItem<Integer, SimpleDataElement>(0, new SimpleDataElement(1L), new DataImportInstructions(false, false, true, false, false, true)),

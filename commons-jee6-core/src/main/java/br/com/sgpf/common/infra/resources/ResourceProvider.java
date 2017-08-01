@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.infra.resources;
 
 import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
@@ -17,7 +23,10 @@ import br.com.sgpf.common.infra.exception.InfraestructureFatalException;
  * Classe que provê recursos do sistema estaticamente.
  */
 public class ResourceProvider {
+	
 	private static final String ERROR_LOOKUP_BEAN_MANAGER = "Não foi possível encontrar o registro do Bean Manager no JNDI.";
+	
+	public static final String ARG_NAME_BEAN_MANAGER_NAME = "beanManagerName";
 	
 	public static final String DEFAULT_BEAN_MANAGER_NAME = "java:comp/BeanManager";
 	
@@ -40,7 +49,7 @@ public class ResourceProvider {
 	 */
 	public ResourceProvider(String beanManagerName) {
 		super();
-		this.beanManagerName = checkNotNull(beanManagerName, ERROR_NULL_ARGUMENT, "beanManagerName");
+		this.beanManagerName = checkNotNull(beanManagerName, ERROR_NULL_ARGUMENT, ARG_NAME_BEAN_MANAGER_NAME);
 	}
 
 	/**

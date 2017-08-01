@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.domain.dataimport.impl;
 
 import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
@@ -47,11 +53,8 @@ import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensExcep
  */
 public abstract class SimpleSheetDataSource<T extends Serializable> implements ImportDataSource<Integer, T> {
 	private static final long serialVersionUID = -7387063988593887736L;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSheetDataSource.class);
 
-	private static final String TO_STRING_PATTERN_FILE = "File Based %s: \"%s\"";
-	private static final String TO_STRING_PATTERN_INPUT_STREAM = "In Memory Based %s";
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSheetDataSource.class);
 	
 	private static final String ERROR_FILE_NOT_FOUND = "Não foi possível encontrar o arquivo [%s].";
 	private static final String ERROR_READING_DOCUMENT = "Ocorreu um erro na leitura do documento.";
@@ -66,16 +69,20 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	private static final String ERROR_NON_EXISTING_ROW = "A planilha não possui uma linha com o índice[%d].";
 	private static final String ERROR_CHAR_FORMART = "A coluna [%s] não possui conteúdo no formato Character.";
 	private static final String ERROR_YES_NO_FORMAT = "A coluna [%s] não possui conteúdo no formato Y/N.";
-	
 	private static final String ERROR_RELEASING_INPUT_STREAM = "Ocorreu um erro ao liberar o input stream do documento.";
 	private static final String ERROR_WRITING_CHANGES = "Não foi possível gravar as alterações no documento.";
 	private static final String ERROR_CLOSING_DOCUMENT = "Ocorreu um erro ao fechar o documento.";
-	
 	private static final String ERROR_DOCUMENT_CLOSED = "O documento está fechado.";
 	private static final String ERROR_DOCUMENT_OPEN = "O documento está aberto.";
 	
+	private static final String ARG_NAME_FILE = "file";
+	private static final String ARG_NAME_IS = "is";
+	
 	private static final String VALUE_STRING_Y = "Y";
 	private static final String VALUE_STRING_N = "N";
+	
+	private static final String TO_STRING_PATTERN_FILE = "File Based %s: \"%s\"";
+	private static final String TO_STRING_PATTERN_INPUT_STREAM = "In Memory Based %s";
 
 	private enum Type { FILE, INPUT_STREAM }
 	
@@ -107,7 +114,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 */
 	public SimpleSheetDataSource(File file, int sheetId) throws DataSourceFileException {
 		this(Type.FILE, sheetId);
-		this.file = checkNotNull(file, ERROR_NULL_ARGUMENT, "file");
+		this.file = checkNotNull(file, ERROR_NULL_ARGUMENT, ARG_NAME_FILE);
 		
 		if (!file.exists()) {
 			throw new DataSourceFileException(String.format(ERROR_FILE_NOT_FOUND, file.getAbsolutePath()));
@@ -124,7 +131,7 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	 */
 	public SimpleSheetDataSource(InputStream is, int sheetId) {
 		this(Type.INPUT_STREAM, sheetId);
-		this.is = checkNotNull(is, ERROR_NULL_ARGUMENT, "is");;
+		this.is = checkNotNull(is, ERROR_NULL_ARGUMENT, ARG_NAME_IS);
 	}
 
 	@Override

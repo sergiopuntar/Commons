@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.infra.dao;
 
 import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
@@ -25,6 +31,10 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 	private static final long serialVersionUID = -6837735901842866300L;
 	
 	private static final String ERROR_RESULT_TYPE = "O objeto [%s] não é do tipo esperado [%s].";
+	
+	private static final String ARG_NAME_ID = "id";
+	private static final String ARG_NAME_ENTITY = "entity";
+	private static final String ARG_NAME_RESULT_TYPE = "resultType";
 
 	@PersistenceContext
 	protected transient EntityManager em;
@@ -39,7 +49,7 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public E find(I id) {
-		checkNotNull(id, ERROR_NULL_ARGUMENT, "id");
+		checkNotNull(id, ERROR_NULL_ARGUMENT, ARG_NAME_ID);
 		
 		return em.find(clazz, id);
 	}
@@ -52,7 +62,7 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public void persist(E entity) {
-		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
 		
 		em.persist(entity);
 		em.flush();
@@ -60,7 +70,7 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public E merge(E entity) {
-		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
 		
 		E persistedEntity = em.merge(entity);
 		em.flush();
@@ -70,14 +80,14 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 
 	@Override
 	public void refresh(E entity) {
-		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
 		
 		em.refresh(entity);
 	}
 
 	@Override
 	public void remove(E entity) {
-		checkNotNull(entity, ERROR_NULL_ARGUMENT, "entity");
+		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
 		
 		if (!em.contains(entity)) {
 			em.remove(em.merge(entity));
@@ -97,7 +107,7 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T firstResult(List<?> resultList, Class<T> resultType) {
-		checkNotNull(resultType, ERROR_NULL_ARGUMENT, "resultType");
+		checkNotNull(resultType, ERROR_NULL_ARGUMENT, ARG_NAME_RESULT_TYPE);
 		
 		T firstResult = null;
 		Object object = (resultList != null && !resultList.isEmpty()) ? resultList.get(0) : null;

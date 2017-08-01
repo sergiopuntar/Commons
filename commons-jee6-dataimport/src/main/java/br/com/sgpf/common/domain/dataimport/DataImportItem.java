@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.domain.dataimport;
 
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.DELETED;
@@ -24,6 +30,10 @@ import br.com.sgpf.common.util.CanEqual;
  */
 public class DataImportItem<I extends Serializable, T extends Serializable> implements Serializable, CanEqual {
 	private static final long serialVersionUID = -4993453059086257679L;
+
+	private static final String ARG_NAME_ID = "id";
+	private static final String ARG_NAME_DATA = "data";
+	private static final String ARG_NAME_INSTRUCTIONS = "instructions";
 	
 	private static final List<DataImportResult.Status> CHANGED_STATUS = Lists.newArrayList(INSERTED, UPDATED, FORCE_UPDATED, DELETED, OVERRIDDEN);
 	
@@ -34,9 +44,9 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	
 	public DataImportItem(I id, T data, DataImportInstructions instructions) {
 		super();
-		this.id = checkNotNull(id, ERROR_NULL_ARGUMENT, "id");
-		this.data = checkNotNull(data, ERROR_NULL_ARGUMENT, "data");
-		this.instructions = checkNotNull(instructions, ERROR_NULL_ARGUMENT, "instructions");
+		this.id = checkNotNull(id, ERROR_NULL_ARGUMENT, ARG_NAME_ID);
+		this.data = checkNotNull(data, ERROR_NULL_ARGUMENT, ARG_NAME_DATA);
+		this.instructions = checkNotNull(instructions, ERROR_NULL_ARGUMENT, ARG_NAME_INSTRUCTIONS);
 		this.result = new DataImportResult();
 	}
 

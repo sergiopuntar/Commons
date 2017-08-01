@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+ * 
+ * This program is made available under the terms of the MIT License.
+ * See the LICENSE file for details.
+ */
 package br.com.sgpf.common.domain.entity;
 
 import static br.com.sgpf.common.infra.resources.Constants.ERROR_NULL_ARGUMENT;
@@ -12,6 +18,9 @@ import java.util.UUID;
  */
 public class EntityUtil {
 
+	private static final String ARG_NAME_ID = "id";
+	private static final String ARG_NAME_ENTITIES = "entities";
+	
 	private EntityUtil() {
 		super();
 	}
@@ -33,8 +42,8 @@ public class EntityUtil {
 	 * @return Entidade recuperada, null se ela não estiver presente na lista
 	 */
 	public static <T extends Entity<I>, I extends Serializable> T recoverEntity(Collection<T> entities, I id) {
-		checkNotNull(entities, ERROR_NULL_ARGUMENT, "entities");
-		checkNotNull(id, ERROR_NULL_ARGUMENT, "id");
+		checkNotNull(entities, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITIES);
+		checkNotNull(id, ERROR_NULL_ARGUMENT, ARG_NAME_ID);
 		
 		for (T entity : entities) {
 			if(entity.getId() != null && entity.getId().equals(id)) {

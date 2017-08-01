@@ -1,3 +1,11 @@
+<!--
+
+	Copyright (c) 2017 Sergio Gonçalves Puntar Filho
+
+	This program is made available under the terms of the MIT License.
+	See the LICENSE file for details.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -7,13 +15,35 @@
 	<packaging>pom</packaging>
 	<name>SGPF : Commons JEE6</name>
 	<description>Biblioteca agregadora de componentes e utilitários de apoio para projetos JEE6</description>
-	
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<scm>
 		<url>https://github.com/sergiopuntar/CommonsJEE6</url>
 		<connection>scm:git:https://github.com/sergiopuntar/CommonsJEE6.git</connection>
 		<developerConnection>scm:git:https://github.com/sergiopuntar/CommonsJEE6.git</developerConnection>
 	</scm>
-	
+
+	<developers>
+		<developer>
+			<email>sergiogpuntar@gmail.com</email>
+			<name>Sergio Puntar</name>
+			<url>https://github.com/sergiopuntar</url>
+			<id>sergiopuntar</id>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/sergiopuntar/CommonsJEE6/issues</url>
+	</issueManagement>
+
 	<modules>
 		<module>commons-jee6-core</module>
 		<module>commons-jee6-test</module>
