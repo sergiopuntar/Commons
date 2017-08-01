@@ -16,6 +16,8 @@ import br.com.sgpf.common.domain.entity.Entity;
  *
  * @param <E> Tipo da entidade
  * @param <I> Tipo do identificador da entidade
+ * 
+ * @author Sergio Puntar
  */
 public interface Repository<E extends Entity<I>, I extends Serializable> extends Serializable {
 

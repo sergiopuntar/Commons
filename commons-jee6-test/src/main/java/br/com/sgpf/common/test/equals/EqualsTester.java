@@ -13,6 +13,8 @@ import nl.jqno.equalsverifier.Warning;
  * Classe utilitária para teste dos métodos equals e hashcode.
  * 
  * @param<T> Tipo da classe testada
+ * 
+ * @author Sergio Puntar
  */
 public class EqualsTester<T> {
 

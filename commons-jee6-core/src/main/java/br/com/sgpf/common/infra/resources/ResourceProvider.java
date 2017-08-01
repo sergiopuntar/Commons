@@ -21,6 +21,8 @@ import br.com.sgpf.common.infra.exception.InfraestructureFatalException;
 
 /**
  * Classe que provê recursos do sistema estaticamente.
+ * 
+ * @author Sergio Puntar
  */
 public class ResourceProvider {
 	

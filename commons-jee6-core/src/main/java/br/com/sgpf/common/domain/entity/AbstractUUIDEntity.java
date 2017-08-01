@@ -15,7 +15,9 @@ import javax.persistence.MappedSuperclass;
  * Se a applicação roda de forma reduntante, duas instâncias tem uma baixíssima porém existente
  * possibilidade de gerar UUIDs iguais <br>
  * <br>
- * Obs.: O ideal seria que o id fosse do tipo UUID, mas o JPA 2.1 não suporta converter em IDs
+ * Obs.: O ideal seria que o id fosse do tipo UUID, mas o JPA 2.1 não suporta converter em IDs.
+ * 
+ * @author Sergio Puntar
  */
 @MappedSuperclass
 public abstract class AbstractUUIDEntity extends AbstractEntity<String> {

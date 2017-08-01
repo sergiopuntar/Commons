@@ -7,7 +7,9 @@
 package br.com.sgpf.common.infra.exception;
 
 /**
- * Exceção de erro fatal para regras de negócio
+ * Exceção de erro fatal para regras de negócio.
+ * 
+ * @author Sergio Puntar
  */
 public class BusinessFatalException extends RuntimeException {
 	private static final long serialVersionUID = 4113122929766666683L;

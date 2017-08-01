@@ -31,6 +31,8 @@ import br.com.sgpf.common.test.pojo.rules.CustomNoFieldShadowingRule;
 
 /**
  * Classe utilitária para teste de pojos.
+ * 
+ * @author Sergio Puntar
  */
 public class PojoTester {
 	

@@ -11,6 +11,8 @@ import java.util.ResourceBundle;
 
 /**
  * Classe que provê Message Bundles a partir de um locale.
+ * 
+ * @author Sergio Puntar
  */
 public class MessageBundleProvider {
 

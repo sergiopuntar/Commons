@@ -26,6 +26,8 @@ import br.com.sgpf.common.infra.exception.DAOException;
  *
  * @param <E> Tipo da entidade
  * @param <I> Tipo do identificador da entidade
+ * 
+ * @author Sergio Puntar
  */
 public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> implements Repository<E, I> {
 	private static final long serialVersionUID = -6837735901842866300L;

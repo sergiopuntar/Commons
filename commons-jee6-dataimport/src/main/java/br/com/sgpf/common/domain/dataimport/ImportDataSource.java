@@ -15,6 +15,8 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
  * 
  * @param <I> Identificador o item de importação
  * @param <T> Tipo do dado
+ * 
+ * @author Sergio Puntar
  */
 public interface ImportDataSource<I extends Serializable, T extends Serializable> extends Serializable {
 
@@ -36,9 +38,8 @@ public interface ImportDataSource<I extends Serializable, T extends Serializable
 	 * Verifica se existe um próximo item na sequência da fonte de dados.
 	 * 
 	 * @return True se existe um próximo item, False caso contrário.
-	 * @throws DataImportException Se ocorrer um erro na leitura da fonte de dados.
 	 */
-	public boolean hasNext() throws DataImportException;
+	public boolean hasNext();
 	
 	/**
 	 * Lê o próximo item na sequência da fonte de dados.

@@ -27,6 +27,8 @@ import br.com.sgpf.common.util.CanEqual;
  *
  * @param <I> Identificador o item de importação
  * @param <T> Tipo do dado
+ * 
+ * @author Sergio Puntar
  */
 public class DataImportItem<I extends Serializable, T extends Serializable> implements Serializable, CanEqual {
 	private static final long serialVersionUID = -4993453059086257679L;

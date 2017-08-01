@@ -24,6 +24,8 @@ import br.com.sgpf.common.util.CanEqual;
  * Super classe abstrata para todas as entidades do sistema.
  * 
  * @param <I> Tipo do identificador da entidade
+ * 
+ * @author Sergio Puntar
  */
 @MappedSuperclass
 public abstract class AbstractEntity<I extends Serializable> implements Entity<I>, CanEqual {

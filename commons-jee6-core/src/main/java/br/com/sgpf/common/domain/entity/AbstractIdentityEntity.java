@@ -11,6 +11,8 @@ import javax.persistence.MappedSuperclass;
 /**
  * Super classe abstrata para todas as entidades do sistema com identificador baseado em uma coluna
  * de identidade auto incrementada na base de dados.
+ * 
+ * @author Sergio Puntar
  */
 @MappedSuperclass
 public abstract class AbstractIdentityEntity extends AbstractEntity<Long> {

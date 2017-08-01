@@ -10,6 +10,8 @@ import java.io.Serializable;
 
 /**
  * Classe que contêm as instruções de importação de de dados para um item de importação. 
+ * 
+ * @author Sergio Puntar
  */
 public class DataImportInstructions implements Serializable {
 	private static final long serialVersionUID = 5158010165679258326L;

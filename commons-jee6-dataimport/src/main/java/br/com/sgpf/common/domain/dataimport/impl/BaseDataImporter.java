@@ -27,6 +27,8 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
  * 
  * @param <I> Identificador o item de importação
  * @param <T> Tipo do dado
+ * 
+ * @author Sergio Puntar
  */
 public abstract class BaseDataImporter<I extends Serializable, T extends Serializable> implements DataImporter<I, T> {
 	private static final long serialVersionUID = 5124248593928945081L;

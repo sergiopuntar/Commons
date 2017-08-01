@@ -17,6 +17,8 @@ import br.com.sgpf.common.domain.entity.Entity;
  * Implementação base para todas as entidades de uma fonte de dados baseada em planilha Excel simples.
  *
  * @param <E> Tipo da entidade
+ * 
+ * @author Sergio Puntar
  */
 public abstract class EntitySimpleSheetDataSource<I extends Serializable, E extends Entity<I>> extends SimpleSheetDataSource<E> {
 	private static final long serialVersionUID = 1711265271350804677L;

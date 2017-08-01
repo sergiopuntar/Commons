@@ -15,6 +15,8 @@ import java.util.UUID;
 
 /**
  * Classe de utilitários para entidades.
+ * 
+ * @author Sergio Puntar
  */
 public class EntityUtil {
 

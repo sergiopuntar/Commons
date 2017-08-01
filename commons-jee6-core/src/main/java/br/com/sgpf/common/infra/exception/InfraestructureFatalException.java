@@ -8,6 +8,8 @@ package br.com.sgpf.common.infra.exception;
 
 /**
  * Exceção fatal de infraestrutura do sistema.
+ * 
+ * @author Sergio Puntar
  */
 public class InfraestructureFatalException extends RuntimeException {
 	private static final long serialVersionUID = 1000896224430502360L;

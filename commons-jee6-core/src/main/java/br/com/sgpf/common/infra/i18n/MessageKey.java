@@ -8,6 +8,8 @@ package br.com.sgpf.common.infra.i18n;
 
 /**
  * Interface para enumerações de chaves de mensagens.
+ * 
+ * @author Sergio Puntar
  */
 public interface MessageKey {
 	

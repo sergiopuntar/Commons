@@ -25,6 +25,8 @@ import com.openpojo.validation.rule.Rule;
  * Na implementação original, o método {@link #isSerializable(PojoField, PojoClass)} considera que
  * a classe é serializável somente se ela implementa diretamente a interface Serializable.<br>
  * Essa implementação considera que a classe pode herdar a interface de uma super classe.
+ * 
+ * @author Sergio Puntar
  */
 public class CustomNoFieldShadowingRule implements Rule {
 	private static final String SERIAL_VERSION_UID_FIELD_NAME = "serialVersionUID";

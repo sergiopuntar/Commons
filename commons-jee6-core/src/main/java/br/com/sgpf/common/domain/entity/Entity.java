@@ -13,6 +13,8 @@ import java.util.Date;
  * Interface padrão para todas as entidades do sistema.
  * 
  * @param <I> Tipo do identificador da entidade
+ * 
+ * @author Sergio Puntar
  */
 public interface Entity<I extends Serializable> extends Serializable, Cloneable {
 

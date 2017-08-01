@@ -8,6 +8,8 @@ package br.com.sgpf.common.infra.resources;
 
 /**
  * Classe de constantes do sistema.
+ * 
+ * @author Sergio Puntar
  */
 public final class Constants {
 	

@@ -16,6 +16,8 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
  * 
  * @param <I> Identificador o item de importação
  * @param <T> Tipo do dado
+ * 
+ * @author Sergio Puntar
  */
 public interface DataImporter<I extends Serializable, T extends Serializable> extends Serializable {
 	

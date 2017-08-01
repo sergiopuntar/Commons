@@ -19,6 +19,8 @@ import javax.inject.Qualifier;
 
 /**
  * Qualificador para eventos que precedem outro evento. 
+ * 
+ * @author Sergio Puntar
  */
 @Qualifier
 @Retention(RUNTIME)

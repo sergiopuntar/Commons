@@ -42,7 +42,6 @@ import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentExceptio
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFormatException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceIOException;
-import br.com.sgpf.common.domain.dataimport.exception.DataSourceInvalidStateException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensException;
 
 /**
@@ -50,6 +49,8 @@ import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensExcep
  *
  * @param <ID> Identificador o item de importação
  * @param <T> Tipo do dado
+ * 
+ * @author Sergio Puntar
  */
 public abstract class SimpleSheetDataSource<T extends Serializable> implements ImportDataSource<Integer, T> {
 	private static final long serialVersionUID = -7387063988593887736L;
@@ -198,13 +199,13 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 
 	@Override
-	public boolean hasNext() throws DataSourceInvalidStateException {
+	public boolean hasNext() {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		return sheet.getRow(currRow + 1) != null;
 	}
 
 	@Override
-	public DataImportItem<Integer, T> next() throws DataSourceInvalidStateException, DataSourceNoMoreItensException, DataSourceFormatException {
+	public DataImportItem<Integer, T> next() throws DataSourceNoMoreItensException, DataSourceFormatException {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		
 		if (!hasNext()) {
@@ -217,13 +218,9 @@ public abstract class SimpleSheetDataSource<T extends Serializable> implements I
 	}
 
 	@Override
-	public DataImportItem<Integer, T> current() throws DataSourceInvalidStateException, DataSourceFormatException {
+	public DataImportItem<Integer, T> current() throws DataSourceFormatException {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		checkState(currRow >= 1, ERROR_NEXT_NEVER_CALLED);
-		
-		if (currRow < 1) {
-			throw new DataSourceInvalidStateException(ERROR_NEXT_NEVER_CALLED);
-		}
 		
 		Boolean insert = readYesNoCell(ImportActionHeader.INSERT.name());
 		Boolean update = readYesNoCell(ImportActionHeader.UPDATE.name());

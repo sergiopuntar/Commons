@@ -8,6 +8,8 @@ package br.com.sgpf.common.domain.dataimport.exception;
 
 /**
  * Exceção geral de erro de DataSource de importação.
+ * 
+ * @author Sergio Puntar
  */
 public class DataImportException extends Exception {
 	private static final long serialVersionUID = -6357098074559278302L;

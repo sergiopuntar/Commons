@@ -7,7 +7,9 @@
 package br.com.sgpf.common.infra.exception;
 
 /**
- * Exceção de erro para regras de negócio
+ * Exceção de erro para regras de negócio.
+ * 
+ * @author Sergio Puntar
  */
 public class BusinessException extends Exception {
 	private static final long serialVersionUID = 1269659412146724424L;

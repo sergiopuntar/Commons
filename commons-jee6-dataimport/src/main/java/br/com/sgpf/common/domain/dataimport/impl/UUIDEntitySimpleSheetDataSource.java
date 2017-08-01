@@ -16,6 +16,8 @@ import br.com.sgpf.common.domain.entity.AbstractUUIDEntity;
  * Implementação base para todas as entidades UUID de uma fonte de dados baseada em planilha Excel simples.
  *
  * @param <E> Tipo da entidade
+ * 
+ * @author Sergio Puntar
  */
 public abstract class UUIDEntitySimpleSheetDataSource<E extends AbstractUUIDEntity> extends EntitySimpleSheetDataSource<String, E> {
 	private static final long serialVersionUID = 8096959271007933357L;

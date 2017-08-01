@@ -19,6 +19,8 @@ import javax.inject.Qualifier;
 
 /**
  * Qualificador para eventos de salvamento de dados. 
+ * 
+ * @author Sergio Puntar
  */
 @Qualifier
 @Retention(RUNTIME)

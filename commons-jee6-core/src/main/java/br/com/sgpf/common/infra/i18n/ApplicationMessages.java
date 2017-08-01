@@ -18,6 +18,8 @@ import br.com.sgpf.common.infra.resources.ResourceProvider;
 
 /**
  * Classe de recuperação das mensages da aplicação.
+ * 
+ * @author Sergio Puntar
  */
 public class ApplicationMessages {
 	

@@ -10,6 +10,8 @@ import java.io.Serializable;
 
 /**
  * Classe que representa o resultado da importação de dados.
+ * 
+ * @author Sergio Puntar
  */
 public class DataImportResult implements Serializable {
 	private static final long serialVersionUID = 6106162065670933764L;
