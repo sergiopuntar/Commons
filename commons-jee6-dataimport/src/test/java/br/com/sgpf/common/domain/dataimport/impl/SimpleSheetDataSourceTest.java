@@ -34,6 +34,7 @@ import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensExcep
 import br.com.sgpf.common.domain.vo.SimpleDataElement;
 
 public class SimpleSheetDataSourceTest {
+	
 	private static final File TEST_SHEET_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/SimpleSheetDataSourceTest.xls");
 	private static final File TEST_SHEET_FILE_UNREADABLE = Mockito.spy(TEST_SHEET_FILE);
 	private static final File TEST_SHEET_FILE_UNWRITABLE = Mockito.spy(TEST_SHEET_FILE);
@@ -87,14 +88,7 @@ public class SimpleSheetDataSourceTest {
 	
 	@Test(expected = DataSourceFileException.class)
 	public void unreadableFileConstructorTest() throws DataImportException {
-		TEST_SHEET_FILE_UNREADABLE.setReadable(false);
-		try {
-			new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNREADABLE, SHEET_INDEX);
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			TEST_SHEET_FILE_UNREADABLE.setReadable(true);			
-		}
+		new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNREADABLE, SHEET_INDEX);
 	}
 	
 	@Test(expected = DataSourceFileException.class)
