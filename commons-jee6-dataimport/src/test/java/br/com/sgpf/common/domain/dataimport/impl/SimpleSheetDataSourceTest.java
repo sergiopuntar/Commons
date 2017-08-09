@@ -28,7 +28,6 @@ import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
-import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceFormatException;
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceNoMoreItensException;
 import br.com.sgpf.common.domain.vo.SimpleDataElement;
@@ -76,22 +75,43 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void nullFileConstructorTest() throws DataSourceFileException {
+	public void nullFileConstructorTest() throws DataSourceDocumentException {
 		File file = null;
 		new SimpleSheetDataSourceImpl(file, SHEET_INDEX);
 	}
 	
-	@Test(expected = DataSourceFileException.class)
-	public void invalidFileConstructorTest() throws DataSourceFileException {
+	@Test(expected = DataSourceDocumentException.class)
+	public void invalidFileConstructorTest() throws DataSourceDocumentException {
 		new SimpleSheetDataSourceImpl(INVALID_FILE, SHEET_INDEX);
 	}
 	
-	@Test(expected = DataSourceFileException.class)
+	@Test(expected = DataSourceDocumentException.class)
 	public void unreadableFileConstructorTest() throws DataImportException {
 		new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNREADABLE, SHEET_INDEX);
 	}
 	
-	@Test(expected = DataSourceFileException.class)
+	@Test
+	public void inputStreamIsWritableTest() throws FileNotFoundException {
+		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
+		
+		assertFalse(simpleSheetDataSource.isWritable());
+	}
+	
+	@Test
+	public void writeableFileIsWritableTest() throws DataSourceDocumentException {
+		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
+		
+		assertTrue(simpleSheetDataSource.isWritable());
+	}
+	
+	@Test
+	public void nonWriteableFileIsWritableTest() throws DataSourceDocumentException {
+		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNWRITABLE, SHEET_INDEX);
+		
+		assertFalse(simpleSheetDataSource.isWritable());
+	}
+	
+	@Test(expected = DataSourceDocumentException.class)
 	public void nonExistingFileOpenTest() throws DataImportException, IOException {
 		INVALID_FILE.createNewFile();
 		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(INVALID_FILE, SHEET_INDEX_INVALID);
@@ -119,18 +139,6 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test
-	public void toStringFileDataSourceTest() throws DataImportException {
-		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
-		assertEquals("File Based SimpleSheetDataSourceImpl: \"" + TEST_SHEET_FILE.getAbsolutePath() + "\"", simpleSheetDataSource.toString());
-	}
-	
-	@Test
-	public void toStringInputStreamDataSourceTest() throws DataImportException, FileNotFoundException {
-		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
-		assertEquals("In Memory Based SimpleSheetDataSourceImpl", simpleSheetDataSource.toString());
-	}
-	
-	@Test
 	public void openFileDataSourceTest() throws DataImportException {
 		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
@@ -142,27 +150,6 @@ public class SimpleSheetDataSourceTest {
 		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
 		simpleSheetDataSource.open();
 		simpleSheetDataSource.close();
-	}
-	
-	@Test
-	public void inputStreamIsWritableTest() throws FileNotFoundException {
-		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
-		
-		assertFalse(simpleSheetDataSource.isWritable());
-	}
-	
-	@Test
-	public void writeableFileIsWritableTest() throws DataSourceFileException {
-		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
-		
-		assertTrue(simpleSheetDataSource.isWritable());
-	}
-	
-	@Test
-	public void nonWriteableFileIsWritableTest() throws DataSourceFileException {
-		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE_UNWRITABLE, SHEET_INDEX);
-		
-		assertFalse(simpleSheetDataSource.isWritable());
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -335,7 +322,7 @@ public class SimpleSheetDataSourceTest {
 		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
 		simpleSheetDataSource.open();
 		
-		simpleSheetDataSource.writeStringCell(null, TestColumns.INVALID.name(), STRING_VALUE);
+		simpleSheetDataSource.writeStringCell(null, TestColumns.STRING.name(), STRING_VALUE);
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -537,14 +524,6 @@ public class SimpleSheetDataSourceTest {
 	}
 	
 	@Test(expected = IllegalStateException.class)
-	public void closedDataSourceSyncTest() throws DataImportException {
-		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
-		DataImportInstructions instructions = new DataImportInstructions(false, false, true, false, false, true);
-		DataImportItem<Integer, SimpleDataElement> item = new DataImportItem<Integer, SimpleDataElement>(1, new SimpleDataElement(1L), instructions);
-		simpleSheetDataSource.sync(item);
-	}
-	
-	@Test(expected = IllegalStateException.class)
 	public void closeAlreadyClosedDataSourceTest() throws DataImportException {
 		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, 0);
 		simpleSheetDataSource.open();
@@ -571,4 +550,18 @@ public class SimpleSheetDataSourceTest {
 		
 		assertTrue(after > before);
 	}
+	
+	@Test
+	public void toStringFileDataSourceTest() throws DataImportException {
+		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX);
+		assertEquals("SimpleSheetDataSourceImpl based on Document [File Based WorkbookWrapperImpl: \"" + TEST_SHEET_FILE.getAbsolutePath() + "\"]", simpleSheetDataSource.toString());
+	}
+	
+	@Test
+	public void toStringInputStreamDataSourceTest() throws DataImportException, FileNotFoundException {
+		SimpleSheetDataSource<SimpleDataElement> simpleSheetDataSource = new SimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX);
+		assertEquals("SimpleSheetDataSourceImpl based on Document [In Memory Based WorkbookWrapperImpl]", simpleSheetDataSource.toString());
+	}
 }
+
+

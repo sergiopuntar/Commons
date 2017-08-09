@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -42,7 +41,7 @@ import br.com.sgpf.common.document.exception.DocumentIOException;
  * 
  * @author Sergio Puntar
  */
-public class WorkbookWrapperImpl implements Serializable, WorkbookWrapper {
+public class WorkbookWrapperImpl implements  WorkbookWrapper {
 	private static final long serialVersionUID = 5664150354430952186L;
 	
 	private static final String ERROR_FILE_NOT_FOUND = "Não foi possível encontrar o arquivo [%s].";
@@ -72,6 +71,9 @@ public class WorkbookWrapperImpl implements Serializable, WorkbookWrapper {
 	
 	private static final String VALUE_STRING_Y = "Y";
 	private static final String VALUE_STRING_N = "N";
+	
+	private static final String TO_STRING_PATTERN_FILE = "File Based %s: \"%s\"";
+	private static final String TO_STRING_PATTERN_INPUT_STREAM = "In Memory Based %s";
 
 	private enum Type { FILE, INPUT_STREAM }
 	
@@ -535,5 +537,14 @@ public class WorkbookWrapperImpl implements Serializable, WorkbookWrapper {
 		checkArgument(cell != null, ERROR_NON_EXISTING_CELL, rowIndex, cellIndex);
 		
 		return cell;
+	}
+	
+	@Override
+	public String toString() {
+		if (file != null) {
+			return String.format(TO_STRING_PATTERN_FILE, getClass().getSimpleName(), file.getAbsolutePath());
+		}
+		
+		return String.format(TO_STRING_PATTERN_INPUT_STREAM, getClass().getSimpleName());
 	}
 }

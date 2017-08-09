@@ -19,13 +19,6 @@ import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
  * @author Sergio Puntar
  */
 public interface ImportDataSource<I extends Serializable, T extends Serializable> extends Serializable {
-
-	/**
-	 * Abre a fonte de dados para iniciar a leitura ou escrita.
-	 * 
-	 * @throws DataImportException Se ocorrer um erro na abertura da fonte de dados.
-	 */
-	public void open() throws DataImportException;
 	
 	/**
 	 * Verifica se a fonte de dados é gravável.
@@ -33,6 +26,13 @@ public interface ImportDataSource<I extends Serializable, T extends Serializable
 	 * @return True se for gravável, False caso contrário
 	 */
 	public boolean isWritable();
+
+	/**
+	 * Abre a fonte de dados para iniciar a leitura ou escrita.
+	 * 
+	 * @throws DataImportException Se ocorrer um erro na abertura da fonte de dados.
+	 */
+	public void open() throws DataImportException;
 	
 	/**
 	 * Verifica se existe um próximo item na sequência da fonte de dados.

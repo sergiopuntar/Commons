@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
 import br.com.sgpf.common.domain.entity.Entity;
 
 /**
@@ -28,7 +28,7 @@ public abstract class EntitySimpleSheetDataSource<I extends Serializable, E exte
 	/**
 	 * {@inheritDoc}
 	 */
-	public EntitySimpleSheetDataSource(File file, int sheetId) throws DataSourceFileException {
+	public EntitySimpleSheetDataSource(File file, int sheetId) throws DataSourceDocumentException {
 		super(file, sheetId);
 	}
 

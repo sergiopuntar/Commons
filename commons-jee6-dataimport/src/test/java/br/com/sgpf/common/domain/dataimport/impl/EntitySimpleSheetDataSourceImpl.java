@@ -9,13 +9,13 @@ package br.com.sgpf.common.domain.dataimport.impl;
 import java.io.File;
 import java.io.InputStream;
 
-import br.com.sgpf.common.domain.dataimport.exception.DataSourceFileException;
+import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
 import br.com.sgpf.common.domain.entity.AbstractEntityImpl;
 
 public class EntitySimpleSheetDataSourceImpl extends EntitySimpleSheetDataSource<Long, AbstractEntityImpl> {
 	private static final long serialVersionUID = 1L;
 
-	public EntitySimpleSheetDataSourceImpl(File file, int sheetId) throws DataSourceFileException {
+	public EntitySimpleSheetDataSourceImpl(File file, int sheetId) throws DataSourceDocumentException {
 		super(file, sheetId);
 	}
 

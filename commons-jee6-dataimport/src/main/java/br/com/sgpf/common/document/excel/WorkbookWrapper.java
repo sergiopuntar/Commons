@@ -6,6 +6,7 @@
  */
 package br.com.sgpf.common.document.excel;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,7 +25,7 @@ import br.com.sgpf.common.document.exception.DocumentIOException;
  * 
  * @author Sergio Puntar
  */
-public interface WorkbookWrapper {
+public interface WorkbookWrapper extends Serializable {
 
 	/**
 	 * Verifica se o documento é gravável.
