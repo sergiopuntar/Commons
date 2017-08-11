@@ -8,6 +8,9 @@ package br.com.sgpf.common.infra.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.Lists;
@@ -53,7 +55,7 @@ public class AbstractDAOTest {
 	public void findTest() {
 		AbstractEntityImpl entity = new AbstractEntityImpl();
 		entity.setId(1L);
-		Mockito.when(em.find(AbstractEntityImpl.class, entity.getId())).thenReturn(entity);
+		when(em.find(AbstractEntityImpl.class, entity.getId())).thenReturn(entity);
 		
 		assertEquals(entity, dao.find(1L));
 	}
@@ -66,10 +68,10 @@ public class AbstractDAOTest {
 		entity2.setId(2L);
 		ArrayList<AbstractEntityImpl> entities = Lists.newArrayList(entity1, entity2);
 		
-		Query query = Mockito.mock(Query.class);
-		Mockito.when(query.getResultList()).thenReturn(entities);
+		Query query = mock(Query.class);
+		when(query.getResultList()).thenReturn(entities);
 		
-		Mockito.when(em.createQuery("from " + AbstractEntityImpl.class.getName())).thenReturn(query);
+		when(em.createQuery("from " + AbstractEntityImpl.class.getName())).thenReturn(query);
 		
 		assertEquals(entities, dao.findAll());
 	}
@@ -86,8 +88,8 @@ public class AbstractDAOTest {
 		
 		dao.persist(entity);
 		
-		Mockito.verify(em).persist(entity);
-		Mockito.verify(em).flush();
+		verify(em).persist(entity);
+		verify(em).flush();
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -104,12 +106,12 @@ public class AbstractDAOTest {
 		mergedEntity.setId(1L);
 		mergedEntity.setVersion(0L);
 		
-		Mockito.when(em.merge(entity)).thenReturn(mergedEntity);
+		when(em.merge(entity)).thenReturn(mergedEntity);
 		
 		assertEquals(mergedEntity, dao.merge(entity));
 		
-		Mockito.verify(em).merge(entity);
-		Mockito.verify(em).flush();
+		verify(em).merge(entity);
+		verify(em).flush();
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -124,7 +126,7 @@ public class AbstractDAOTest {
 		
 		dao.refresh(entity);
 		
-		Mockito.verify(em).refresh(entity);
+		verify(em).refresh(entity);
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -137,12 +139,12 @@ public class AbstractDAOTest {
 		AbstractEntityImpl entity = new AbstractEntityImpl();
 		entity.setId(1L);
 		
-		Mockito.when(em.contains(entity)).thenReturn(true);
+		when(em.contains(entity)).thenReturn(true);
 		
 		dao.remove(entity);
 		
-		Mockito.verify(em).remove(entity);
-		Mockito.verify(em).flush();
+		verify(em).remove(entity);
+		verify(em).flush();
 	}
 	
 	@Test
@@ -154,14 +156,14 @@ public class AbstractDAOTest {
 		mergedEntity.setId(1L);
 		mergedEntity.setVersion(0L);
 		
-		Mockito.when(em.contains(entity)).thenReturn(false);
-		Mockito.when(em.merge(entity)).thenReturn(mergedEntity);
+		when(em.contains(entity)).thenReturn(false);
+		when(em.merge(entity)).thenReturn(mergedEntity);
 		
 		dao.remove(entity);
 		
-		Mockito.verify(em).merge(entity);
-		Mockito.verify(em).remove(mergedEntity);
-		Mockito.verify(em).flush();
+		verify(em).merge(entity);
+		verify(em).remove(mergedEntity);
+		verify(em).flush();
 	}
 	
 	@Test(expected = NullPointerException.class)

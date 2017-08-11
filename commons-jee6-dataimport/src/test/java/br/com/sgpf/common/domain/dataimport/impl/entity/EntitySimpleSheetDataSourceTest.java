@@ -4,9 +4,11 @@
  * This program is made available under the terms of the MIT License.
  * See the LICENSE file for details.
  */
-package br.com.sgpf.common.domain.dataimport.impl;
+package br.com.sgpf.common.domain.dataimport.impl.entity;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
@@ -46,7 +47,7 @@ public class EntitySimpleSheetDataSourceTest {
 	
 	@Test
 	public void readCurrentItemDataTest() throws DataImportException, ParseException {
-		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = Mockito.spy(new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX));
+		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = spy(new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX));
 		entitySimpleSheetDataSource.open();
 		
 		DataImportItem<Integer, AbstractEntityImpl> importItem = entitySimpleSheetDataSource.next();
@@ -55,14 +56,14 @@ public class EntitySimpleSheetDataSourceTest {
 		assertEquals(DATE_FORMAT.parse("01/01/2017"), importItem.getData().getUpdateDate());
 		assertEquals(Long.valueOf(0L), importItem.getData().getVersion());
 		
-		Mockito.verify(entitySimpleSheetDataSource).readCurrentItemData();
+		verify(entitySimpleSheetDataSource).readCurrentItemData();
 		
 		entitySimpleSheetDataSource.close();
 	}
 	
 	@Test
 	public void syncRowTest() throws DataImportException, ParseException {
-		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = Mockito.spy(new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX));
+		EntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = spy(new EntitySimpleSheetDataSourceImpl(TEST_SHEET_FILE, SHEET_INDEX));
 		entitySimpleSheetDataSource.open();
 		
 		DataImportItem<Integer, AbstractEntityImpl> importItem = entitySimpleSheetDataSource.next();
@@ -79,11 +80,11 @@ public class EntitySimpleSheetDataSourceTest {
 		entitySimpleSheetDataSource.sync(importItem);
 		DataImportItem<Integer, AbstractEntityImpl> updatedImportItem = entitySimpleSheetDataSource.current();
 		
-		Mockito.verify(entitySimpleSheetDataSource).writeEntityId(importItem.getId(), TestColumns.ID.name(), Long.valueOf(1L));
+		verify(entitySimpleSheetDataSource).writeEntityId(importItem.getId(), TestColumns.ID.name(), Long.valueOf(1L));
 		assertEquals(DATE_FORMAT.parse("10/01/2017"), updatedImportItem.getData().getCreationDate());
 		assertEquals(DATE_FORMAT.parse("10/01/2017"), updatedImportItem.getData().getUpdateDate());
 		assertEquals(Long.valueOf(1L), updatedImportItem.getData().getVersion());
-		Mockito.verify(entitySimpleSheetDataSource).writeItemData(importItem.getId(), importItem.getData());
+		verify(entitySimpleSheetDataSource).writeItemData(importItem.getId(), importItem.getData());
 		
 		// Desfaz as alterações
 		updatedImportItem.getData().setId(0L);

@@ -4,12 +4,13 @@
  * This program is made available under the terms of the MIT License.
  * See the LICENSE file for details.
  */
-package br.com.sgpf.common.domain.dataimport.impl;
+package br.com.sgpf.common.domain.dataimport.impl.entity;
 
 import java.io.File;
 import java.io.InputStream;
 
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
+import br.com.sgpf.common.domain.dataimport.impl.entity.UUIDEntitySimpleSheetDataSource;
 import br.com.sgpf.common.domain.entity.AbstractUUIDEntityImpl;
 
 public class UUIDEntitySimpleSheetDataSourceImpl extends UUIDEntitySimpleSheetDataSource<AbstractUUIDEntityImpl> {

@@ -4,7 +4,7 @@
  * This program is made available under the terms of the MIT License.
  * See the LICENSE file for details.
  */
-package br.com.sgpf.common.domain.dataimport.impl;
+package br.com.sgpf.common.domain.dataimport.impl.entity;
 
 import java.io.File;
 import java.io.InputStream;
@@ -22,25 +22,25 @@ import br.com.sgpf.common.domain.entity.AbstractIdentityEntity;
 public abstract class IdentityEntitySimpleSheetDataSource<E extends AbstractIdentityEntity> extends EntitySimpleSheetDataSource<Long, E> {
 	private static final long serialVersionUID = 8096959271007933357L;
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	public IdentityEntitySimpleSheetDataSource(File file, int sheetId) throws DataSourceDocumentException {
 		super(file, sheetId);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public IdentityEntitySimpleSheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected Long readEntityId(String columnName) {
 		return readLongCell(columnName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean writeEntityId(Integer rowIndex, String columnName, Long id) {
 		return writeLongCell(rowIndex, columnName, id);

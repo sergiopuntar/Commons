@@ -6,6 +6,8 @@
  */
 package br.com.sgpf.common.domain.dataimport;
 
+import static br.com.sgpf.common.test.pojo.PojoTester.looseTesters;
+import static br.com.sgpf.common.test.pojo.PojoTester.strictRules;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -28,6 +30,6 @@ public class DataImportInstructionsTest {
 	@Test
 	public void pojoTest() {
 		PojoTester pojoTester =  new PojoTester(DataImportInstructions.class);
-		pojoTester.validatePojo(PojoTester.getStrictRules(), PojoTester.getLooseTesters());	
+		pojoTester.validatePojo(strictRules(), looseTesters());	
 	}
 }

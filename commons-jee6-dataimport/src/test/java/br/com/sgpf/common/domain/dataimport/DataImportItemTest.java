@@ -15,12 +15,14 @@ import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.OVERR
 import static br.com.sgpf.common.domain.dataimport.DataImportResult.Status.UPDATED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 
 import org.junit.Test;
 
+import br.com.sgpf.common.domain.dataimport.DataImportResult.Status;
 import br.com.sgpf.common.test.equals.EqualsTester;
 
 public class DataImportItemTest {
@@ -43,7 +45,7 @@ public class DataImportItemTest {
 	}
 	
 	@Test
-	public void constructorTest() {
+	public void regularConstructorTest() {
 		DataImportInstructions dataImportInstructions = new DataImportInstructions(true, true, true, true, true, true);
 		DataImportItem<Integer, Integer> dataImportItem = new DataImportItem<>(1, 1, dataImportInstructions);
 		
@@ -55,6 +57,26 @@ public class DataImportItemTest {
 		assertEquals(dataImportInstructions.isRemove(), dataImportItem.isRemove());
 		assertEquals(dataImportInstructions.isForce(), dataImportItem.isForce());
 		assertEquals(dataImportInstructions.isSync(), dataImportItem.isSync());
+	}
+	
+	@Test
+	public void errorConstructorTest() {
+		String message = "Mensagem de erro";
+		Exception exception = new Exception("Mensagem da exceção");
+		DataImportItem<Integer, Integer> dataImportItem =  new DataImportItem<>(message, exception);
+		
+		assertEquals(message, dataImportItem.getResult().getMessage());
+		assertEquals(exception, dataImportItem.getResult().getException());
+		assertEquals(Status.ERROR, dataImportItem.getResult().getStatus());
+		assertFalse(dataImportItem.getResult().isSynced());
+		assertNull(dataImportItem.getId());
+		assertNull(dataImportItem.getData());
+		assertFalse(dataImportItem.isInsert());
+		assertFalse(dataImportItem.isUpdate());
+		assertFalse(dataImportItem.isMerge());
+		assertFalse(dataImportItem.isRemove());
+		assertFalse(dataImportItem.isForce());
+		assertFalse(dataImportItem.isSync());
 	}
 	
 	@Test

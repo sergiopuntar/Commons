@@ -14,6 +14,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +28,6 @@ import java.util.Calendar;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import br.com.sgpf.common.document.exception.DocumentException;
 import br.com.sgpf.common.document.exception.DocumentFileException;
@@ -36,8 +37,8 @@ import br.com.sgpf.common.document.exception.DocumentIOException;
 public class WorkbookWrapperImplTest {
 	
 	private static final File WORKBOOK_FILE = new File("src/test/resources/br/com/sgpf/common/document/excel/WorkbookWrapperTest.xls");
-	private static final File UNREADABLE_WORKBOOK_FILE = Mockito.spy(WORKBOOK_FILE);
-	private static final File UNWRITABLE_WORKBOOK_FILE = Mockito.spy(WORKBOOK_FILE);
+	private static final File UNREADABLE_WORKBOOK_FILE = spy(WORKBOOK_FILE);
+	private static final File UNWRITABLE_WORKBOOK_FILE = spy(WORKBOOK_FILE);
 	private static final File ENCRYPTED_WORKBOOK_FILE = new File("src/test/resources/br/com/sgpf/common/document/excel/EncryptedWorkbookWrapperTest.xls");
 	private static final File TEXT_FILE = new File("src/test/resources/br/com/sgpf/common/document/excel/TextFile.txt");
 	private static final File INVALID_FILE = new File("src/test/resources/br/com/sgpf/common/document/excel/invalid.xls");
@@ -67,8 +68,8 @@ public class WorkbookWrapperImplTest {
 	@BeforeClass
 	public static void beforeClass() throws ParseException {
 		CALENDAR_VALUE.setTime(DATE_FORMAT.parse("01/01/2017"));
-		Mockito.when(UNREADABLE_WORKBOOK_FILE.canRead()).thenReturn(false);
-		Mockito.when(UNWRITABLE_WORKBOOK_FILE.canWrite()).thenReturn(false);
+		when(UNREADABLE_WORKBOOK_FILE.canRead()).thenReturn(false);
+		when(UNWRITABLE_WORKBOOK_FILE.canWrite()).thenReturn(false);
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -156,7 +157,7 @@ public class WorkbookWrapperImplTest {
 	
 	@Test(expected = DocumentIOException.class)
 	public void openWorkbookFromInvalidInputStreamTest() throws DocumentException, IOException {
-		FileInputStream fis = Mockito.spy(new FileInputStream(WORKBOOK_FILE));
+		FileInputStream fis = spy(new FileInputStream(WORKBOOK_FILE));
 		doThrow(new IOException()).when(fis).read();
 		doThrow(new IOException()).when(fis).read(any(byte[].class));
 		doThrow(new IOException()).when(fis).read(any(byte[].class), anyInt(), anyInt());

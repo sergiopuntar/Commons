@@ -37,19 +37,37 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	private static final String ARG_NAME_DATA = "data";
 	private static final String ARG_NAME_INSTRUCTIONS = "instructions";
 	
-	private static final List<DataImportResult.Status> CHANGED_STATUS = Lists.newArrayList(INSERTED, UPDATED, FORCE_UPDATED, DELETED, OVERRIDDEN);
+	private static final List<DataImportResult.Status> CHANGED_DATA_STATUS = Lists.newArrayList(INSERTED, UPDATED, FORCE_UPDATED, DELETED, OVERRIDDEN);
 	
 	private I id;
 	private T data;
 	private DataImportInstructions instructions;
 	private DataImportResult result;
 	
+	/**
+	 * Constrói o item de importação com os dados recuperados da origem.
+	 * 
+	 * @param id Identificador do item na origem
+	 * @param data Dados do item na origem
+	 * @param instructions Instruções de importação do item na origem
+	 */
 	public DataImportItem(I id, T data, DataImportInstructions instructions) {
 		super();
 		this.id = checkNotNull(id, ERROR_NULL_ARGUMENT, ARG_NAME_ID);
 		this.data = checkNotNull(data, ERROR_NULL_ARGUMENT, ARG_NAME_DATA);
 		this.instructions = checkNotNull(instructions, ERROR_NULL_ARGUMENT, ARG_NAME_INSTRUCTIONS);
 		this.result = new DataImportResult();
+	}
+	
+	/**
+	 * Constrói um item de importação sem dados, contendo um resultado de erro de importação.
+	 * 
+	 * @param errorMessage Mensagem de erro de importação
+	 * @param exception Exceção que gerou o erro
+	 */
+	public DataImportItem(String errorMessage, Exception exception) {
+		super();
+		this.result = new DataImportResult(errorMessage, exception);
 	}
 
 	public I getId() {
@@ -61,27 +79,27 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	}
 
 	public Boolean isInsert() {
-		return instructions.isInsert();
+		return instructions != null && instructions.isInsert();
 	}
 
 	public Boolean isUpdate() {
-		return instructions.isUpdate();
+		return instructions != null && instructions.isUpdate();
 	}
 
 	public Boolean isMerge() {
-		return instructions.isMerge();
+		return instructions != null && instructions.isMerge();
 	}
 
 	public Boolean isRemove() {
-		return instructions.isRemove();
+		return instructions != null && instructions.isRemove();
 	}
 
 	public Boolean isForce() {
-		return instructions.isForce();
+		return instructions != null && instructions.isForce();
 	}
 
 	public Boolean isSync() {
-		return instructions.isSync();
+		return instructions != null && instructions.isSync();
 	}
 
 	public DataImportResult getResult() {
@@ -95,14 +113,20 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 	 * @return True se houve alteração, False caso contrário 
 	 */
 	public Boolean dataChanged() {
-		return CHANGED_STATUS.contains(getResult().getStatus());
+		return CHANGED_DATA_STATUS.contains(getResult().getStatus());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.getId());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DataImportItem) {
@@ -114,6 +138,9 @@ public class DataImportItem<I extends Serializable, T extends Serializable> impl
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean canEqual(Object obj) {
 		return obj instanceof DataImportItem;

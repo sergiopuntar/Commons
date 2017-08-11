@@ -58,6 +58,20 @@ public class DataImportResult implements Serializable {
 	public DataImportResult() {
 		super();
 	}
+	
+	/**
+	 * Constrói um resultado de erro com status definido como {@link
+	 * br.com.sgpf.common.domain.dataimport.DataImportResult.Status#ERROR ERROR}.
+	 * 
+	 * @param message Mensagem de erro de importação
+	 * @param exception Exceção que gerou o erro
+	 */
+	public DataImportResult(String message, Exception exception) {
+		super();
+		status = Status.ERROR;
+		this.message = message;
+		this.exception = exception;
+	}
 
 	public Status getStatus() {
 		return status;

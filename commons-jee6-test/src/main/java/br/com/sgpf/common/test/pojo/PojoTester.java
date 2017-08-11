@@ -224,7 +224,7 @@ public class PojoTester {
 	 * 
 	 * @return Array de regras de estrutura estritas.
 	 */
-	public static Rule[] getStrictRules() {
+	public static Rule[] strictRules() {
 		return STRICT_RULES.clone();
 	}
 
@@ -233,7 +233,7 @@ public class PojoTester {
 	 * 
 	 * @return Array de testes de comportamento estritas.
 	 */
-	public static Tester[] getStrictTesters() {
+	public static Tester[] strictTesters() {
 		return STRICT_TESTERS.clone();
 	}
 
@@ -242,7 +242,7 @@ public class PojoTester {
 	 * 
 	 * @return Array de regras de estrutura frouxas.
 	 */
-	public static Rule[] getLooseRules() {
+	public static Rule[] looseRules() {
 		return LOOSE_RULES.clone();
 	}
 
@@ -251,7 +251,7 @@ public class PojoTester {
 	 * 
 	 * @return Array de testes de comportamento frouxas.
 	 */
-	public static Tester[] getLooseTesters() {
+	public static Tester[] looseTesters() {
 		return LOOSE_TESTERS.clone();
 	}
 
@@ -261,7 +261,7 @@ public class PojoTester {
 	 * 
 	 * @return Array de regras de estrutura para pojos com conteúdo imutável.
 	 */
-	public static Rule[] getUnmutableRules() {
+	public static Rule[] unmutableRules() {
 		return UNMUTABLE_RULES.clone();
 	}
 
@@ -271,7 +271,7 @@ public class PojoTester {
 	 * 
 	 * @return Array de testes de comportamento para pojos com conteúdo imutável.
 	 */
-	public static Tester[] getUnmutableTesters() {
+	public static Tester[] unmutableTesters() {
 		return UNMUTABLE_TESTERS.clone();
 	}
 }

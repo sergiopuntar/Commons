@@ -4,13 +4,14 @@
  * This program is made available under the terms of the MIT License.
  * See the LICENSE file for details.
  */
-package br.com.sgpf.common.domain.dataimport.impl;
+package br.com.sgpf.common.domain.dataimport.impl.entity;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 
 import br.com.sgpf.common.domain.dataimport.exception.DataSourceDocumentException;
+import br.com.sgpf.common.domain.dataimport.impl.SimpleSheetDataSource;
 import br.com.sgpf.common.domain.entity.Entity;
 
 /**
@@ -25,20 +26,17 @@ public abstract class EntitySimpleSheetDataSource<I extends Serializable, E exte
 	
 	private enum EntityMetadataHeader { ID, CREATION_DATE, UPDATE_DATE, VERSION }
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public EntitySimpleSheetDataSource(File file, int sheetId) throws DataSourceDocumentException {
 		super(file, sheetId);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public EntitySimpleSheetDataSource(InputStream is, int sheetId) {
 		super(is, sheetId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected E readCurrentItemData() {
 		E entity = createEntityInstance();
@@ -63,6 +61,9 @@ public abstract class EntitySimpleSheetDataSource<I extends Serializable, E exte
 	 */
 	protected abstract I readEntityId(String columnName);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean syncRow(Integer rowIndex, E data) {
 		boolean idChanged = writeEntityId(rowIndex, EntityMetadataHeader.ID.name(), data.getId());

@@ -6,15 +6,33 @@
  */
 package br.com.sgpf.common.domain.dataimport;
 
+import static br.com.sgpf.common.test.pojo.PojoTester.looseRules;
+import static br.com.sgpf.common.test.pojo.PojoTester.strictTesters;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import org.junit.Test;
 
+import br.com.sgpf.common.domain.dataimport.DataImportResult.Status;
 import br.com.sgpf.common.test.pojo.PojoTester;
 
 public class DataImportResultTest {
 
 	@Test
+	public void constructorTest() {
+		String message = "Mensagem de erro";
+		Exception exception = new Exception("Mensagem da exceção");
+		DataImportResult dataImportResult =  new DataImportResult(message, exception);
+		
+		assertEquals(message, dataImportResult.getMessage());
+		assertEquals(exception, dataImportResult.getException());
+		assertEquals(Status.ERROR, dataImportResult.getStatus());
+		assertFalse(dataImportResult.isSynced());
+	}
+	
+	@Test
 	public void pojoTest() {
 		PojoTester pojoTester =  new PojoTester(DataImportResult.class);
-		pojoTester.validatePojo(PojoTester.getLooseRules(), PojoTester.getStrictTesters());	
+		pojoTester.validatePojo(looseRules(), strictTesters());	
 	}
 }

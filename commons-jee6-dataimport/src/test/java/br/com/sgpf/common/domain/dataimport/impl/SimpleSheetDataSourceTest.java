@@ -10,6 +10,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +24,6 @@ import java.util.Calendar;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
@@ -35,8 +36,8 @@ import br.com.sgpf.common.domain.vo.SimpleDataElement;
 public class SimpleSheetDataSourceTest {
 	
 	private static final File TEST_SHEET_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/SimpleSheetDataSourceTest.xls");
-	private static final File TEST_SHEET_FILE_UNREADABLE = Mockito.spy(TEST_SHEET_FILE);
-	private static final File TEST_SHEET_FILE_UNWRITABLE = Mockito.spy(TEST_SHEET_FILE);
+	private static final File TEST_SHEET_FILE_UNREADABLE = spy(TEST_SHEET_FILE);
+	private static final File TEST_SHEET_FILE_UNWRITABLE = spy(TEST_SHEET_FILE);
 	private static final File INVALID_FILE = new File("src/test/resources/br/com/sgpf/common/domain/dataimport/impl/invalid.xls");
 	
 	private static final int SHEET_INDEX = 0;
@@ -64,8 +65,8 @@ public class SimpleSheetDataSourceTest {
 	@BeforeClass
 	public static void beforeClass() throws ParseException {
 		CALENDAR_VALUE.setTime(DATE_FORMAT.parse("01/01/2017"));
-		Mockito.when(TEST_SHEET_FILE_UNREADABLE.canRead()).thenReturn(false);
-		Mockito.when(TEST_SHEET_FILE_UNWRITABLE.canWrite()).thenReturn(false);
+		when(TEST_SHEET_FILE_UNREADABLE.canRead()).thenReturn(false);
+		when(TEST_SHEET_FILE_UNWRITABLE.canWrite()).thenReturn(false);
 	}
 	
 	@Test(expected = NullPointerException.class)

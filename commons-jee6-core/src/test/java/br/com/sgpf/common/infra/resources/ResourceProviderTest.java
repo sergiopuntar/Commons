@@ -7,6 +7,10 @@
 package br.com.sgpf.common.infra.resources;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +23,6 @@ import javax.naming.NamingException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -40,9 +42,9 @@ public class ResourceProviderTest {
 
 	@Test
 	public void getBeanManagerTest() throws NamingException {
-		BeanManager beanManager = Mockito.mock(BeanManager.class);
-		PowerMockito.mockStatic(InitialContext.class);
-		Mockito.when(InitialContext.doLookup(ResourceProvider.DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
+		BeanManager beanManager = mock(BeanManager.class);
+		mockStatic(InitialContext.class);
+		when(InitialContext.doLookup(ResourceProvider.DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
 		
 		ResourceProvider resourceProvider = new ResourceProvider();
 		assertEquals(beanManager, resourceProvider.getBeanManager());
@@ -55,9 +57,9 @@ public class ResourceProviderTest {
 	
 	@Test
 	public void setBeanManagerNameConstructorTest() throws NamingException {
-		BeanManager beanManager = Mockito.mock(BeanManager.class);
-		PowerMockito.mockStatic(InitialContext.class);
-		Mockito.when(InitialContext.doLookup(TEST_BEAN_MANAGER_NAME)).thenReturn(beanManager);
+		BeanManager beanManager = mock(BeanManager.class);
+		mockStatic(InitialContext.class);
+		when(InitialContext.doLookup(TEST_BEAN_MANAGER_NAME)).thenReturn(beanManager);
 		
 		ResourceProvider resourceProvider = new ResourceProvider(TEST_BEAN_MANAGER_NAME);
 		assertEquals(beanManager, resourceProvider.getBeanManager());
@@ -67,18 +69,18 @@ public class ResourceProviderTest {
 	public void getContextualReferenceTest() throws NamingException {
 		Object object = new Object();
 		Set<Bean<? extends Object>> beans = new HashSet<>();
-		Bean<?> bean = Mockito.mock(Bean.class);
+		Bean<?> bean = mock(Bean.class);
 		beans.add(bean);
-		CreationalContext<?> ctx = Mockito.mock(CreationalContext.class);
+		CreationalContext<?> ctx = mock(CreationalContext.class);
 		
-		BeanManager beanManager = Mockito.mock(BeanManager.class);
-		Mockito.when(beanManager.getBeans(Object.class)).thenReturn(beans);
-		Mockito.doReturn(bean).when(beanManager).resolve(beans);
-		Mockito.doReturn(ctx).when(beanManager).createCreationalContext(bean);
-		Mockito.doReturn(object).when(beanManager).getReference(bean, Object.class, ctx);
+		BeanManager beanManager = mock(BeanManager.class);
+		when(beanManager.getBeans(Object.class)).thenReturn(beans);
+		doReturn(bean).when(beanManager).resolve(beans);
+		doReturn(ctx).when(beanManager).createCreationalContext(bean);
+		doReturn(object).when(beanManager).getReference(bean, Object.class, ctx);
 		
-		PowerMockito.mockStatic(InitialContext.class);
-		Mockito.when(InitialContext.doLookup(ResourceProvider.DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
+		mockStatic(InitialContext.class);
+		when(InitialContext.doLookup(ResourceProvider.DEFAULT_BEAN_MANAGER_NAME)).thenReturn(beanManager);
 		
 		ResourceProvider resourceProvider = new ResourceProvider();
 		assertEquals(object, resourceProvider.getContextualReference(Object.class));

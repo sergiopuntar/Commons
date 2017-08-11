@@ -142,11 +142,17 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		this.is = checkNotNull(is, ERROR_NULL_ARGUMENT, ARG_NAME_IS);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isWritable() {
 		return type == Type.FILE && file != null && file.canWrite();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void open() throws DocumentException {
 		checkState(workbook == null, ERROR_DOCUMENT_OPEN);
@@ -174,6 +180,10 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		updateWorkingSheet(workingSheetIndex);
 	}
 	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setWorkingSheetId(Integer workingSheetIndex) throws DocumentException {
 		checkNotNull(workingSheetIndex, ERROR_NULL_ARGUMENT, ARG_NAME_WORKING_SHEET_INDEX);
@@ -199,6 +209,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close(Boolean save) throws DocumentFileException, DocumentIOException {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
@@ -244,12 +257,18 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Workbook getWorkbook() {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
 		return workbook;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Sheet getWorkingSheet() {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
@@ -257,6 +276,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return sheet;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String readStringCell(Integer rowIndex, Integer cellIndex) {
 		Cell cell = getRowCell(rowIndex, cellIndex);
@@ -268,6 +290,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return cell.getStringCellValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeStringCell(Integer rowIndex, Integer cellIndex, String value) {
 		if (value == null) {
@@ -284,6 +309,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return change;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Character readCharCell(Integer rowIndex, Integer cellIndex) throws DocumentFormatException {
 		String stringValue = readStringCell(rowIndex, cellIndex);
@@ -297,11 +325,17 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return stringValue.charAt(0);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeCharCell(Integer rowIndex, Integer cellIndex, Character value) {
 		return writeStringCell(rowIndex, cellIndex, value == null ? null : String.valueOf(value));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Double readDoubleCell(Integer rowIndex, Integer cellIndex) {
 		Cell cell = getRowCell(rowIndex, cellIndex);
@@ -313,6 +347,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return cell.getNumericCellValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeDoubleCell(Integer rowIndex, Integer cellIndex, Double value) {
 		if (value == null) {
@@ -329,61 +366,94 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return change;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Float readFloatCell(Integer rowIndex, Integer cellIndex) {
 		Double doubleValue = readDoubleCell(rowIndex, cellIndex);
 		return doubleValue == null ? null : doubleValue.floatValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeFloatCell(Integer rowIndex, Integer cellIndex, Float value) {
 		return writeDoubleCell(rowIndex, cellIndex, value == null ? null : Double.valueOf(value));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long readLongCell(Integer rowIndex, Integer cellIndex) {
 		Double doubleValue = readDoubleCell(rowIndex, cellIndex);
 		return doubleValue == null ? null : doubleValue.longValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeLongCell(Integer rowIndex, Integer cellIndex, Long value) {
 		return writeDoubleCell(rowIndex, cellIndex, value == null ? null : Double.valueOf(value));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer readIntegerCell(Integer rowIndex, Integer cellIndex) {
 		Double doubleValue = readDoubleCell(rowIndex, cellIndex);
 		return doubleValue == null ? null : doubleValue.intValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeIntegerCell(Integer rowIndex, Integer cellIndex, Integer value) {
 		return writeDoubleCell(rowIndex, cellIndex, value == null ? null : Double.valueOf(value));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Short readShortCell(Integer rowIndex, Integer cellIndex) {
 		Double doubleValue = readDoubleCell(rowIndex, cellIndex);
 		return doubleValue == null ? null : doubleValue.shortValue();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeShortCell(Integer rowIndex, Integer cellIndex, Short value) {
 		return writeDoubleCell(rowIndex, cellIndex, value == null ? null : Double.valueOf(value));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Byte readByteCell(Integer rowIndex, Integer cellIndex) {
 		Double doubleValue = readDoubleCell(rowIndex, cellIndex);
 		return doubleValue == null ? null : doubleValue.byteValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeByteCell(Integer rowIndex, Integer cellIndex, Byte value) {
 		return writeDoubleCell(rowIndex, cellIndex, value == null ? null : Double.valueOf(value));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean readBooleanCell(Integer rowIndex, Integer cellIndex) {
 		Cell cell = getRowCell(rowIndex, cellIndex);
@@ -395,6 +465,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return cell.getBooleanCellValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeBooleanCell(Integer rowIndex, Integer cellIndex,Boolean value) {
 		if (value == null) {
@@ -411,6 +484,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return change;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Date readDateCell(Integer rowIndex, Integer cellIndex) {
 		Cell cell = getRowCell(rowIndex, cellIndex);
@@ -422,6 +498,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return cell.getDateCellValue();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeDateCell(Integer rowIndex, Integer cellIndex, Date value) {
 		if (value == null) {
@@ -438,6 +517,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return change;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Calendar readCalendarCell(Integer rowIndex, Integer cellIndex) {
 		Date date = readDateCell(rowIndex, cellIndex);
@@ -452,6 +534,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return calendar;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeCalendarCell(Integer rowIndex, Integer cellIndex, Calendar value) {
 		if (value == null) {
@@ -475,6 +560,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return change;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean readYesNoCell(Integer rowIndex, Integer cellIndex) throws DocumentFormatException {
 		String value = getRowCell(rowIndex, cellIndex).getStringCellValue();
@@ -490,6 +578,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return null;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeYesNoCell(Integer rowIndex, Integer cellIndex, Boolean value) {
 		if (value == null) {
@@ -508,6 +599,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return change;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean writeNullValue(Integer rowIndex, Integer cellIndex) {
 		Cell cell = getRowCell(rowIndex, cellIndex);
@@ -523,6 +617,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Cell getRowCell(Integer rowIndex, Integer cellIndex) {
 		checkState(workbook != null, ERROR_DOCUMENT_CLOSED);
@@ -539,6 +636,9 @@ public class WorkbookWrapperImpl implements  WorkbookWrapper {
 		return cell;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		if (file != null) {

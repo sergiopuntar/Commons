@@ -4,16 +4,17 @@
  * This program is made available under the terms of the MIT License.
  * See the LICENSE file for details.
  */
-package br.com.sgpf.common.domain.dataimport.impl;
+package br.com.sgpf.common.domain.dataimport.impl.entity;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
@@ -45,20 +46,20 @@ public class UUIDEntitySimpleSheetDataSourceTest {
 	
 	@Test
 	public void readEntityIdTest() throws DataImportException, FileNotFoundException {
-		UUIDEntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = Mockito.spy(new UUIDEntitySimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX));
+		UUIDEntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = spy(new UUIDEntitySimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX));
 		entitySimpleSheetDataSource.open();
 		
 		DataImportItem<Integer, AbstractUUIDEntityImpl> importItem = entitySimpleSheetDataSource.next();
 		
 		assertEquals(ID_VALUE, importItem.getData().getId());
-		Mockito.verify(entitySimpleSheetDataSource).readEntityId(TestColumns.ID.name());
+		verify(entitySimpleSheetDataSource).readEntityId(TestColumns.ID.name());
 		
 		entitySimpleSheetDataSource.close();
 	}
 	
 	@Test
 	public void writeEntityIdTest() throws DataImportException, FileNotFoundException {
-		UUIDEntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = Mockito.spy(new UUIDEntitySimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX));
+		UUIDEntitySimpleSheetDataSourceImpl entitySimpleSheetDataSource = spy(new UUIDEntitySimpleSheetDataSourceImpl(new FileInputStream(TEST_SHEET_FILE), SHEET_INDEX));
 		entitySimpleSheetDataSource.open();
 		
 		String newId = EntityUtil.generateUUID();
@@ -72,7 +73,7 @@ public class UUIDEntitySimpleSheetDataSourceTest {
 		DataImportItem<Integer, AbstractUUIDEntityImpl> updatedImportItem = entitySimpleSheetDataSource.current();
 		
 		assertEquals(newId, updatedImportItem.getData().getId());
-		Mockito.verify(entitySimpleSheetDataSource).writeEntityId(1, TestColumns.ID.name(), newId);
+		verify(entitySimpleSheetDataSource).writeEntityId(1, TestColumns.ID.name(), newId);
 		
 		// Desfaz as alterações
 		updatedImportItem.getData().setId(ID_VALUE);

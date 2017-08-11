@@ -7,6 +7,7 @@
 package br.com.sgpf.common.infra.i18n;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.Locale;
 
@@ -46,7 +47,7 @@ public class ApplicationMessagesTest {
 	
 	@Test
 	public void getMessageTest() {
-		Mockito.when(resourceProvider.getContextualReference(Locale.class)).thenReturn(Locale.US);
+		when(resourceProvider.getContextualReference(Locale.class)).thenReturn(Locale.US);
 		
 		assertEquals("value", applicationMessages.getMessage(MessageKeyImpl.TEST));
 		assertEquals("param: paramValue", applicationMessages.getMessage(MessageKeyImpl.TEST_PARAM, "paramValue"));

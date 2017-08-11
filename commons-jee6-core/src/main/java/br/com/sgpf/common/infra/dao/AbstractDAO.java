@@ -49,6 +49,9 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 		clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public E find(I id) {
 		checkNotNull(id, ERROR_NULL_ARGUMENT, ARG_NAME_ID);
@@ -56,12 +59,18 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 		return em.find(clazz, id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<E> findAll() {
 		return em.createQuery("from " + clazz.getName()).getResultList();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void persist(E entity) {
 		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
@@ -70,6 +79,9 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 		em.flush();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public E merge(E entity) {
 		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
@@ -80,6 +92,9 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 		return persistedEntity;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void refresh(E entity) {
 		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
@@ -87,6 +102,9 @@ public abstract class AbstractDAO<E extends Entity<I>, I extends Serializable> i
 		em.refresh(entity);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove(E entity) {
 		checkNotNull(entity, ERROR_NULL_ARGUMENT, ARG_NAME_ENTITY);
