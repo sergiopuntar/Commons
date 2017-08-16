@@ -8,8 +8,6 @@ package br.com.sgpf.common.domain.dataimport.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -31,7 +29,6 @@ import com.google.common.collect.Lists;
 import br.com.sgpf.common.domain.dataimport.DataImportInstructions;
 import br.com.sgpf.common.domain.dataimport.DataImportItem;
 import br.com.sgpf.common.domain.dataimport.DataImportResult;
-import br.com.sgpf.common.domain.dataimport.DataImportResult.Status;
 import br.com.sgpf.common.domain.dataimport.ImportDataSource;
 import br.com.sgpf.common.domain.dataimport.exception.DataImportException;
 import br.com.sgpf.common.domain.vo.SimpleDataElement;
@@ -153,7 +150,7 @@ public class BaseDataImporterTest {
 	@Test(expected = DataImportException.class)
 	public void dataSourceReadErrorWithoutSuppression() throws DataImportException {
 		mockRegularDataSourceBehaviour();
-		when(dataSource.next()).thenThrow(new DataImportException("Data Source Read Error"));
+		when(dataSource.next()).thenThrow(new DataImportException("Data Read Error"));
 		
 		baseDataImporter.importData(dataSource, true, false);
 	}
@@ -163,57 +160,7 @@ public class BaseDataImporterTest {
 	 */
 	@Test
 	public void dataSourceReadErrorWithSuppression() throws DataImportException {
-		mockRegularDataSourceBehaviour();
 		
-		// hasNext() vai retornar True duas vezes e depois False
-		when(dataSource.hasNext()).then(new Answer<Boolean>() {
-			int i = 0;
-			
-			@Override
-			public Boolean answer(InvocationOnMock invocation) throws Throwable {
-				i++;
-				return i <= 2;
-			}
-		});
-		
-		// next() vai arremessar exceção para os itens ímpares e executar o comportamento normal para os pares
-		final DataImportException exception = new DataImportException("Data Source Read Error");		
-		when(dataSource.next()).then(new Answer<DataImportItem<Integer, SimpleDataElement>>() {
-			int i = 0;
-
-			@Override
-			public DataImportItem<Integer, SimpleDataElement> answer(InvocationOnMock invocation) throws Throwable {
-				DataImportItem<Integer, SimpleDataElement> item = itemList.get(i);
-				
-				i++;
-				
-				if (i % 2 == 1) {
-					throw exception;
-				}
-				
-				return  item;
-			}
-		});
-		
-		Iterator<DataImportItem<Integer, SimpleDataElement>> importedItens = baseDataImporter.importData(dataSource, true, true).iterator();
-		
-		DataImportItem<Integer, SimpleDataElement> errorItem = importedItens.next();
-		
-		assertNull(errorItem.getId());
-		assertNull(errorItem.getData());
-		assertFalse(errorItem.isInsert());
-		assertFalse(errorItem.isUpdate());
-		assertFalse(errorItem.isMerge());
-		assertFalse(errorItem.isRemove());
-		assertFalse(errorItem.isForce());
-		assertFalse(errorItem.isSync());
-		assertEquals(Status.ERROR, errorItem.getResult().getStatus());
-		assertNotNull(errorItem.getResult().getMessage());
-		assertEquals(exception, errorItem.getResult().getException());
-		
-		DataImportItem<Integer, SimpleDataElement> successItem = importedItens.next();
-		
-		assertEquals(itemList.get(1), successItem);
 	}
 	
 	/**
@@ -223,7 +170,7 @@ public class BaseDataImporterTest {
 	public void destinyWriteErrorWithoutSuppression() throws DataImportException {
 		mockRegularDataSourceBehaviour();
 		BaseDataImporter<Integer, SimpleDataElement> localDataImporter = spy(baseDataImporter);
-		when(localDataImporter.importData(dataSource, true, true)).thenThrow(new DataImportException("Data Source Read Error"));
+		when(localDataImporter.importData(dataSource, true, true)).thenThrow(new DataImportException("Data Write Error"));
 		
 		localDataImporter.importData(dataSource, true, false);
 	}
@@ -233,11 +180,26 @@ public class BaseDataImporterTest {
 	 */
 	@Test
 	public void destinyWriteErrorWithSuppression() throws DataImportException {
-		mockRegularDataSourceBehaviour();
-		BaseDataImporter<Integer, SimpleDataElement> localDataImporter = spy(baseDataImporter);
-		DataImportException exception = new DataImportException("Data Source Read Error");
-		when(localDataImporter.importData(dataSource, true, true)).thenThrow(exception);
 		
-		Collection<DataImportItem<Integer, SimpleDataElement>> importedItens = localDataImporter.importData(dataSource, true, true);
+	}
+	
+	/**
+	 * Testa um erro de importação durante a sincronização dos dados na origem sem supressão de exceções.
+	 */
+	@Test(expected = DataImportException.class)
+	public void dataSourceSyncErrorWithoutSuppression() throws DataImportException {
+		mockRegularDataSourceBehaviour();
+		when(dataSource.isWritable()).thenReturn(true);
+		when(dataSource.sync(itemList.get(0))).thenThrow(new DataImportException("Data Sync Error"));
+		
+		baseDataImporter.importData(dataSource, true, false);
+	}
+	
+	/**
+	 * Testa um erro de importação durante a sincronização dos dados na origem com supressão de exceções.
+	 */
+	
+	public void dataSourceSyncErrorWithSuppression() throws DataImportException {
+		
 	}
 }

@@ -42,7 +42,8 @@ public interface ImportDataSource<I extends Serializable, T extends Serializable
 	public boolean hasNext();
 	
 	/**
-	 * Lê o próximo item na sequência da fonte de dados.
+	 * Lê o próximo item na sequência da fonte de dados.<br>
+	 * A sequência de itens progride mesmo que haja um erro de leitura.
 	 * 
 	 * @return Item lido da fonte de dados
 	 * @throws DataImportException Se ocorrer um erro na leitura da fonte de dados.
